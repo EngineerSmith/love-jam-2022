@@ -1,5 +1,6 @@
 local args = require("util.args")
 local sceneManager = require("util.sceneManager")
+local logger = require("util.logger")
 
 local love = love
 local le, lg, lt = love.event, love.graphics, love.timer
@@ -36,6 +37,7 @@ end
 
 love.run = function()
   if args["-server"] then
+    logger.info("Creating server gameloop")
     sceneManager.changeScene("server")
     return function()
       local quit = processEvents()
@@ -45,6 +47,7 @@ love.run = function()
       lt.sleep(1e-5)
     end
   else -- love.run taken from feris 
+    logger.info("Creating server gameloop")
     sceneManager.changeScene("client")
     local frameTime, fuzzyTime = 1/60, {1/2,1,2}
     local networkTick = 1/10
