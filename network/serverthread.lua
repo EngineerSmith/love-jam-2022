@@ -64,7 +64,7 @@ while true do
         else
           local result = validateLogin(client, encoded)
           if result == true then
-            cmdOut(enumPT.confirmConnection, serialize.encode({0, clientID, client.name})
+            cmdOut(enumPT.confirmConnection, serialize.encode(0, clientID, client.name)
           else
             client.peer:disconnect_now(result or enum.disconnect.badlogin)
           end
@@ -77,7 +77,7 @@ while true do
       end
     elseif event.type == "disconnect" then
       removeClient(clientID)
-      cmdOut(enumPT.disconnect, serialize.encode({0, clientID})
+      cmdOut(enumPT.disconnect, serialize.encode(0, clientID)
     elseif event.type == "connect" then
       client.id = clientID
       client.login = false

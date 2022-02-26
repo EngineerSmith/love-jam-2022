@@ -20,14 +20,28 @@ local server = host:connect(address)
 
 local success = host:service(5000)
 if not success then
-  cmdOut("error", "Could not connect to server.")
+  cmdOut(enumPT.disconnect, serialize.encode("badconnect", enum.disconnect.badconnect))
   return
 end
 
 while true do
   local event, limit = host:service(50), 0 
   while event, limit < 50 do
-    
+    if event.type == "receive" then
+      local success, data = pcall(ld.decompress, "string", "lz4", event.data)
+      if not success then
+        cmdOut("log", "Could not decompress incoming data from server")
+      else
+        cmdOut(enumPT.receive, data)
+      end
+    elseif event.type == "connect" then
+      if event.peer ~= server then
+        event.peer:disconnect_now(enum.disconnect.badconnect)
+      end
+    elseif event.type == "disconnect" then
+      local reason = enum.convert(event.data, "disconnect")
+      cmdOut(enumPT.disconnect, serialize.encode(reason, event.data))
+    end
     limit = limit + 1
     event = host:service()
   end

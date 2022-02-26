@@ -56,6 +56,10 @@ client.quit = function()
 end
 
 client.handle = function(packetType, encoded)
+  if packetType == "warn" then
+    logger.warn(encoded)
+    return
+  end
   local decoded = serialize.decode(encoded)
   encoded = nil
   if packetType == enumPT.receive then
