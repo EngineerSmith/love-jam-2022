@@ -10,13 +10,19 @@ camera.scale = 2
 camera:setFollowLerp(0.2)
 camera:setFollowStyle('TOPDOWN')
 
-local lg, lk = love.graphics, love.keyboard
+local lg, lk, lj = love.graphics, love.keyboard, love.joystick
 local sqrt = math.sqrt
+
+local joystick
 
 local scene = { }
 
 scene.load = function(name, address)
   network.connect(address, { name = name })
+  local joysticks = lj.getJoysticks()
+  if joysticks[1] then
+    joystick = joysticks[1]
+  end
 end
 
 local chatMode = false
@@ -24,6 +30,7 @@ scene.update = function(dt)
   --input
   if not chatMode then
     local dirX, dirY = 0, 0
+    -- Keyboard
     if lk.isScancodeDown("w", "up") then
       dirY = dirY - 1
     end
@@ -35,6 +42,18 @@ scene.update = function(dt)
     end
     if lk.isScancodeDown("d", "right") then
       dirX = dirX + 1
+    end
+    
+    if joystick then
+      -- basic deadzones
+      local leftX = joystick:getGamepadAxis("leftx")
+      local leftY = joystick:getGamepadAxis("lefty")
+      local mag = sqrt(leftX*leftX+leftY*leftY)
+      print(leftX, leftY, mag)
+      if mag > 0.2 then -- deadzone
+        dirX = dirX + leftX
+        dirY = dirY + leftY
+      end
     end
     
     if dirX ~= 0 and dirY ~= 0 then
@@ -109,6 +128,19 @@ scene.resize = function(w, h)
   camera.screen_y = h/2
   camera.w = w
   camera.h = h
+end
+
+scene.joystickadded = function(js)
+  joystick = js
+end
+
+scene.joystickremoved = function(js)
+  if joystick == js then
+    local joysticks = lj.getJoysticks()
+    if joysticks[1] then
+      joystick = joysticks[1]
+    end
+  end
 end
 
 return scene
