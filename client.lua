@@ -7,7 +7,7 @@ local floor = math.floor
 local logo = lg.newImage("assets/UI/logo.png")
 logo:setFilter("nearest", "nearest")
 
-local scene = {}
+local scene = { }
 local lily
 scene.load = function()
   lily = loader()
@@ -42,7 +42,7 @@ scene.draw = function()
   lg.stencil(function()
       lg.rectangle("fill", lineWidth, lineWidth, barW-lineWidth2, barH-lineWidth2)
     end, "replace", 1)
-  --lg.setColor(.7,.7,.7)
+  lg.setColor(.9,.9,.9)
   lg.setStencilTest("equal", 0)
   lg.rectangle("fill", 0, 0, barW, barH)
   lg.setStencilTest()

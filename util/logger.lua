@@ -3,11 +3,11 @@ local args = require("util.args")
 
 local logger = {
   internallog = {
-    ["WARN"] = {},
-    ["ERROR"] = {},
-    ["FATAL"] = {},
+    ["WARN"] = { },
+    ["ERROR"] = { },
+    ["FATAL"] = { },
   },
-  sinks = {},
+  sinks = { },
   levels = require("util.loggerLevels")
 }
 

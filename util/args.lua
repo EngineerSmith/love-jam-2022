@@ -1,6 +1,6 @@
 local args = love.arg.parseGameArguments(arg)
 local insert = table.insert
-local processed, last, cache = {}, nil, nil
+local processed, last, cache = { }, nil, nil
 for i=1, #args do
   local arg = args[i]
   local firstChar, lastChar = arg:sub(1,1), arg:sub(-1)
@@ -25,7 +25,7 @@ for i=1, #args do
   if not isArgument then
     if last then
       if type(processed[last]) ~= "table" then
-        processed[last] = {}
+        processed[last] = { }
       end
       insert(processed[last], arg)
     else
@@ -41,7 +41,7 @@ end
 if cache then
   if last then
     if type(processed[last]) ~= "table" then
-      processed[last] = {}
+      processed[last] = { }
     end
     insert(processed[last], cache)
   else

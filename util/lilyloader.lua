@@ -3,7 +3,7 @@ local lily = require("libs.lily")
 local insert = table.insert
 
 local extensions = {
-    png = "newImage",
+    png  = "newImage",
     jpg  = "newImage",
     jpeg = "newImage",
     bmp  = "newImage",
@@ -22,17 +22,16 @@ end
 
 return function()
   local assets = require("assets.defineAssets") or error("Unable to find asset")
-  local lilyTable = {}
+  local lilyTable = { }
   for _, asset in ipairs(assets) do
     local extension = splitFileExtension(asset[1])
     insert(lilyTable, {
-        extensions[extension or ""] or error("Couldn't find load function for "..tostring(extension).." from file "..tostring(asset[1])),
+        extensions[extension and extension:lower() or ""] or error("Couldn't find load function for "..tostring(extension).." extension from file "..tostring(asset[1])),
         "assets/"..asset[1],
       })
   end
   
   local outAssets = require("util.assets")
-  print(type(outAssets))
   
   local multiLily = lily.loadMulti(lilyTable)
   multiLily:onComplete(function(_, lilies)
