@@ -2,6 +2,8 @@ local args = require("util.args")
 local sceneManager = require("util.sceneManager")
 local logger = require("util.logger")
 
+local flux = require("libs.flux")
+
 local love = love
 local le, lg, lt = love.event, love.graphics, love.timer
 

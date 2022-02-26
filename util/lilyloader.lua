@@ -20,16 +20,19 @@ local function splitFileExtension(strFilename)
   return strFilename:match("^.+%.(.+)$")
 end
 
-return function(outAssets)
+return function()
   local assets = require("assets.defineAssets") or error("Unable to find asset")
   local lilyTable = {}
   for _, asset in ipairs(assets) do
-    local extension = splitFileExtension(assets[1])
+    local extension = splitFileExtension(asset[1])
     insert(lilyTable, {
-        extensions[extension or ""] or error("Couldn't find load function for "..tostring(extension).." from file "..tostring(assets[1])),
-        assets[1],
+        extensions[extension or ""] or error("Couldn't find load function for "..tostring(extension).." from file "..tostring(asset[1])),
+        "assets/"..asset[1],
       })
   end
+  
+  local outAssets = require("util.assets")
+  print(type(outAssets))
   
   local multiLily = lily.loadMulti(lilyTable)
   multiLily:onComplete(function(_, lilies)
