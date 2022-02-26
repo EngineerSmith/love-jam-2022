@@ -10,8 +10,8 @@ end
 
 local defaultSettings = { 
     client = {
-        windowSize = { width = 800,  height = 600, },
-        windowFullscreen = false,
+        windowsize = { width = 800,  height = 600, },
+        windowfullscreen = false,
       },
     server = {
         port = 20202,
@@ -52,7 +52,7 @@ end
 local encode = function()
   local success, message = json.encode(settingsFile, settings)
   if not success then
-    logger.error("Could not update", settingsFile, ":", message
+    logger.error("Could not update", settingsFile, ":", message)
   end
 end
 encode() -- creates default file
@@ -69,10 +69,10 @@ local out = {
       end,
   }
 setmetatable(out.client, {
-    _index = function(_, key)
+    __index = function(_, key)
         return settings.client[key]
       end,
-    _newindex = function(_, key, value)
+    __newindex = function(_, key, value)
         settings.client[key] = value
         encode()
         if handlers[key] then
@@ -83,10 +83,10 @@ setmetatable(out.client, {
       end,
   })
 setmetatable(out.server, {
-    _index = function(_, key)
+    __index = function(_, key)
         return settings.server[key]
       end,
-    _newindex = function(_, key, value)
+    __newindex = function(_, key, value)
         settings.client[key] = value
         encode()
         if handlers[key] then

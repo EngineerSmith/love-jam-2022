@@ -49,11 +49,11 @@ else
     t.window.display = 1
     t.window.highdpi = true
     t.window.depth = 24
-    t.window.width = settings.client.windowSize.width
-    t.window.height = settings.client.windowSize.height
-    t.window.minwidth = settings._default.client.windowSize.width
-    t.window.maxwidth = settings._default.client.windowSize.height
-    t.window.fullscreen = settings.client.windowFullscreen
+    t.window.width = settings.client.windowsize.width
+    t.window.height = settings.client.windowsize.height
+    t.window.minwidth = settings._default.client.windowsize.width
+    t.window.maxwidth = settings._default.client.windowsize.height
+    t.window.fullscreen = settings.client.windowfullscreen
     
     t.modules.audio = true
     t.modules.data = true

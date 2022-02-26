@@ -42,7 +42,7 @@ server.handle = function(packetType, encoded)
     end
   elseif packetType == enumPT.disconnect then
     logger.info("Disconnect from", clientID)
-    for _, callback in ipairs(server.handlers[enumPT.disconnect]) do}
+    for _, callback in ipairs(server.handlers[enumPT.disconnect]) do
       callback(unpack(decoded))
     end
   elseif packetType == enumPT.firstConnect then
