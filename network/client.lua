@@ -56,10 +56,8 @@ client.quit = function()
 end
 
 client.handle = function(packetType, encoded)
-  local decoded
-  if encoded then
-    decoded = serialize.decode(encoded)
-  end
+  local decoded = serialize.decode(encoded)
+  encoded = nil
   if packetType == enumPT.receive then
     local pt = decoded[1]
     remove(decoded, 1)
@@ -68,10 +66,10 @@ client.handle = function(packetType, encoded)
     end
   elseif packetType == enumPT.disconnect then
     logger.info("Disconnected, reason:", decoded[1], "code:", decoded[2])
+    client.quit()
     for _, callback in ipairs(client.handlers[enumPT.disconnect]) do
       callback(unpack(decoded))
     end
-    client.quit()
   elseif packetType == enumPT.confirmConnection then
     logger.info("Successful connection made")
     client.isConnected = true
