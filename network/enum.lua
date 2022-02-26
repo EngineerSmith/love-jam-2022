@@ -3,6 +3,7 @@ local enum = {
         normal = 0,
         badconnect = 0,
         badserver = 0,
+        badusername = 0,
       },
     packetType = { -- must be 1 char in size
         receive           = 'r',

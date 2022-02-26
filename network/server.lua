@@ -38,6 +38,9 @@ server.threaderror = function(thread, errorMessage)
 end
 
 server.handle = function(packetType, encoded)
+  if packetType == "error" then
+    server.threaderror(server.thread, encoded)
+  end
   local decoded = serialize.decode(encoded)
   encoded = nil
   local clientID = decoded[2]
@@ -45,9 +48,8 @@ server.handle = function(packetType, encoded)
   decoded[2] = client
   if packetType == enumPT.receive then
     local pt = decoded[1]
-    remove(decoded, 1)
     for _, callback in ipairs(server.handlers[pt]) do
-      callback(unpack(decoded))
+      callback(unpack(decoded, 2))
     end
   elseif packetType == enumPT.disconnect then
     logger.info("Disconnect from", clientID)
@@ -56,8 +58,9 @@ server.handle = function(packetType, encoded)
     end
     server._removeClient(clientID)
   elseif packetType == enumPT.firstConnect then
-    logger.info("Connection from", clientID)
+    logger.info("Connection from", clientID, ", waiting for login")
   elseif packetType == enumPT.confirmConnection then
+    client.name = decoded[3]
     logger.info("Confirmed connection for", clientID, "named", client.name)
     for _, callback in ipairs(server.handlers[enumPT.confirmConnection]) do
       callback(unpack(decoded))
@@ -103,7 +106,7 @@ end
 
 server.disconnect = function(client, reason)
   reason = reason or enum.disconnect.normal
-  cmdIn:push(enumPT.disconnect..reason)
+  cmdIn:push({client.id, enumPT.disconnect..reason})
 end
 
 return server

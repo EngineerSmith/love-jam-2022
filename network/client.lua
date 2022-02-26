@@ -60,9 +60,8 @@ client.handle = function(packetType, encoded)
   encoded = nil
   if packetType == enumPT.receive then
     local pt = decoded[1]
-    remove(decoded, 1)
     for _, callback in ipairs(client.handlers[pt]) do
-      callback(unpack(decoded))
+      callback(unpack(decoded, 2))
     end
   elseif packetType == enumPT.disconnect then
     logger.info("Disconnected, reason:", decoded[1], "code:", decoded[2])
