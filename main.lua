@@ -5,6 +5,10 @@ local settings = require("util.settings")
 
 local flux = require("libs.flux")
 
+local utf8 = require("utf8")
+-- add utf8 len lib from lua lib
+require("libs.utf8").len = utf8.len
+
 local love = love
 local le, lg, lt = love.event, love.graphics, love.timer
 
@@ -103,7 +107,6 @@ end
 
 -- ERROR HANDLER
 -- Changed to output errors to log
-local utf8 = require("utf8")
 
 local function error_printer(message, layer)
 	return debug.traceback(tostring(message), 1+(layer or 1)):gsub("\n[^\n]+$", "")

@@ -1,6 +1,8 @@
 local logger = require("util.logger")
 local network = require("network.server")
 
+local chat = require("coordinators.chat")
+
 local scene = { }
 
 scene.load = function(port)

@@ -38,6 +38,7 @@ local removeClient = function(clientID)
 end
 
 local validateLogin = function(client, encoded)
+  cmdOut("log", encoded)
   local decoded = serialize.decode(encoded)
   if type(decoded[1]) ~= "table" then
     return enum.disconnect.badlogin
@@ -59,11 +60,11 @@ while true do
       local success, encoded = pcall(ld.decompress, "string", "lz4", event.data)
       if success then
         if client.login then
-          cmdOut(enumPT.receive, encoded)
+          cmdOut(enumPT.receive, clientID, encoded)
         else
           local result = validateLogin(client, encoded)
           if result == true then
-            cmdOut(enumPT.confirmConnection, serialize.encode(0, clientID, client.name))
+            cmdOut(enumPT.confirmConnection, clientID, serialize.encode(0, client.name))
             local encoded = serialize.encode(enumPT.confirmConnection)
             if encoded then
               cmdIn:push({clientID, encoded})
