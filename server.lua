@@ -8,7 +8,7 @@ scene.load = function(port)
   logger.info("Server loading assets")
   loader()
   logger.info("Switching to main loop")
-  require("util.sceneManager").changeScene("server.main", port)
+  require("util.sceneManager").changeScene("server.game", port)
 end
 
 return scene
