@@ -8,7 +8,7 @@ return function(coordinator)
   local world
   
   coordinator.generateWorld = function()
-      world = worldGen(4,4,0)
+      world = worldGen(50,50,0)
     end
   
   network.addHandler(network.enum.confirmConnection, function(client)

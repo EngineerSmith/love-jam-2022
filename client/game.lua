@@ -4,6 +4,10 @@ local network = require("network.client")
 local chat = require("coordinators.chat")
 local world = require("coordinators.world")
 
+local camera = require("libs.stalker-x")()
+camera:setFollowLerp(0.2)
+camera:setFollowStyle('TOPDOWN')
+
 local lg = love.graphics
 
 local scene = { }
@@ -12,12 +16,17 @@ scene.load = function(name, address)
   network.connect(address, { name = name })
 end
 
+scene.update = function(dt)
+  camera:update(dt)
+end
+
 local text = ""
 scene.draw = function()
   lg.clear(.1,.1,.1)
-  -- camera.attach
+  camera:attach()
   world.draw()
-  -- camera.detach
+  camera:detach()
+  camera:draw()
   lg.setColor(1,1,1)
   lg.print(text.."\n"..table.concat(chat.chat, "\n"))
 end
