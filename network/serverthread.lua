@@ -61,16 +61,23 @@ while true do
       if success then
         if client.login then
           error("TODO")
-        elseif validateLogin(client, encoded) then
-          cmdOut(enumPT.confirmConnection, serialize.encode({0, clientID, client.name})
+        else
+          local result = validateLogin(client, encoded)
+          if result == true then
+            cmdOut(enumPT.confirmConnection, serialize.encode({0, clientID, client.name})
+          else
+            client.peer:disconnect_now(result or enum.disconnect.badlogin)
+          end
         end
       end
     elseif event.type == "disconnect" then
-      error("TODO")
+      removeClient(clientID)
+      cmdOut(enumPT.disconnect, serialize.encode({0, clientID})
     elseif event.type == "connect" then
       client.id = clientID
       client.login = false
-      cmdOut(enumPT.firstConnect, serialize.encode({0, clientID}))
+      client.loginAttempt = 0
+      client.peer = event.peer
     end
     limit = limit + 1
     local event = host:service()

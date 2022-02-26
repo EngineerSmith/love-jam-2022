@@ -9,7 +9,6 @@ local enum = {
         receive           = 'r',
         disconnect        = 'd',
         confirmConnection = 'c',
-        firstConnect      = 'f',
         -- custom
         chatMessage       = 'm',
         -- world data

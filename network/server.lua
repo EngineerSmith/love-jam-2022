@@ -53,12 +53,12 @@ server.handle = function(packetType, encoded)
     end
   elseif packetType == enumPT.disconnect then
     logger.info("Disconnect from", clientID)
-    for _, callback in ipairs(server.handlers[enumPT.disconnect]) do
-      callback(unpack(decoded))
+    if client.name then
+      for _, callback in ipairs(server.handlers[enumPT.disconnect]) do
+        callback(unpack(decoded))
+      end
     end
     server._removeClient(clientID)
-  elseif packetType == enumPT.firstConnect then
-    logger.info("Connection from", clientID, ", waiting for login")
   elseif packetType == enumPT.confirmConnection then
     client.name = decoded[3]
     logger.info("Confirmed connection for", clientID, "named", client.name)
@@ -75,7 +75,7 @@ server.getClient = function(clientID)
   end
   client = {
       id = clientID,
-      name = "unknown",
+      name = nil,
     }
   server.clients[clientID] = client
   return client
