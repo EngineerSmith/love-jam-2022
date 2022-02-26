@@ -14,6 +14,7 @@ local enum = {
         chatMessage       = 'm',
         -- world data
         playerPosition    = 'p',
+        worldData         = 'w',
       },
   }
   

@@ -2,6 +2,7 @@ local logger = require("util.logger")
 local network = require("network.client")
 
 local chat = require("coordinators.chat")
+local world = require("coordinators.world")
 
 local lg = love.graphics
 
@@ -15,6 +16,7 @@ local text = ""
 scene.draw = function()
   lg.clear(.1,.1,.1)
   -- camera.attach
+  world.draw()
   -- camera.detach
   lg.setColor(1,1,1)
   lg.print(text.."\n"..table.concat(chat.chat, "\n"))

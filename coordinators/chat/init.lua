@@ -1,7 +1,7 @@
 local args = require("util.args")
 
 local chatCoordinator = {
-    chat = {},
+    chat = { },
     chatLimit = 100,
   }
 
