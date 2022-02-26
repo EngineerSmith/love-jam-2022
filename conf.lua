@@ -2,6 +2,7 @@ local identity = "love-jam-2022-ES"
 love.filesystem.setIdentity(identity, true)
 
 local args = require("util.args")
+local settings = require("util.settings")
 
 local baseConf = function(t)
   t.identity = identity
@@ -48,6 +49,11 @@ else
     t.window.display = 1
     t.window.highdpi = true
     t.window.depth = 24
+    t.window.width = settings.client.windowSize.width
+    t.window.height = settings.client.windowSize.height
+    t.window.minwidth = settings._default.client.windowSize.width
+    t.window.maxwidth = settings._default.client.windowSize.height
+    t.window.fullscreen = settings.client.windowFullscreen
     
     t.modules.audio = true
     t.modules.data = true
