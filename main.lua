@@ -1,6 +1,7 @@
 local args = require("util.args")
 local sceneManager = require("util.sceneManager")
 local logger = require("util.logger")
+local settings = require("util.settings")
 
 local flux = require("libs.flux")
 
@@ -40,8 +41,8 @@ end
 love.run = function()
   if args["-server"] then
     logger.info("Creating server gameloop")
-    local port = args["-port"] or 
-    sceneManager.changeScene("server")
+    local port = args["-port"] or settings.server.port or settings._default.server.port
+    sceneManager.changeScene("server", port)
     return function()
       local quit = processEvents()
       if quit then return quit end
