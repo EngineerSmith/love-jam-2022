@@ -17,7 +17,7 @@ local percentage = 0
 scene.update = function(dt)
   percentage = lily:getLoadedCount() / lily:getCount()
   if lily:isComplete() then
-    --require("util.sceneManager").changeScene("client.menu")
+    require("util.sceneManager").changeScene("client.menu")
   end
 end
 local w, h = love.graphics.getDimensions()
