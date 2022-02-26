@@ -28,4 +28,4 @@ enum.convert = function(value, enumType)
   return nil
 end
 
-return nil
+return enum

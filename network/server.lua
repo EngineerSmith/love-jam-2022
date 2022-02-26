@@ -9,7 +9,7 @@ local remove, insert = table.remove, table.insert
 
 local server = { 
     enum = enumPT,
-    callbacks = {},
+    handlers = {},
     clients = {},
   }
 
