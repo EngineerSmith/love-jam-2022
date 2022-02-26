@@ -54,6 +54,7 @@ server.handle = function(packetType, encoded)
     for _, callback in ipairs(server.handlers[enumPT.disconnect]) do
       callback(unpack(decoded))
     end
+    server._removeClient(clientID)
   elseif packetType == enumPT.firstConnect then
     logger.info("Connection from", clientID)
   elseif packetType == enumPT.confirmConnection then
@@ -77,6 +78,11 @@ server.getClient = function(clientID)
   return client
 end
 
+-- used internally only, use server.disconnect to disconnect a client
+server._removeClient = function(clientID)
+  server.clients[clientID] = nil
+end
+
 server.addHandler = function(packetType, callback)
   insert(client.handlers[packetType], callback)
 end
@@ -93,6 +99,11 @@ server.sendAll = function(packetType, ...)
   if encoded then
     cmdIn:push({"all", encoded})
   end
+end
+
+server.disconnect = function(client, reason)
+  reason = reason or enum.disconnect.normal
+  cmdIn:push(enumPT.disconnect..reason)
 end
 
 return server
