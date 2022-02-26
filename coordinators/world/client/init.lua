@@ -6,42 +6,53 @@ local assets = require("util.assets")
 
 return function(coordinator)
   
-  local world, size
+  local world
   
   network.addHandler(network.enum.worldData, function(worldData)
       -- process world into something that can be used
       world = worldData
-      size = #worldData
     end)
   
   local lg = love.graphics
   
   local heightmap = {
-      { assets["tiles.test1"], 0 },
+      [0] = assets["tiles.test1"],
+      [1] = assets["tiles.test2"],
+      [2] = assets["tiles.test3"],
+      [3] = assets["tiles.test1"],
+      [4] = assets["tiles.test1"],
+      [5] = assets["tiles.test1"],
+      [6] = assets["tiles.test1"],
+      [7] = assets["tiles.test1"],
+      [8] = assets["tiles.test1"],
+      [9] = assets["tiles.test1"],
     }
   
   local tileW, tileH = assets["tiles.test1"]:getDimensions()
   tileH = tileH/2
   local getTileForHeight = function(height)
-    for _, h in ipairs(heightmap) do
-      if height > h[2] then
-        return h[1]
-      end
-    end
+    return heightmap[height]
   end
   
   coordinator.draw = function()
       if world then
         lg.push()
-        lg.translate(0,200)
-        --lg.scale(2,2)
-        for i=1, size do
-        for j=size, 1, -1 do
+        for i=0, #world do
+          if world[i] then
+        for j=#world[i], 0, -1 do
           local target = world[i][j]
-          local x = j * tileW / 2 + i * tileW / 2
-          local y = i * tileH / 2 - j * tileH / 2
-          lg.draw(getTileForHeight(target.height), x, y-math.floor(target.height*3)*10)
+          if target and target.height then
+            local x = j * tileW / 2 + i * tileW / 2
+            local y = i * tileH / 2 - j * tileH / 2
+            local img = getTileForHeight(target.height)
+            if img then
+              lg.draw(img, x, y-math.floor(target.height)*10)
+            else
+              print(target.height)
+            end
+          end
         end
+          end
         end
         lg.pop()
         

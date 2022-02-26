@@ -49,7 +49,6 @@ scene.update = function(dt)
       local leftX = joystick:getGamepadAxis("leftx")
       local leftY = joystick:getGamepadAxis("lefty")
       local mag = sqrt(leftX*leftX+leftY*leftY)
-      print(leftX, leftY, mag)
       if mag > 0.2 then -- deadzone
         dirX = dirX + leftX
         dirY = dirY + leftY
