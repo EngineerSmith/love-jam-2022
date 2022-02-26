@@ -1,12 +1,15 @@
 local logger = require("util.logger")
 local loader = require("util.lilyLoader")
 
+local lg = love.graphics
 local floor = math.floor
+
+local logo = lg.newImage("assets/UI/logo.png")
+logo:setFilter("nearest", "nearest")
 
 local scene = {}
 local lily
 scene.load = function()
-  love.graphics.setBackgroundColor(.1,.1,.1)
   lily = loader()
 end
 
@@ -23,17 +26,21 @@ scene.resize = function(w_, h_)
   w, h = floor(w_/2), floor(h_/2)
 end
 
-local lg = love.graphics
 local barW, barH = 400, 20
 local lineWidth = 2
 local lineWidth2, lineWidth4 = lineWidth*2, lineWidth*4
 scene.draw = function()
+  lg.clear(.1,.1,.1)
   lg.push("all")
-  local x, y = w-floor(barW/2), h-floor(barH/2)
-  lg.translate(x, y)
+  lg.translate(w, h)
+  local scale = 8
+  lg.draw(logo, 0,0, 0, scale,scale, logo:getWidth()/2, logo:getHeight()/2)
+  lg.translate(0, logo:getHeight()*(scale)/1.5)
+  lg.translate(-floor(barW/2), -floor(barH/2))
   lg.stencil(function()
       lg.rectangle("fill", lineWidth, lineWidth, barW-lineWidth2, barH-lineWidth2)
     end, "replace", 1)
+  --lg.setColor(.7,.7,.7)
   lg.setStencilTest("equal", 0)
   lg.rectangle("fill", 0, 0, barW, barH)
   lg.setStencilTest()

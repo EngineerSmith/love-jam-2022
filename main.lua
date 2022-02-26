@@ -49,7 +49,7 @@ love.run = function()
       lt.sleep(1e-5)
     end
   else -- love.run taken from feris 
-    logger.info("Creating server gameloop")
+    logger.info("Creating client gameloop")
     sceneManager.changeScene("client")
     local frameTime, fuzzyTime = 1/60, {1/2,1,2}
     local networkTick = 1/10
