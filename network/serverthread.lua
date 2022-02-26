@@ -40,11 +40,11 @@ end
 
 local validateLogin = function(client, encoded)
   local decoded = serialize.decode(encoded)
-  client.username = decoded[1]
-  if type(client.username) ~= "string" or #client.username == 0 then
+  client.name = decoded[1]
+  if type(client.name) ~= "string" or #client.name == 0 or #client.name > 16 then
     return enum.disconnect.badusername
   end
-  if client.username:match("(^%a)") then
+  if client.name:match("(^%a)") then
     return enum.disconnect.badusername
   end
   client.login = true
@@ -60,7 +60,7 @@ while true do
       local success, encoded = pcall(ld.decompress, "string", "lz4", event.data)
       if success then
         if client.login then
-          error("TODO")
+          cmdOut(enumPT.receive, encoded)
         else
           local result = validateLogin(client, encoded)
           if result == true then
@@ -68,6 +68,11 @@ while true do
           else
             client.peer:disconnect_now(result or enum.disconnect.badlogin)
           end
+        end
+      else
+        cmdOut("log", "Could not decompress incoming data from "..tostring(client.id)..(client.name and " known as "..tostring(client.name or ""))
+        if not client.login then
+          client.peer:disconnect_now(enum.disconnect.badlogin)
         end
       end
     elseif event.type == "disconnect" then
@@ -86,16 +91,15 @@ while true do
   while cmd and limit < 20 do
     local target = cmd[1]
     if target == "all" then
-      error("TODO")
+      host:broadcast(cmd[2])
     else
-      local clientID = cmd[2]
-      error("TODO")
-    end
-    if cmd:sub(1,1) == enumPT.disconnect then
-      local reason = tonumber(cmd:sub(2)) or enum.disconnect.normal
-      server:disconnect(reason)
-    else
-      server:send(ld.compress("string", "lz4", tostring(cmd)))
+      local client = getClient(target)
+      if cmd[2] == enumPT.disconnect then
+        local reason = tonumber(cmd[3]) or enum.disconnect.normal
+        client.peer:disconnect(reason)
+      else
+        client.peer:send(cmd[2])
+      end
     end
     cmd = cmdIn:pop()
     limit = limit + 1

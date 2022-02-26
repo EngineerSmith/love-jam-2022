@@ -106,7 +106,7 @@ end
 
 server.disconnect = function(client, reason)
   reason = reason or enum.disconnect.normal
-  cmdIn:push({client.id, enumPT.disconnect..reason})
+  cmdIn:push({client.id, enumPT.disconnect, reason})
 end
 
 return server
