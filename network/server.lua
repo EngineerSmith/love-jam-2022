@@ -24,7 +24,9 @@ server.start = function(port)
   server.thread = lt.newThread("network/serverthread.lua")
   love.handlers["cmdOut"] = server.handle
   cmdIn:clear()
+  logger.info("HIT")
   server.thread:start(port)
+  logger.info("HIT")
   server.port = port
 end
 

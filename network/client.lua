@@ -85,13 +85,13 @@ end
 client.send = function(packetType, ...)
   local encoded = serialize.encode(packetType, ...)
   if encoded then
-    cmdIn:push(encoded)
+    cmdIn:push({encoded})
   end
 end
 
 client.disconnect = function(reason)
   reason = reason or enum.disconnect.normal
-  cmdIn:push(enumPT.disconnect..reason)
+  cmdIn:push({enumPT.disconnect, reason})
 end
 
 return client

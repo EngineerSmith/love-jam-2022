@@ -20,7 +20,7 @@ local host = enet.host_create("*:"..port)
 
 local success = host:service(1000)
 if not success then
-  cmdOut("error", "Could not start server.")s
+  cmdOut("error", "Could not start server.")
   return
 end
 
@@ -52,8 +52,8 @@ local validateLogin = function(client, encoded)
 end
 
 while true do
-  local event, limit = host:service(timeout)
-  while event and limit < 50 then
+  local event, limit = host:service(timeout), 0
+  while event and limit < 50 do
     local clientID = hash(tostring(event.peer))
     local client = getClient(clientID)
     if event.type == "receive" then
@@ -85,7 +85,7 @@ while true do
       client.peer = event.peer
     end
     limit = limit + 1
-    local event = host:service()
+    event = host:service()
   end
   local cmd, limit = cmdIn:pop(), 0
   while cmd and limit < 20 do
