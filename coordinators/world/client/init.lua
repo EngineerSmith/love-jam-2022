@@ -34,7 +34,7 @@ return function(coordinator)
       if world then
         lg.push()
         lg.translate(0,200)
-        lg.scale(2,2)
+        --lg.scale(2,2)
         for i=1, size do
         for j=size, 1, -1 do
           local target = world[i][j]

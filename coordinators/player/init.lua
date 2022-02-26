@@ -1,7 +1,7 @@
 local args = require("util.args")
 
 local playerCoordinator = { 
-    speed = 10,
+    speed = 500,
   }
 
 if args["-server"] then

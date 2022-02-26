@@ -33,4 +33,15 @@ return function(coordinator)
       end
     end)
   
+  coordinator.moveTowardsDirection = function(dirX, dirY, dt)
+      if dirX ~= 0 then 
+        local forceX = dirX * speed * dt
+        p.x = p.x + forceX
+      end
+      if dirY ~= 0 then
+        local forceY = dirY * speed * dt
+        p.y = p.y + forceY
+      end
+    end
+  
 end
