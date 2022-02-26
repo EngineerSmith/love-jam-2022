@@ -11,12 +11,14 @@ local scene = {}
 local lily
 scene.load = function()
   lily = loader()
+  logger.info("Loading", lily:getCount(), "assets")
 end
 
 local percentage = 0
 scene.update = function(dt)
   percentage = lily:getLoadedCount() / lily:getCount()
   if lily:isComplete() then
+    logger.info("Finished loading, moving to menu")
     require("util.sceneManager").changeScene("client.menu")
   end
 end
