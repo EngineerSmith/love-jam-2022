@@ -3,6 +3,7 @@ local network = require("network.client")
 
 local chat = require("coordinators.chat")
 local world = require("coordinators.world")
+local player = require("coordinators.player")
 
 local camera = require("libs.stalker-x")()
 camera:setFollowLerp(0.2)
@@ -18,6 +19,11 @@ end
 
 scene.update = function(dt)
   camera:update(dt)
+  camera:folllow(player.position.x, player.position.z)
+end
+
+scene.updateNetwork = function()
+  player:updateNetwork()
 end
 
 local text = ""

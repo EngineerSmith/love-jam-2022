@@ -38,7 +38,6 @@ local removeClient = function(clientID)
 end
 
 local validateLogin = function(client, encoded)
-  cmdOut("log", encoded)
   local decoded = serialize.decode(encoded)
   if type(decoded[1]) ~= "table" then
     return enum.disconnect.badlogin

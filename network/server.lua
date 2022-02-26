@@ -38,7 +38,6 @@ server.threaderror = function(thread, errorMessage)
 end
 
 server.handle = function(packetType, ...)
-  logger.info("HIT ME", packetType)
   if packetType == "error" then
     server.threaderror(server.thread, ...)
     return
