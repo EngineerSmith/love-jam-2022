@@ -19,13 +19,14 @@ end
 
 scene.update = function(dt)
   camera:update(dt)
-  camera:folllow(player.position.x, player.position.z)
+  camera:follow(player.position.x, player.position.z)
 end
 
 scene.updateNetwork = function()
   player:updateNetwork()
 end
 
+local chatMode = false
 local text = ""
 scene.draw = function()
   lg.clear(.1,.1,.1)
@@ -45,11 +46,15 @@ scene.threaderror = function(...)
 end
 
 local utf8 = require("utf8")
+
 scene.textinput = function(t)
   text = text .. t
 end
 
 scene.keypressed = function(key)
+  if key == "tab" then
+    chatMode = not chatMode
+  end
   if key == "backspace" then
     local byteoffset = utf8.offset(text, -1)
     if byteoffset then

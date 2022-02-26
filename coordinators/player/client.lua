@@ -1,5 +1,5 @@
 local logger = require("util.logger")
-local network = require("network.network")
+local network = require("network.client")
 
 local flux = require("libs.flux")
 
