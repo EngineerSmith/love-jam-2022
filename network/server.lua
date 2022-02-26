@@ -30,7 +30,7 @@ end
 
 server.threaderror = function(thread, errorMessage)
   if thread == server.thread then
-    logger.error("Error on network thread:", errorMessage)
+    logger.fatal("Error on network thread:", errorMessage)
     love.event.quit(-1)
     return true
   end

@@ -39,7 +39,10 @@ return function()
         local import = assets[index]
         outAssets[import[2]] = lilyAsset[1]
         if import.onLoad then
-          import.onLoad(lilyAsset[1], unpack(import, 3))
+          local a = import.onLoad(lilyAsset[1], unpack(import, 3))
+          if a then
+            outAssets[import[2]] = a
+          and
         end
       end
     end)
