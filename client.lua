@@ -4,7 +4,7 @@ local loader = require("util.lilyLoader")
 local lg = love.graphics
 local floor = math.floor
 
-local logo = lg.newImage("assets/UI/logo.png")
+local logo = lg.newImage("assets/UI/logoES.png")
 logo:setFilter("nearest", "nearest")
 
 local scene = { }

@@ -5,7 +5,7 @@ local serialize = require("network.serialize")
 local enum = require("network.enum")
 local enumPT = enum.packetType
 
-local remove = table.remove
+local remove, insert = table.remove, table.insert
 
 local server = { 
     enum = enumPT,
@@ -26,6 +26,15 @@ server.start = function(port)
   cmdIn:clear()
   server.thread:start(port)
   server.port = port
+end
+
+server.threaderror = function(thread, errorMessage)
+  if thread == server.thread then
+    logger.error("Error on network thread:", errorMessage)
+    love.event.quit(-1)
+    return true
+  end
+  return false
 end
 
 server.handle = function(packetType, encoded)
@@ -66,6 +75,24 @@ server.getClient = function(clientID)
     }
   server.clients[clientID] = client
   return client
+end
+
+server.addHandler = function(packetType, callback)
+  insert(client.handlers[packetType], callback)
+end
+
+server.send = function(client, packetType, ...)
+  local encoded = serialize.encode(packetType, ...)
+  if encoded then
+    cmdIn:push({client.id, encoded})
+  end
+end
+
+server.sendAll = function(packetType, ...)
+  local encoded = serialize.encode(packetType, ...)
+  if encoded then
+    cmdIn:push({"all", encoded})
+  end
 end
 
 return server

@@ -3,5 +3,5 @@ local pixelArt = function(image)
 end
 
 return { 
-    { "UI/logo.png", "logo", onLoad = pixelArt }
+    { "UI/logoES.png", "logo.ES", onLoad = pixelArt }
   }
