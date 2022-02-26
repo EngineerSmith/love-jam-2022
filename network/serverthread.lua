@@ -18,8 +18,7 @@ end
 
 local host = enet.host_create("*:"..port)
 
-local success = host:service(1000)
-if not success then
+if not host then
   cmdOut("error", "Could not start server.")
   return
 end
@@ -40,11 +39,11 @@ end
 
 local validateLogin = function(client, encoded)
   local decoded = serialize.decode(encoded)
-  client.name = decoded[1]
-  if type(client.name) ~= "string" or #client.name == 0 or #client.name > 16 then
-    return enum.disconnect.badusername
+  if type(decoded[1]) ~= "table" then
+    return enum.disconnect.badlogin
   end
-  if client.name:match("(^%a)") then
+  client.name = decoded[1].name
+  if type(client.name) ~= "string" or #client.name == 0 or #client.name > 16 or client.name:match("(^%a)") then
     return enum.disconnect.badusername
   end
   client.login = true
@@ -64,20 +63,24 @@ while true do
         else
           local result = validateLogin(client, encoded)
           if result == true then
-            cmdOut(enumPT.confirmConnection, serialize.encode(0, clientID, client.name)
+            cmdOut(enumPT.confirmConnection, serialize.encode(0, clientID, client.name))
+            local encoded = serialize.encode(enumPT.confirmConnection)
+            if encoded then
+              cmdIn:push({clientID, encoded})
+            end
           else
             client.peer:disconnect_now(result or enum.disconnect.badlogin)
           end
         end
       else
-        cmdOut("log", "Could not decompress incoming data from "..tostring(client.id)..(client.name and " known as "..tostring(client.name or ""))
+        cmdOut("log", "Could not decompress incoming data from "..tostring(client.id)..(client.name and " known as "..tostring(client.name) or ""))
         if not client.login then
           client.peer:disconnect_now(enum.disconnect.badlogin)
         end
       end
     elseif event.type == "disconnect" then
       removeClient(clientID)
-      cmdOut(enumPT.disconnect, serialize.encode(0, clientID)
+      cmdOut(enumPT.disconnect, serialize.encode(0, clientID))
     elseif event.type == "connect" then
       client.id = clientID
       client.login = false
@@ -91,14 +94,24 @@ while true do
   while cmd and limit < 20 do
     local target = cmd[1]
     if target == "all" then
-      host:broadcast(cmd[2])
+      local success, data = pcall(ld.compress, "string", "lz4", cmd[2])
+      if success then
+        host:broadcast(data)
+      else
+        cmdOut("log", "Could not compress outgoing data to all")
+      end
     else
       local client = getClient(target)
       if cmd[2] == enumPT.disconnect then
         local reason = tonumber(cmd[3]) or enum.disconnect.normal
         client.peer:disconnect(reason)
       else
-        client.peer:send(cmd[2])
+        local success, data = pcall(ld.compress, "string", "lz4", cmd[2])
+        if success then
+          client.peer:send(data)
+        else
+          cmdOut("log", "Could not compress outgoing data to "..tostring(target))
+        end
       end
     end
     cmd = cmdIn:pop()

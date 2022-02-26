@@ -1,9 +1,10 @@
 local enum = {
     disconnect = {
-        normal = 0,
-        badconnect = 0,
-        badserver = 0,
-        badusername = 0,
+        normal      = 0,
+        badconnect  = 1,
+        badserver   = 2,
+        badusername = 3,
+        badlogin    = 4,
       },
     packetType = { -- must be 1 char in size
         receive           = 'r',

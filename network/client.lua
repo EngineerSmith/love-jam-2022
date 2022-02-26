@@ -17,10 +17,10 @@ for _, enumValue in pairs(client.enum) do
   client.handlers[enumValue] = {}
 end
 
-local cmdIn = lt.getChanne("cmdIn")
+local cmdIn = lt.getChannel("cmdIn")
 
 client.connect = function(address, login)
-  if client.isConnected or not (client.thread and client.thread:isRunning()) then
+  if client.isConnected or (client.thread and client.thread:isRunning()) then
     error("Cannot connect when already connected")
   end
   logger.info("Starting network thread, connecting to", address)
@@ -29,7 +29,7 @@ client.connect = function(address, login)
   end
   love.handlers["cmdOut"] = client.handle
   cmdIn:clear()
-  cmdIn:push(login)
+  client.send(login)
   client.thread:start(address)
   client.address = address
 end
@@ -59,11 +59,18 @@ client.handle = function(packetType, encoded)
   if packetType == "warn" then
     logger.warn(encoded)
     return
+  elseif packetType == "log" then
+    logger.info(encoded)
+    return
   end
   local decoded = serialize.decode(encoded)
   encoded = nil
   if packetType == enumPT.receive then
     local pt = decoded[1]
+    if pt == enumPT.confirmConnection then
+      logger.info("Successful connection made")
+      client.isConnected = true
+    end
     for _, callback in ipairs(client.handlers[pt]) do
       callback(unpack(decoded, 2))
     end
@@ -73,12 +80,7 @@ client.handle = function(packetType, encoded)
     for _, callback in ipairs(client.handlers[enumPT.disconnect]) do
       callback(unpack(decoded))
     end
-  elseif packetType == enumPT.confirmConnection then
-    logger.info("Successful connection made")
-    client.isConnected = true
-    for _, callback in ipairs(client.handlers[enumPT.confirmConnection]) do
-      callback(unpack(decoded))
-    end
+  else
   end
 end
 

@@ -42,7 +42,7 @@ return function()
           local a = import.onLoad(lilyAsset[1], unpack(import, 3))
           if a then
             outAssets[import[2]] = a
-          and
+          end
         end
       end
     end)

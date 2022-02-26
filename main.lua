@@ -105,7 +105,7 @@ end
 -- Changed to output errors to log
 local utf8 = require("utf8")
 
-local function error_printer(msg, layer)
+local function error_printer(message, layer)
 	return debug.traceback(tostring(message), 1+(layer or 1)):gsub("\n[^\n]+$", "")
 end
 

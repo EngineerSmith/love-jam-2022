@@ -26,7 +26,7 @@ end
 
 while true do
   local event, limit = host:service(50), 0 
-  while event, limit < 50 do
+  while event and limit < 50 do
     if event.type == "receive" then
       local success, data = pcall(ld.decompress, "string", "lz4", event.data)
       if not success then
@@ -51,7 +51,12 @@ while true do
       local reason = tonumber(cmd[3]) or enum.disconnect.normal
       server:disconnect(reason)
     else
-      server:send(cmd[1])
+      local success, data = pcall(ld.compress, "string", "lz4", cmd[1])
+      if success then
+        server:send(data)
+      else
+        cmdOut("log", "Could not compress outgoing data")
+      end
     end
     cmd = cmdIn:pop()
     limit = limit + 1
