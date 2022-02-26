@@ -1,5 +1,5 @@
 local logger = require("util.logger")
-local loader = require("util.lilyLoader")
+local loader = require("util.lilyloader")
 
 local lg = love.graphics
 local floor = math.floor
