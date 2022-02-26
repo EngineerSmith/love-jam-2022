@@ -40,6 +40,7 @@ end
 love.run = function()
   if args["-server"] then
     logger.info("Creating server gameloop")
+    local port = args["-port"] or 
     sceneManager.changeScene("server")
     return function()
       local quit = processEvents()
