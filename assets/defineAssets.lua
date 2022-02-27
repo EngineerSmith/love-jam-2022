@@ -23,6 +23,15 @@ return {
     { "tiles/grass.png", "tiles.grass", onLoad = pixelArt },
     { "tiles/stone.png", "tiles.stone", onLoad = pixelArt },
     { "tiles/water.png", "tiles.water", onLoad = makePixelAnimation, 8, 32, 32, 0.2},
+    -- Tile debrises
+    { "tiles/debris/grass1.png", "tiles.debris.grass1", onLoad = pixelArt },
+    { "tiles/debris/grass2.png", "tiles.debris.grass2", onLoad = pixelArt },
+    { "tiles/debris/grass3.png", "tiles.debris.grass3", onLoad = pixelArt },
+    { "tiles/debris/grass4.png", "tiles.debris.grass4", onLoad = pixelArt },
+    { "tiles/debris/sand1.png", "tiles.debris.sand1", onLoad = pixelArt },
+    { "tiles/debris/sand2.png", "tiles.debris.sand2", onLoad = pixelArt },
+    { "tiles/debris/sand3.png", "tiles.debris.sand3", onLoad = pixelArt },
+    { "tiles/debris/tree.png", "tiles.debris.tree", onLoad = pixelArt },
     
     -- Characters
     { "characters/duck1.png", "characters.duck1", onLoad = pixelArt },
