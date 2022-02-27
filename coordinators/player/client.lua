@@ -11,7 +11,6 @@ return function(coordinator)
   local speed = coordinator.speed
   
   local p = coordinator.position
-  
   coordinator.setPosition = function(x, y, height)
       p.x, p.y = x, y
       p.height = height
@@ -19,7 +18,7 @@ return function(coordinator)
     
   local heightTween
   coordinator.update = function()
-      local height = world.getHeightAtPoint(p.x+.5, p.y+.5)
+      local height = world.getHeightAtPoint(p.x, p.y)
       if height ~= p.height then
         if heightTween then
           heightTween:stop()
@@ -43,7 +42,7 @@ return function(coordinator)
         coordinator.setPosition(x, y)
       else
         tweenPositionTable.x, tweenPositionTable.y = x, y
-        tween = flux.to(coordinator.position, 0.4, tweenPositionTable)
+        tween = flux.to(coordinator.position, 0, tweenPositionTable)
       end
     end)
   

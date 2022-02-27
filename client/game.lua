@@ -75,20 +75,56 @@ scene.updateNetwork = function()
   player:updateNetwork()
 end
 
+local depthShader = lg.newShader("assets/shaders/depth.glsl")
+local cdepthShader = lg.newShader("assets/shaders/characterDepth.glsl")
+
+--[[local canvas = {
+    lg.newCanvas(lg.getDimensions()),
+    depthstencil = lg.newCanvas(lg.getWidth(), lg.getHeight(), {format="depth32f", readable=true})
+  }]]
+
+--[[local depth = lg.newShader([
+vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
+{
+    vec4 texturecolor = Texel(tex, texture_coords);
+    texturecolor.r = abs(-(texturecolor.r - 0.495) * 10);
+    return texturecolor.rrra;
+}
+])]]
+
 local text = ""
 scene.draw = function()
+  --lg.setCanvas(canvas)
   lg.clear(.1,.1,.1)
+  lg.setColor(1,1,1)
   camera:attach()
-  world.draw()
-  lg.setColor(1,1,1)
-  lg.push()
-  lg.translate(player.position.x, player.position.y-player.position.height)
-  local w,h = assets["characters.duck1"]:getDimensions()
-  lg.draw(assets["characters.duck1"], -w/2, -h/2)
-  lg.pop()
-  lg.setColor(1,1,1)
+  if world.depthScale then
+    lg.push("all")
+    lg.setDepthMode("less", true)
+    lg.setShader(depthShader)
+    world.draw(depthShader)
+    local w,h = assets["characters.duck1"]:getDimensions()
+    lg.translate(player.position.x-w/2, player.position.y-player.position.height-h/1.5)
+    lg.setDepthMode("lequal", true)
+    local z = (player.position.y-h/1.5)/world.depthScale
+    lg.setShader(cdepthShader)
+    cdepthShader:send("z", z)
+    lg.draw(assets["characters.duck1"])
+    lg.pop()
+  end
   camera:detach()
   camera:draw()
+  --lg.setCanvas()
+  --lg.clear(.1,.1,.1)
+  --lg.setBlendMode("alpha", "premultiplied")
+  --if not chatMode then
+    --lg.draw(canvas[1])
+  --[[else
+    lg.setShader(depth)
+    lg.draw(canvas.depthstencil)
+    lg.setShader()
+  end]]
+  --lg.setBlendMode("alpha")
   lg.setColor(1,1,1)
   lg.print(text.."\n"..table.concat(chat.chat, "\n"))
 end
