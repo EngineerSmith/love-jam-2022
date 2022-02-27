@@ -46,7 +46,7 @@ return function(coordinator)
             local y = i * tileH / 2 - j * tileH / 2
             local img = getTileForHeight(target.height)
             if img then
-              lg.draw(img, x, y-math.floor(target.height)*10)
+              lg.draw(img, x, y-target.height*10)
             else
               print(target.height)
             end
@@ -57,6 +57,20 @@ return function(coordinator)
         lg.pop()
         
       end
+    end
+  
+  coordinator.getHeightAtPoint = function(x, y)
+      local a = x/tileW
+      local b = y/tileH
+      local i = a + b
+      local j = a - b
+      if world then
+        local target = world[math.floor(i)][math.floor(j)]
+        if target then
+          return target.height * 10
+        end
+      end
+      return 0
     end
   
 end

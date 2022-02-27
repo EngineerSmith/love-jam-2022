@@ -45,7 +45,6 @@ scene.update = function(dt)
     end
     
     if joystick then
-      -- basic deadzones
       local leftX = joystick:getGamepadAxis("leftx")
       local leftY = joystick:getGamepadAxis("lefty")
       local mag = sqrt(leftX*leftX+leftY*leftY)
@@ -78,7 +77,7 @@ scene.draw = function()
   camera:attach()
   world.draw()
   lg.setColor(1,0,1)
-  lg.rectangle("fill", player.position.x-20, player.position.y-20, 40,40)
+  lg.rectangle("fill", player.position.x-15, player.position.y-15-player.position.height, 30,30)
   lg.setColor(1,1,1)
   camera:detach()
   camera:draw()

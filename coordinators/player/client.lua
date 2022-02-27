@@ -3,9 +3,11 @@ local network = require("network.client")
 
 local flux = require("libs.flux")
 
+local world = require("coordinators.world")
+
 return function(coordinator)
   
-  coordinator.position = {x=0,y=0,z=0}
+  coordinator.position = {x=0,y=0,height=0}
   local speed = coordinator.speed
   
   local p = coordinator.position
@@ -42,6 +44,7 @@ return function(coordinator)
         local forceY = dirY * speed * dt
         p.y = p.y + forceY
       end
+      p.height = world.getHeightAtPoint(p.x+.5, p.y+.5)
     end
   
 end
