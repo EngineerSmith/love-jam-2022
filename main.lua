@@ -47,10 +47,17 @@ love.run = function()
     logger.info("Creating server gameloop")
     local port = args["-port"] or settings.server.port or settings._default.server.port
     sceneManager.changeScene("server", port)
+    local networkDelt = 0
+    lt.step()
     return function()
       local quit = processEvents()
       if quit then return quit end
       love.update()
+      networkDelt = networkDelt + lt.step()
+      if networkDelt > 1/10 then
+        love.updateNetwork()
+        networkDelt = 0
+      end
       manualGC(1e-3, 128)
       lt.sleep(1e-5)
     end

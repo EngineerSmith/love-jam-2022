@@ -1,6 +1,8 @@
 local logger = require("util.logger")
 local network = require("network.client")
 
+local assets = require("util.assets")
+
 local chat = require("coordinators.chat")
 local world = require("coordinators.world")
 local player = require("coordinators.player")
@@ -62,9 +64,11 @@ scene.update = function(dt)
     player.moveTowardsDirection(dirX, dirY, dt)
     
   end
+  -- player
+  player:update()
   -- camera
   camera:update(dt)
-  camera:follow(player.position.x, player.position.y)
+  camera:follow(player.position.x, player.position.y-player.position.height)
 end
 
 scene.updateNetwork = function()
@@ -76,8 +80,12 @@ scene.draw = function()
   lg.clear(.1,.1,.1)
   camera:attach()
   world.draw()
-  lg.setColor(1,0,1)
-  lg.rectangle("fill", player.position.x-15, player.position.y-15-player.position.height, 30,30)
+  lg.setColor(1,1,1)
+  lg.push()
+  lg.translate(player.position.x, player.position.y-player.position.height)
+  local w,h = assets["characters.duck1"]:getDimensions()
+  lg.draw(assets["characters.duck1"], -w/2, -h/2)
+  lg.pop()
   lg.setColor(1,1,1)
   camera:detach()
   camera:draw()

@@ -12,8 +12,20 @@ return function(coordinator)
   
   local p = coordinator.position
   
-  coordinator.setPosition = function(x, y)
+  coordinator.setPosition = function(x, y, height)
       p.x, p.y = x, y
+      p.height = height
+    end
+    
+  local heightTween
+  coordinator.update = function()
+      local height = world.getHeightAtPoint(p.x+.5, p.y+.5)
+      if height ~= p.height then
+        if heightTween then
+          heightTween:stop()
+        end
+        heightTween = flux.to(p, 0.1, {height=height})
+      end
     end
   
   coordinator.updateNetwork = function()
@@ -44,7 +56,6 @@ return function(coordinator)
         local forceY = dirY * speed * dt
         p.y = p.y + forceY
       end
-      p.height = world.getHeightAtPoint(p.x+.5, p.y+.5)
     end
   
 end

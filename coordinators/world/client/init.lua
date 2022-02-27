@@ -47,8 +47,6 @@ return function(coordinator)
             local img = getTileForHeight(target.height)
             if img then
               lg.draw(img, x, y-target.height*10)
-            else
-              print(target.height)
             end
           end
         end
