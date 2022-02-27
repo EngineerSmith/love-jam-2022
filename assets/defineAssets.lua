@@ -7,7 +7,9 @@ end
 local makePixelAnimation = function(image, frameCount, frameWidth, frameHeight, frameTime)
   pixelArt(image)
   local grid = anim8.newGrid(frameWidth, frameHeight, image:getDimensions())
-  return anim8.newAnimation(grid('1-'..frameCount, 1), frameTime)
+  local animation = anim8.newAnimation(grid('1-'..frameCount, 1), frameTime)
+  animation.image = image
+  return animation
 end
 
 return { 
