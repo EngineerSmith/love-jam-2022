@@ -9,5 +9,5 @@ return {
     { "tiles/test2.png", "tiles.test2", onLoad = pixelArt },
     { "tiles/test3.png", "tiles.test3", onLoad = pixelArt },
 
-    { "characters/duck1.png", "characters.duck1", onLoad = setFilter, "nearest" },
+    { "characters/duck1.png", "characters.duck1", onLoad = pixelArt,},
   }
