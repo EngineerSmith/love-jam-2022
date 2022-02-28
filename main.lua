@@ -67,7 +67,7 @@ love.run = function()
     local frameTime, fuzzyTime = 1/60, {1/2,1,2}
     local networkTick = 1/10
     local updateDelta, networkDelta = 0, 0
-    local updatableAssets = require("util.assets")
+    local updatableAssets = require("util.assets").updateTable
     lt.step()
     return function()
       local quit = processEvents()

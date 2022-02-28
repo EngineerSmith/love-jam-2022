@@ -38,7 +38,7 @@ return function(coordinator)
   local lg = love.graphics
   
   local heightmap = {
-      [0] = assets["tiles.test1"],
+      [0] = assets["tiles.water"],
       [1] = assets["tiles.test2"],
       [2] = assets["tiles.test3"],
       [3] = assets["tiles.test1"],

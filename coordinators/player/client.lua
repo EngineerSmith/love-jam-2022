@@ -19,8 +19,8 @@ return function(coordinator)
     
   local heightTween
   coordinator.update = function()
-      local w, h = coordinator.character:getDimensions()
-      w, h = w/2, h/2
+      local w = coordinator.character:getDimensions()
+      w = w/2.5
       local height1 = world.getHeightAtPoint(p.x-w, p.y)
       local height2 = world.getHeightAtPoint(p.x+w, p.y)
       local height = height1 > height2 and height1 or height2
