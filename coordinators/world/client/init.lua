@@ -240,6 +240,11 @@ return function(coordinator)
         lg.translate(x-w/2, y-height-h/1.5)
         local z = (y-h/1.5)/coordinator.depthScale
         char:draw(z)
+        lg.push("all")
+        lg.setShader()
+        lg.setDepthMode("always", false)
+        lg.print(player.name, 0, -10)
+        lg.pop()
         lg.pop()
       end
     end
