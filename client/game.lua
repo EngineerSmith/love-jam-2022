@@ -7,6 +7,8 @@ local chat = require("coordinators.chat")
 local world = require("coordinators.world")
 local player = require("coordinators.player")
 
+local character = require("client.src.character")
+
 local camera = require("libs.stalker-x")()
 camera.scale = 2
 camera:setFollowLerp(0.2)
@@ -20,6 +22,7 @@ local joystick
 local scene = { }
 
 scene.load = function(name, address)
+  player.setCharacter(character.new(assets["characters.duck1"]))
   network.connect(address, { name = name })
   local joysticks = lj.getJoysticks()
   if joysticks[1] then
@@ -76,7 +79,6 @@ scene.updateNetwork = function()
 end
 
 local depthShader = lg.newShader("assets/shaders/depth.glsl")
-local cdepthShader = lg.newShader("assets/shaders/characterDepth.glsl")
 
 --[[local canvas = {
     lg.newCanvas(lg.getDimensions()),
@@ -103,13 +105,7 @@ scene.draw = function()
     lg.setDepthMode("less", true)
     lg.setShader(depthShader)
     world.draw(depthShader)
-    local w,h = assets["characters.duck1"]:getDimensions()
-    lg.translate(player.position.x-w/2, player.position.y-player.position.height-h/1.5)
-    lg.setDepthMode("lequal", true)
-    local z = (player.position.y-h/1.5)/world.depthScale
-    lg.setShader(cdepthShader)
-    cdepthShader:send("z", z)
-    lg.draw(assets["characters.duck1"])
+    player.draw()
     lg.pop()
   end
   camera:detach()

@@ -1,6 +1,7 @@
 local logger = require("util.logger")
 local network = require("network.client")
 
+local lg = love.graphics
 local flux = require("libs.flux")
 
 local world = require("coordinators.world")
@@ -30,6 +31,21 @@ return function(coordinator)
   coordinator.updateNetwork = function()
       network.send(network.enum.playerPosition, p.x, p.y)
     end
+    
+  coordinator.setCharacter = function(character)
+      coordinator.character = character -- TODO make into class
+    end
+    
+  coordinator.draw = function()
+      if coordinator.character then
+        lg.push("all")
+        local w, h = coordinator.character:getDimensions()
+        lg.translate(p.x-w/2, p.y-p.height-h/1.5)
+        local z = (p.y-h/1.5)/world.depthScale
+        coordinator.character:draw(z)
+        lg.pop()
+      end
+    end
   
   local tweenPositionTable, tween = {}, nil
   network.addHandler(network.enum.playerPosition, function(x, y)
@@ -42,7 +58,7 @@ return function(coordinator)
         coordinator.setPosition(x, y)
       else
         tweenPositionTable.x, tweenPositionTable.y = x, y
-        tween = flux.to(coordinator.position, 0, tweenPositionTable)
+        tween = flux.to(coordinator.position, 0.2, tweenPositionTable)
       end
     end)
   
