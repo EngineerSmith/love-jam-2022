@@ -1,2 +1,4 @@
 -- Table is filled by lilyloader.lua
-return { }
+return { 
+    updateTable = { }, -- used for animation
+  }

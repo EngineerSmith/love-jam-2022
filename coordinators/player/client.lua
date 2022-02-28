@@ -1,17 +1,17 @@
 local logger = require("util.logger")
 local network = require("network.client")
 
+local lg = love.graphics
 local flux = require("libs.flux")
 
 local world = require("coordinators.world")
 
 return function(coordinator)
   
-  coordinator.position = {x=0,y=0,height=0}
+  coordinator.position = {x=700,y=50,height=0}
   local speed = coordinator.speed
   
   local p = coordinator.position
-  
   coordinator.setPosition = function(x, y, height)
       p.x, p.y = x, y
       p.height = height
@@ -19,7 +19,13 @@ return function(coordinator)
     
   local heightTween
   coordinator.update = function()
-      local height = world.getHeightAtPoint(p.x+.5, p.y+.5)
+      local w = coordinator.character:getDimensions()
+      w = w/2.5
+      local height1 = world.getHeightAtPoint(p.x-w, p.y)
+      local height2 = world.getHeightAtPoint(p.x+w, p.y)
+      local height = height1 > height2 and height1 or height2
+      local height3 = world.getHeightAtPoint(p.x  , p.y)
+      height = height > height3 and height or height3
       if height ~= p.height then
         if heightTween then
           heightTween:stop()
@@ -30,6 +36,21 @@ return function(coordinator)
   
   coordinator.updateNetwork = function()
       network.send(network.enum.playerPosition, p.x, p.y)
+    end
+    
+  coordinator.setCharacter = function(character)
+      coordinator.character = character
+    end
+    
+  coordinator.draw = function()
+      if coordinator.character then
+        lg.push("all")
+        local w, h = coordinator.character:getDimensions()
+        lg.translate(p.x-w/2, p.y-p.height-h/1.5)
+        local z = (p.y-h/1.5)/world.depthScale
+        coordinator.character:draw(z)
+        lg.pop()
+      end
     end
   
   local tweenPositionTable, tween = {}, nil
@@ -43,18 +64,41 @@ return function(coordinator)
         coordinator.setPosition(x, y)
       else
         tweenPositionTable.x, tweenPositionTable.y = x, y
-        tween = flux.to(coordinator.position, 0.4, tweenPositionTable)
+        tween = flux.to(coordinator.position, 0.2, tweenPositionTable)
       end
     end)
   
   coordinator.moveTowardsDirection = function(dirX, dirY, dt)
+      local moving = false
+      local newX, newY = p.x, p.y
       if dirX ~= 0 then 
         local forceX = dirX * speed * dt
-        p.x = p.x + forceX
+        newX = p.x + forceX
       end
       if dirY ~= 0 then
         local forceY = dirY * speed * dt
-        p.y = p.y + forceY
+        newY = p.y + forceY
+      end
+      
+      if world.canWalkAtPoint(newX, newY) then
+        p.x, p.y = newX, newY
+        moving = true
+      end
+      
+      coordinator.character:setState(moving and "walking" or "standing")
+      if moving then
+        local directon = nil
+        if dirY >= 0 then
+          directon = "F"
+        else
+          directon = "B"
+        end
+        if dirX > 0 then
+          directon = directon.."R"
+        else
+          directon = directon.."L"
+        end
+        coordinator.character:setDirection(directon)
       end
     end
   

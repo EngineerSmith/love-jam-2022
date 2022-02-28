@@ -7,6 +7,8 @@ local chat = require("coordinators.chat")
 local world = require("coordinators.world")
 local player = require("coordinators.player")
 
+local character = require("client.src.character")
+
 local camera = require("libs.stalker-x")()
 camera.scale = 2
 camera:setFollowLerp(0.2)
@@ -20,6 +22,7 @@ local joystick
 local scene = { }
 
 scene.load = function(name, address)
+  player.setCharacter(character.new(require("assets.characters.duck1")))
   network.connect(address, { name = name })
   local joysticks = lj.getJoysticks()
   if joysticks[1] then
@@ -56,7 +59,7 @@ scene.update = function(dt)
       end
     end
     
-    if dirX ~= 0 and dirY ~= 0 then
+    if not (dirX == 0 and dirY == 0) then
       local dist = sqrt(dirX*dirX+dirY*dirY)
       dirX, dirY = dirX/dist, dirY/dist
     end
@@ -64,8 +67,9 @@ scene.update = function(dt)
     player.moveTowardsDirection(dirX, dirY, dt)
     
   end
-  -- player
-  player:update()
+  -- coordinators
+  player.update()
+  world.update(dt)
   -- camera
   camera:update(dt)
   camera:follow(player.position.x, player.position.y-player.position.height)
@@ -75,20 +79,49 @@ scene.updateNetwork = function()
   player:updateNetwork()
 end
 
+local depthShader = lg.newShader("assets/shaders/depth.glsl")
+
+--[[local canvas = {
+    lg.newCanvas(lg.getDimensions()),
+    depthstencil = lg.newCanvas(lg.getWidth(), lg.getHeight(), {format="depth32f", readable=true})
+  }]]
+
+--[[local depth = lg.newShader([
+vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
+{
+    vec4 texturecolor = Texel(tex, texture_coords);
+    texturecolor.r = abs(-(texturecolor.r - 0.495) * 10);
+    return texturecolor.rrra;
+}
+])]]
+
 local text = ""
 scene.draw = function()
+  --lg.setCanvas(canvas)
   lg.clear(.1,.1,.1)
+  lg.setColor(1,1,1)
   camera:attach()
-  world.draw()
-  lg.setColor(1,1,1)
-  lg.push()
-  lg.translate(player.position.x, player.position.y-player.position.height)
-  local w,h = assets["characters.duck1"]:getDimensions()
-  lg.draw(assets["characters.duck1"], -w/2, -h/2)
-  lg.pop()
-  lg.setColor(1,1,1)
+  if world.depthScale then
+    lg.push("all")
+    lg.setDepthMode("less", true)
+    lg.setShader(depthShader)
+    world.draw(depthShader)
+    player.draw()
+    lg.pop()
+  end
   camera:detach()
   camera:draw()
+  --lg.setCanvas()
+  --lg.clear(.1,.1,.1)
+  --lg.setBlendMode("alpha", "premultiplied")
+  --if not chatMode then
+    --lg.draw(canvas[1])
+  --[[else
+    lg.setShader(depth)
+    lg.draw(canvas.depthstencil)
+    lg.setShader()
+  end]]
+  --lg.setBlendMode("alpha")
   lg.setColor(1,1,1)
   lg.print(text.."\n"..table.concat(chat.chat, "\n"))
 end

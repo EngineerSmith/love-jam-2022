@@ -42,6 +42,9 @@ return function()
           local a = import.onLoad(lilyAsset[1], unpack(import, 3))
           if a then
             outAssets[import[2]] = a
+            if type(a) == "table" then
+              insert(outAssets.updateTable, a)
+            end
           end
         end
       end
