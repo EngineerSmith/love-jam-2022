@@ -10,8 +10,15 @@ end
 
 local defaultSettings = { 
     client = {
-        windowsize = { width = 800,  height = 600, },
+        windowsize = { width = 800,  height = 500, },
         windowfullscreen = false,
+        controls = {
+          forward  = { "w", "up",    },
+          backward = { "s", "down",  },
+          left     = { "a", "left",  },
+          right    = { "d", "right", },
+        },
+        lowGraphics = false,
       },
     server = {
         port = 20202,
@@ -73,6 +80,7 @@ setmetatable(out.client, {
         return settings.client[key]
       end,
     __newindex = function(_, key, value)
+        print("HIT", key, value)
         settings.client[key] = value
         encode()
         if handlers[key] then

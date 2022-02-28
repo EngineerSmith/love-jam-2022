@@ -1,14 +1,45 @@
 local logger = require("util.logger")
 local network = require("network.client")
+local settings = require("util.settings")
 
 local assets = require("util.assets")
 local flux = require("libs.flux")
+
+local lg = love.graphics
+
+local texturemap = {
+    [0] = assets["tiles.water2"],
+    [1] = assets["tiles.sand"],
+    [2] = assets["tiles.grass"],
+    [3] = assets["tiles.test1"],
+    [4] = assets["tiles.test1"],
+    [5] = assets["tiles.test1"],
+    [6] = assets["tiles.test1"],
+    [7] = assets["tiles.test1"],
+    [8] = assets["tiles.test1"],
+    [9] = assets["tiles.test1"],
+  }
+
+local textureOptions = {
+    [1] = {
+        assets["tiles.debris.sand1"],
+        assets["tiles.debris.sand2"],
+        assets["tiles.debris.sand3"],
+      },
+    [2] = {
+        assets["tiles.debris.grass1"],
+        assets["tiles.debris.grass2"],
+        assets["tiles.debris.grass3"],
+        assets["tiles.debris.grass4"],
+      },
+  }
 
 return function(coordinator)
   
   local tileW, tileH = 32, 16
   
   local world
+  local sea, seaOffset
   
   network.addHandler(network.enum.worldData, function(worldData)
       -- process world into something that can be used
@@ -16,6 +47,7 @@ return function(coordinator)
       
       -- LAZY CODE TO FIND SMALLEST AND BIGGEST Y
       local small, big = 0, 0
+      local smallx, bigx = 0,0
       for i=0, #world do
           if world[i] then
       for j=#world[i], 0, -1 do
@@ -28,41 +60,40 @@ return function(coordinator)
           if big < y then
             big = y
           end
+          local x = j * tileW / 2 + i * tileW / 2
+          if smallx > x then
+            smallx = x
+          end
+          if bigx < x then
+            bigx = x
+          end
         end
       end
         end
       end
       coordinator.depthScale = big > math.abs(small) and big or math.abs(small)
+      if settings.client.lowGraphics then
+        local canvas = lg.newCanvas(bigx-smallx, big-small)
+        seaOffset = small
+        lg.push("all")
+        lg.translate(-smallx, -small-4)
+        lg.setCanvas(canvas)
+        for i=0, #world do
+          if world[i] then
+        for j=#world[i], 0, -1 do
+          local target = world[i][j]
+          if target and (target.texture or 0) == 0 then
+            local y = i * tileH / 2 - j * tileH / 2
+            local x = j * tileW / 2 + i * tileW / 2
+            texturemap[0]:draw(texturemap[0].image, x, y-4)
+          end
+        end
+          end
+        end
+        lg.pop()
+        sea = lg.newImage(canvas:newImageData())
+      end
     end)
-  
-  local lg = love.graphics
-  
-  local texturemap = {
-      [0] = assets["tiles.water2"],
-      [1] = assets["tiles.sand"],
-      [2] = assets["tiles.grass"],
-      [3] = assets["tiles.test1"],
-      [4] = assets["tiles.test1"],
-      [5] = assets["tiles.test1"],
-      [6] = assets["tiles.test1"],
-      [7] = assets["tiles.test1"],
-      [8] = assets["tiles.test1"],
-      [9] = assets["tiles.test1"],
-    }
-  
-  local textureOptions = {
-      [1] = {
-          assets["tiles.debris.sand1"],
-          assets["tiles.debris.sand2"],
-          assets["tiles.debris.sand3"],
-        },
-      [2] = {
-          assets["tiles.debris.grass1"],
-          assets["tiles.debris.grass2"],
-          assets["tiles.debris.grass3"],
-          assets["tiles.debris.grass4"],
-        },
-    }
   
   local getTexture = function(textureID)
     return texturemap[textureID]
@@ -194,6 +225,11 @@ return function(coordinator)
   
   coordinator.draw = function(shader)
       if world then
+        if sea then
+          shader:send("scale", sea:getHeight()/4)
+          shader:send("z", -4)
+          lg.draw(sea, 0, seaOffset)
+        end
         lg.push()
         shader:send("scale", tileH*2)
         for i=0, #world do
@@ -201,6 +237,9 @@ return function(coordinator)
         for j=#world[i], 0, -1 do
           local target = world[i][j]
           if target and target.height then
+            if sea and target.texture == 0 or target.texture == nil then
+              goto continue
+            end
             local x = j * tileW / 2 + i * tileW / 2
             local y = i * tileH / 2 - j * tileH / 2
             local img = getTexture(target.texture or 0)
@@ -226,6 +265,7 @@ return function(coordinator)
               end
             end
           end
+          ::continue::
         end
           end
         end

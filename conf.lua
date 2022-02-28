@@ -52,7 +52,7 @@ else
     t.window.width = settings.client.windowsize.width
     t.window.height = settings.client.windowsize.height
     t.window.minwidth = settings._default.client.windowsize.width
-    t.window.maxwidth = settings._default.client.windowsize.height
+    t.window.minheight = settings._default.client.windowsize.height
     t.window.fullscreen = settings.client.windowfullscreen
     
     t.modules.audio = true

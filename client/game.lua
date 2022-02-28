@@ -2,6 +2,7 @@ local logger = require("util.logger")
 local network = require("network.client")
 
 local assets = require("util.assets")
+local settings = require("util.settings")
 
 local chat = require("coordinators.chat")
 local world = require("coordinators.world")
@@ -36,16 +37,16 @@ scene.update = function(dt)
   if not chatMode then
     local dirX, dirY = 0, 0
     -- Keyboard
-    if lk.isScancodeDown("w", "up") then
+    if lk.isScancodeDown(unpack(settings.client.controls.forward)) then
       dirY = dirY - 1
     end
-    if lk.isScancodeDown("s", "down") then
+    if lk.isScancodeDown(unpack(settings.client.controls.backward)) then
       dirY = dirY + 1
     end
-    if lk.isScancodeDown("a", "left") then
+    if lk.isScancodeDown(unpack(settings.client.controls.left)) then
       dirX = dirX - 1
     end
-    if lk.isScancodeDown("d", "right") then
+    if lk.isScancodeDown(unpack(settings.client.controls.right)) then
       dirX = dirX + 1
     end
     
@@ -81,23 +82,23 @@ end
 
 local depthShader = lg.newShader("assets/shaders/depth.glsl")
 
---[[local canvas = {
+local canvas = {
     lg.newCanvas(lg.getDimensions()),
     depthstencil = lg.newCanvas(lg.getWidth(), lg.getHeight(), {format="depth32f", readable=true})
-  }]]
+  }
 
---[[local depth = lg.newShader([
+local depth = lg.newShader([[
 vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 {
     vec4 texturecolor = Texel(tex, texture_coords);
     texturecolor.r = abs(-(texturecolor.r - 0.495) * 10);
     return texturecolor.rrra;
 }
-])]]
+]])
 
 local text = ""
 scene.draw = function()
-  --lg.setCanvas(canvas)
+  lg.setCanvas(canvas)
   lg.clear(.1,.1,.1)
   lg.setColor(1,1,1)
   camera:attach()
@@ -111,17 +112,17 @@ scene.draw = function()
   end
   camera:detach()
   camera:draw()
-  --lg.setCanvas()
-  --lg.clear(.1,.1,.1)
-  --lg.setBlendMode("alpha", "premultiplied")
-  --if not chatMode then
-    --lg.draw(canvas[1])
-  --[[else
+  lg.setCanvas()
+  lg.clear(.1,.1,.1)
+  lg.setBlendMode("alpha", "premultiplied")
+  if not chatMode then
+    lg.draw(canvas[1])
+  else
     lg.setShader(depth)
     lg.draw(canvas.depthstencil)
     lg.setShader()
-  end]]
-  --lg.setBlendMode("alpha")
+  end
+  lg.setBlendMode("alpha")
   lg.setColor(1,1,1)
   lg.print(text.."\n"..table.concat(chat.chat, "\n"))
 end
