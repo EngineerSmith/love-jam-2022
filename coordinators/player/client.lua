@@ -8,7 +8,7 @@ local world = require("coordinators.world")
 
 return function(coordinator)
   
-  coordinator.position = {x=0,y=0,height=0}
+  coordinator.position = {x=700,y=50,height=0}
   local speed = coordinator.speed
   
   local p = coordinator.position
@@ -39,7 +39,7 @@ return function(coordinator)
     end
     
   coordinator.setCharacter = function(character)
-      coordinator.character = character -- TODO make into class
+      coordinator.character = character
     end
     
   coordinator.draw = function()
@@ -69,13 +69,31 @@ return function(coordinator)
     end)
   
   coordinator.moveTowardsDirection = function(dirX, dirY, dt)
+      local moving = false
       if dirX ~= 0 then 
         local forceX = dirX * speed * dt
         p.x = p.x + forceX
+        moving = true
       end
       if dirY ~= 0 then
         local forceY = dirY * speed * dt
         p.y = p.y + forceY
+        moving = true
+      end
+      coordinator.character:setState(moving and "walking" or "standing")
+      if moving then
+        local directon = nil
+        if dirY > 0 then
+          directon = "F"
+        else
+          directon = "B"
+        end
+        if dirX > 0 then
+          directon = directon.."R"
+        else
+          directon = directon.."L"
+        end
+        coordinator.character:setDirection(directon)
       end
     end
   

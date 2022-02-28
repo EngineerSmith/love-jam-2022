@@ -36,4 +36,6 @@ return {
     
     -- Characters
     { "characters/duck1.png", "characters.duck1", onLoad = pixelArt },
+    { "characters/duck1_standing1.png", "characters.duck1.standing1", onLoad = makePixelAnimation, 5, 30, 33, 0.2},
+    { "characters/duck1_walking1.png", "characters.duck1.walking1", onLoad = makePixelAnimation, 5, 30, 33, 0.1},
   }

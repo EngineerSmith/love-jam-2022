@@ -5,14 +5,34 @@ local lg = love.graphics
 
 local cdepthShader = lg.newShader("assets/shaders/characterDepth.glsl")
 
-character.new = function(image)
+character.new = function(characterState)
   return setmetatable({
-      image = image, -- TODO change to image set
+      characterState = characterState,
+      facing = "FR",
+      state = "standing",
     }, character)
 end
 
 character.getDimensions = function(self)
-  return self.image:getDimensions()
+  return self.characterState:getDimensions(self.state.."."..self.facing)
+end
+
+local directions = {
+  ["FL"] = true, ["FR"] = true,
+  ["BL"] = true, ["BR"] = true,
+}
+
+character.setDirection = function(self, direction)
+  self.facing = directions[direction] and direction or error(tostring(direction).." is an invalid direction")
+end
+
+local states = {
+    ["standing"] = true,
+    ["walking"]  = true,
+  }
+
+character.setState = function(self, state)
+  self.state = states[state] and state or error(tostring(state).." is an invalid state")
 end
 
 character.draw = function(self, z)
@@ -20,7 +40,7 @@ character.draw = function(self, z)
   lg.setDepthMode("lequal", true)
   lg.setShader(cdepthShader)
   cdepthShader:send("z", z)
-  lg.draw(self.image)
+  self.characterState:draw(self.state.."."..self.facing)
   lg.setShader()
   lg.pop()
 end

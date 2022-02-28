@@ -22,7 +22,7 @@ local joystick
 local scene = { }
 
 scene.load = function(name, address)
-  player.setCharacter(character.new(assets["characters.duck1"]))
+  player.setCharacter(character.new(require("assets.characters.duck1")))
   network.connect(address, { name = name })
   local joysticks = lj.getJoysticks()
   if joysticks[1] then
@@ -59,7 +59,7 @@ scene.update = function(dt)
       end
     end
     
-    if dirX ~= 0 and dirY ~= 0 then
+    if not (dirX == 0 and dirY == 0) then
       local dist = sqrt(dirX*dirX+dirY*dirY)
       dirX, dirY = dirX/dist, dirY/dist
     end
