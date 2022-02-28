@@ -22,6 +22,7 @@ return {
     { "tiles/test3.png", "tiles.test3", onLoad = pixelArt },
     { "tiles/grass.png", "tiles.grass", onLoad = pixelArt },
     { "tiles/stone.png", "tiles.stone", onLoad = pixelArt },
+    { "tiles/sand.png", "tiles.sand", onLoad = pixelArt },
     { "tiles/water.png", "tiles.water", onLoad = makePixelAnimation, 8, 32, 32, 0.2},
     -- Tile debrises
     { "tiles/debris/grass1.png", "tiles.debris.grass1", onLoad = pixelArt },
