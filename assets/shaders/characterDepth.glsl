@@ -3,7 +3,7 @@ uniform float z;
 
 vec4 position(mat4 transform_projection, vec4 vertex_position)
 {
-    vertex_position.z = z + (VertexTexCoord.y / 44.0);
+    vertex_position.z = z + (VertexTexCoord.y / 46.5);
     return transform_projection * vertex_position;
 }
 #endif

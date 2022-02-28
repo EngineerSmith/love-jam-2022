@@ -164,7 +164,7 @@ return function(coordinator)
         else
           direction = "B"
         end
-        if dirX > -0.1 then
+        if dirX > (direction == "F" and -0.1 or 0.1) then
           direction = direction.."R"
         else
           direction = direction.."L"
@@ -263,6 +263,14 @@ return function(coordinator)
                 lg.draw(options[n], x, y-height)
                 lg.pop()
               end
+              --[[if n == 1 then
+                lg.push("all")
+                lg.setDepthMode("less", true)
+                local w, h = assets["objects.towers.test"]:getDimensions()
+                lg.draw(assets["objects.towers.test"], x-w/4, y-h)
+                target.notWalkable = true
+                lg.pop()
+              end]]
             end
           end
           ::continue::

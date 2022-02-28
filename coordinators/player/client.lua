@@ -87,18 +87,18 @@ return function(coordinator)
       
       coordinator.character:setState(moving and "walking" or "standing")
       if moving then
-        local directon = nil
+        local direction = nil
         if dirY >= 0 then
-          directon = "F"
+          direction = "F"
         else
-          directon = "B"
+          direction = "B"
         end
-        if dirX > -0.1 then
-          directon = directon.."R"
+        if dirX > (direction == "F" and -0.1 or 0.1) then
+          direction = direction.."R"
         else
-          directon = directon.."L"
+          direction = direction.."L"
         end
-        coordinator.character:setDirection(directon)
+        coordinator.character:setDirection(direction)
       end
     end
   

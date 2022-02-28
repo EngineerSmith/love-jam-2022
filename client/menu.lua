@@ -1,4 +1,5 @@
 local settings = require("util.settings")
+local assets = require("util.assets")
 local suit = require("libs.suit").new()
 
 local lg = love.graphics
@@ -15,7 +16,10 @@ local showGameMenu = false
 
 local lowGraphics = { text = "Low Graphics", checked = settings.client.lowGraphics }
 
-scene.update = function()
+-- for scene.draw
+local time = 0
+scene.update = function(dt)
+  time = time + dt
   local w, h = lg.getDimensions()
   suit.layout:reset(w-200, h-30)
   suit.layout:up(150,30)
@@ -45,11 +49,29 @@ scene.update = function()
   end
 end
 
+local tile = assets["tiles.water2"]
+local tileW, tileH = 32, 16
+local scale = 2
+local getTile = function(x, y)
+  local a = x/tileW
+  local b = y/tileH
+  local i = math.floor(a + b)
+  local j = math.floor(a - b)
+  return i, j
+end
 scene.draw = function()
   lg.clear(.1,.1,.1)
-  lg.setColor(1,0,1)
-  lg.rectangle("fill", 0,0, lg.getDimensions())
   lg.setColor(1,1,1)
+  lg.push()
+  lg.scale(scale)
+  local shift = true
+  for y = -tileH, math.ceil(lg.getHeight()/scale)*2, tileH/2 do
+    shift = not shift
+  for x = -tileW, math.ceil(lg.getWidth()/scale), tileW do
+    tile:draw(tile.image, x + (shift and tileW/2 or 0), y+(math.sin(x+y+time)*4.5))
+  end
+  end
+  lg.pop()
   suit:draw()
 end
 
