@@ -70,20 +70,25 @@ return function(coordinator)
   
   coordinator.moveTowardsDirection = function(dirX, dirY, dt)
       local moving = false
+      local newX, newY = p.x, p.y
       if dirX ~= 0 then 
         local forceX = dirX * speed * dt
-        p.x = p.x + forceX
-        moving = true
+        newX = p.x + forceX
       end
       if dirY ~= 0 then
         local forceY = dirY * speed * dt
-        p.y = p.y + forceY
+        newY = p.y + forceY
+      end
+      
+      if world.canWalkAtPoint(newX, newY) then
+        p.x, p.y = newX, newY
         moving = true
       end
+      
       coordinator.character:setState(moving and "walking" or "standing")
       if moving then
         local directon = nil
-        if dirY > 0 then
+        if dirY >= 0 then
           directon = "F"
         else
           directon = "B"

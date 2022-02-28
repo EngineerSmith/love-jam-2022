@@ -38,7 +38,7 @@ return function(coordinator)
   local lg = love.graphics
   
   local texturemap = {
-      [0] = assets["tiles.water"],
+      [0] = assets["tiles.water2"],
       [1] = assets["tiles.sand"],
       [2] = assets["tiles.grass"],
       [3] = assets["tiles.test1"],
@@ -91,10 +91,10 @@ return function(coordinator)
             local y = i * tileH / 2 - j * tileH / 2
             local img = getTexture(target.texture or 0)
             local height = target.height*tileH/2
-            --[[if target.texture == 0 or not target.texture then
-              height = height + math.sin(x+y+time*1.5)*4
+            if target.texture == 0 or not target.texture then
+              height = height + math.sin(x+y+time*1.25)*4.5
               -- Water dancing
-            end]]
+            end
             shader:send("z", (y-tileH)/coordinator.depthScale)
             if type(img) == "table" then
               img:draw(img.image, x, y-height)
@@ -118,19 +118,31 @@ return function(coordinator)
         lg.pop()
       end
     end
-  
-  coordinator.getHeightAtPoint = function(x, y)
+    
+  local getTile = function(world, x, y)
       local a = x/tileW
       local b = y/tileH
       local i = math.floor(a + b)
       local j = math.floor(a - b)
       if world and world[i] and world[i][j] then
-        local target = world[i][j]
-        if target.height then
-          return target.height * tileH/2
-        end
+        return world[i][j]
+      end
+    end
+  
+  coordinator.getHeightAtPoint = function(x, y)
+      local target = getTile(world, x, y)
+      if target and target.height then
+        return target.height * tileH/2
       end
       return 0
     end
+  
+  coordinator.canWalkAtPoint = function(x, y)
+    local target = getTile(world, x, y)
+    if target and target.notWalkable ~= nil then
+      return not target.notWalkable
+    end
+    return true
+  end
   
 end
