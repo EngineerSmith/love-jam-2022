@@ -1,7 +1,7 @@
 local assets = require("util.assets")
 local characterState = require("client.src.characterState")
 
-local state = characterState.new()
+local state = characterState.new("duck1")
 
 state:addImage("standing.FR", assets["characters.duck1.standing1"])
 state:addImage("standing.BR", assets["characters.duck1.standing1"])

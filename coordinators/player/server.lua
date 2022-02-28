@@ -6,7 +6,7 @@ return function(coordinator)
   
   local speed = coordinator.speed
   
-  network.addHandler(network.enum.playerPosition, function(client, x, y)
+  network.addHandler(network.enum.playerPosition, function(client, x, y, character)
       local position = client.position
       if not position then return end
       local dx = x - position.x
@@ -16,6 +16,7 @@ return function(coordinator)
       else
         position.x, position.y = x, y
       end
+      client.character = character
     end
   
   coordinator.movePlayer = function(client, x, y)

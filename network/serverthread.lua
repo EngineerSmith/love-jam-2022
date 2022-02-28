@@ -63,8 +63,9 @@ while true do
         else
           local result = validateLogin(client, encoded)
           if result == true then
-            cmdOut(enumPT.confirmConnection, clientID, serialize.encode(0, client.name))
-            local encoded = serialize.encode(enumPT.confirmConnection)
+            local hash = ld.encode("string", "base64", clientID)
+            cmdOut(enumPT.confirmConnection, clientID, serialize.encode(0, client.name, hash))
+            local encoded = serialize.encode(enumPT.confirmConnection, hash)
             if encoded then
               cmdIn:push({clientID, encoded})
             end

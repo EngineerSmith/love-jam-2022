@@ -15,6 +15,7 @@ local enum = {
         -- world data
         playerPosition    = 'p',
         worldData         = 'w',
+        foreignPlayers    = 'f',
       },
   }
   

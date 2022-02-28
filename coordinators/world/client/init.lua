@@ -1,8 +1,8 @@
 local logger = require("util.logger")
-
 local network = require("network.client")
 
 local assets = require("util.assets")
+local flux = require("libs.flux")
 
 return function(coordinator)
   
@@ -144,5 +144,29 @@ return function(coordinator)
     end
     return true
   end
+  
+  coordinator.foreignPlayers = {}
+  
+  network.addHandler(network.enum.foreignPlayers, function(players)
+      if network.hash then
+        for _, player in ipairs(players) do
+          if coordinator.foreignPlayers[player.clientID] then
+            local target = coordinator.foreignPlayers[player.clientID]
+            local tween = target.tween
+            if target.tween then
+              target.tween:stop()
+            end
+            target.tween = flux.to(target.position, 0.1, player.position)
+            target.character = player.charactr or "duck1"
+          elseif player.clientID ~= network.hash then
+            coordinator.foreignPlayers[player.clientID] = {
+                name      = player.name,
+                position  = player.position,
+                character = player.character or "duck1",
+              }
+          end
+        end
+      end
+    end)
   
 end

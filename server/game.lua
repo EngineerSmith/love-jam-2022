@@ -11,6 +11,10 @@ scene.load = function(port)
   network.start(port)
 end
 
+scene.updateNetwork = function()
+  world.updateNetwork()
+end
+
 scene.threaderror = function(...)
   if network.threaderror(...) then
     return

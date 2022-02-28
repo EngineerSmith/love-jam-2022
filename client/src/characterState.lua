@@ -34,8 +34,8 @@ local getOppositeState = function(state)
   return nil
 end
 
-characterState.new = function()
-  local self = setmetatable({ }, characterState)
+characterState.new = function(id)
+  local self = setmetatable({ id = id }, characterState)
   for state, _ in pairs(states) do
     self[state] = {}
   end

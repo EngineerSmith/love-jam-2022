@@ -35,7 +35,7 @@ return function(coordinator)
     end
   
   coordinator.updateNetwork = function()
-      network.send(network.enum.playerPosition, p.x, p.y)
+      network.send(network.enum.playerPosition, p.x, p.y, coordinator.character.characterState.id)
     end
     
   coordinator.setCharacter = function(character)
@@ -76,7 +76,7 @@ return function(coordinator)
         newX = p.x + forceX
       end
       if dirY ~= 0 then
-        local forceY = dirY * speed * dt
+        local forceY = dirY * (speed/1.5) * dt
         newY = p.y + forceY
       end
       
@@ -93,7 +93,7 @@ return function(coordinator)
         else
           directon = "B"
         end
-        if dirX > 0 then
+        if dirX > -0.1 then
           directon = directon.."R"
         else
           directon = directon.."L"

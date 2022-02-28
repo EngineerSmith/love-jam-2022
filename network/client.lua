@@ -68,8 +68,9 @@ client.handle = function(packetType, encoded)
   if packetType == enumPT.receive then
     local pt = decoded[1]
     if pt == enumPT.confirmConnection then
-      logger.info("Successful connection made")
       client.isConnected = true
+      client.hash = decoded[2]
+      logger.info("Successful connection made. This clientID", client.hash)
     end
     for _, callback in ipairs(client.handlers[pt]) do
       callback(unpack(decoded, 2))

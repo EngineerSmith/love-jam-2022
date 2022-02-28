@@ -72,6 +72,7 @@ server.handle = function(packetType, ...)
     server._removeClient(clientID)
   elseif packetType == enumPT.confirmConnection then
     client.name = decoded[2]
+    client.hash = decoded[3]
     logger.info("Confirmed connection for", EncodeID(clientID), "named", client.name)
     for _, callback in ipairs(server.handlers[enumPT.confirmConnection]) do
       callback(client, unpack(decoded, 2))
