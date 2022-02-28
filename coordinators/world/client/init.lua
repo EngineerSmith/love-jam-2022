@@ -237,7 +237,7 @@ return function(coordinator)
         for j=#world[i], 0, -1 do
           local target = world[i][j]
           if target and target.height then
-            if sea and target.texture == 0 or target.texture == nil then
+            if sea and (target.texture == 0 or target.texture == nil) then
               goto continue
             end
             local x = j * tileW / 2 + i * tileW / 2

@@ -82,23 +82,23 @@ end
 
 local depthShader = lg.newShader("assets/shaders/depth.glsl")
 
-local canvas = {
+--[[local canvas = {
     lg.newCanvas(lg.getDimensions()),
     depthstencil = lg.newCanvas(lg.getWidth(), lg.getHeight(), {format="depth32f", readable=true})
   }
 
-local depth = lg.newShader([[
+local depth = lg.newShader([
 vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 {
     vec4 texturecolor = Texel(tex, texture_coords);
     texturecolor.r = abs(-(texturecolor.r - 0.495) * 10);
     return texturecolor.rrra;
 }
-]])
+])]]
 
 local text = ""
 scene.draw = function()
-  lg.setCanvas(canvas)
+  --lg.setCanvas(canvas)
   lg.clear(.1,.1,.1)
   lg.setColor(1,1,1)
   camera:attach()
@@ -112,7 +112,7 @@ scene.draw = function()
   end
   camera:detach()
   camera:draw()
-  lg.setCanvas()
+  --[[lg.setCanvas()
   lg.clear(.1,.1,.1)
   lg.setBlendMode("alpha", "premultiplied")
   if not chatMode then
@@ -122,7 +122,7 @@ scene.draw = function()
     lg.draw(canvas.depthstencil)
     lg.setShader()
   end
-  lg.setBlendMode("alpha")
+  lg.setBlendMode("alpha")]]
   lg.setColor(1,1,1)
   lg.print(text.."\n"..table.concat(chat.chat, "\n"))
 end
