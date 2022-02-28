@@ -37,10 +37,10 @@ return function(coordinator)
   
   local lg = love.graphics
   
-  local heightmap = {
+  local texturemap = {
       [0] = assets["tiles.water"],
-      [1] = assets["tiles.test2"],
-      [2] = assets["tiles.test3"],
+      [1] = assets["tiles.sand"],
+      [2] = assets["tiles.grass"],
       [3] = assets["tiles.test1"],
       [4] = assets["tiles.test1"],
       [5] = assets["tiles.test1"],
@@ -50,8 +50,32 @@ return function(coordinator)
       [9] = assets["tiles.test1"],
     }
   
-  local getTileForHeight = function(height)
-    return heightmap[height]
+  local textureOptions = {
+      [1] = {
+          assets["tiles.debris.sand1"],
+          assets["tiles.debris.sand2"],
+          assets["tiles.debris.sand3"],
+        },
+      [2] = {
+          assets["tiles.debris.grass1"],
+          assets["tiles.debris.grass2"],
+          assets["tiles.debris.grass3"],
+          assets["tiles.debris.grass4"],
+        },
+    }
+  
+  local getTexture = function(textureID)
+    return texturemap[textureID]
+  end
+  
+  local time = 0
+  coordinator.update = function(dt)
+    time = time + dt
+  end
+  
+  local rand = function(seed)
+    local x = math.sin(seed) * 43758.5453123
+    return x-math.floor(x)
   end
   
   coordinator.draw = function(shader)
@@ -65,13 +89,27 @@ return function(coordinator)
           if target and target.height then
             local x = j * tileW / 2 + i * tileW / 2
             local y = i * tileH / 2 - j * tileH / 2
-            local img = getTileForHeight(target.height)
+            local img = getTexture(target.texture or 0)
             local height = target.height*tileH/2
+            --[[if target.texture == 0 or not target.texture then
+              height = height + math.sin(x+y+time*1.5)*4
+              -- Water dancing
+            end]]
             shader:send("z", (y-tileH)/coordinator.depthScale)
             if type(img) == "table" then
               img:draw(img.image, x, y-height)
             else
               lg.draw(img, x, y-height)
+            end
+            local options = textureOptions[target.texture or 0]
+            if options then
+              local n = math.floor((rand(x * #world + y) * (#options*10)) + 1)
+              if n <= #options then
+                lg.push("all")
+                lg.setDepthMode("always", true)
+                lg.draw(options[n], x, y-height)
+                lg.pop()
+              end
             end
           end
         end

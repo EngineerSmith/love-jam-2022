@@ -67,8 +67,9 @@ scene.update = function(dt)
     player.moveTowardsDirection(dirX, dirY, dt)
     
   end
-  -- player
-  player:update()
+  -- coordinators
+  player.update()
+  world.update(dt)
   -- camera
   camera:update(dt)
   camera:follow(player.position.x, player.position.y-player.position.height)
