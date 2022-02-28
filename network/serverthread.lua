@@ -88,7 +88,7 @@ while true do
       client.peer = event.peer
     end
     limit = limit + 1
-    event = host:service()
+    event = host:check_events()
   end
   local cmd, limit = cmdIn:pop(), 0
   while cmd and limit < 20 do

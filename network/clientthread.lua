@@ -43,7 +43,7 @@ while true do
       cmdOut(enumPT.disconnect, serialize.encode(reason, event.data))
     end
     limit = limit + 1
-    event = host:service()
+    event = host:check_events()
   end
   local cmd, limit = cmdIn:pop(), 0
   while cmd and limit < 20 do
