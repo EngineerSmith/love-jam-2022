@@ -10,4 +10,5 @@ return {
     { "tiles/test3.png", "tiles.test3", onLoad = pixelArt },
 
     { "characters/duck1.png", "characters.duck1", onLoad = pixelArt,},
+    { "characters/duck2.png", "characters.duck2", onLoad = pixelArt,},
   }
