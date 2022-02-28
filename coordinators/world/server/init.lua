@@ -18,10 +18,14 @@ return function(coordinator)
       network.send(client, network.enum.worldData, world)
     end)
   
+  network.addHandler(network.enum.disconnect, function(client)
+      network.sendAll(network.enum.foreignDisconnect, client.hash)
+    end)
+  
   coordinator.updateNetwork = function()
       local players = {}
       for clientID, client in pairs(network.clients) do
-        if client.hash then
+        if client.hash and client.position then
           insert(players, {
               clientID  = client.hash,
               name      = client.name,

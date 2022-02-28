@@ -154,6 +154,8 @@ scene.keypressed = function(key)
     elseif key == "return" then
       if text == "disconnect" then
         network.disconnect()
+        -- TODO go back to menu
+        love.event.quit()
       elseif text ~= "" then
         chat.sendChatMessage(text)
         text = ""

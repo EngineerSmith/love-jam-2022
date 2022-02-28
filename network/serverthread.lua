@@ -24,7 +24,7 @@ if not host then
 end
 
 local hash = function(data)
-  return ld.hash("sha224", data)
+  return ld.encode("string", "base64", ld.hash("sha224", data))
 end
 
 local clients = { }
@@ -63,9 +63,8 @@ while true do
         else
           local result = validateLogin(client, encoded)
           if result == true then
-            local hash = ld.encode("string", "base64", clientID)
-            cmdOut(enumPT.confirmConnection, clientID, serialize.encode(0, client.name, hash))
-            local encoded = serialize.encode(enumPT.confirmConnection, hash)
+            cmdOut(enumPT.confirmConnection, clientID, serialize.encode(0, client.name, clientID))
+            local encoded = serialize.encode(enumPT.confirmConnection, clientID)
             if encoded then
               cmdIn:push({clientID, encoded})
             end
@@ -81,7 +80,7 @@ while true do
       end
     elseif event.type == "disconnect" then
       removeClient(clientID)
-      cmdOut(enumPT.disconnect, serialize.encode(0, clientID))
+      cmdOut(enumPT.disconnect, clientID)
     elseif event.type == "connect" then
       client.id = clientID
       client.login = false

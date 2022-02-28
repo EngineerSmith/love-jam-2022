@@ -38,7 +38,8 @@ server.threaderror = function(thread, errorMessage)
 end
 
 local EncodeID = function(id)
-  return love.data.encode("string", "base64", id)
+  --return love.data.encode("string", "base64", id)
+  return id
 end
 
 server.handle = function(packetType, ...)
@@ -64,12 +65,12 @@ server.handle = function(packetType, ...)
     end
   elseif packetType == enumPT.disconnect then
     logger.info("Disconnect from", EncodeID(clientID))
+    server._removeClient(clientID)
     if client.name then
       for _, callback in ipairs(server.handlers[enumPT.disconnect]) do
-        callback(client, unpack(decoded, 2))
+        callback(client)
       end
     end
-    server._removeClient(clientID)
   elseif packetType == enumPT.confirmConnection then
     client.name = decoded[2]
     client.hash = decoded[3]
@@ -87,7 +88,6 @@ server.getClient = function(clientID)
   end
   client = {
       id = clientID,
-      name = nil,
     }
   server.clients[clientID] = client
   return client

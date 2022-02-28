@@ -3,6 +3,7 @@ local network = require("network.server")
 
 local chat = require("coordinators.chat")
 local world = require("coordinators.world")
+local player = require("coordinators.player")
 
 local scene = { }
 

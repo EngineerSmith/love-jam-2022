@@ -17,15 +17,19 @@ return function(coordinator)
         position.x, position.y = x, y
       end
       client.character = character
-    end
+    end)
   
   coordinator.movePlayer = function(client, x, y)
       if not client.position then
-        client.position = {}
+        client.position = { }
       end
       local p = client.position
       p.x, p.y = x, y
       network.send(client, network.enum.playerPosition, x, y)
     end
+  
+  network.addHandler(network.enum.confirmConnection, function(client)
+      coordinator.movePlayer(client, 700, 50)
+    end)
   
 end

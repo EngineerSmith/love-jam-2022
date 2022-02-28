@@ -68,10 +68,124 @@ return function(coordinator)
     return texturemap[textureID]
   end
   
+  coordinator.foreignPlayers = {} -- added to later
+  
   local time = 0
   coordinator.update = function(dt)
     time = time + dt
+    for _, player in pairs(coordinator.foreignPlayers) do
+      local char = player.character
+      local x, y = player.position.x, player.position.y
+      local w, h = char:getDimensions()
+      w = w/2.5
+      local height1 = coordinator.getHeightAtPoint(x-w, y)
+      local height2 = coordinator.getHeightAtPoint(x+w, y)
+      local height = height1 > height2 and height1 or height2
+      local height3 = coordinator.getHeightAtPoint(x  , y)
+      height = height > height3 and height or height3
+      if height ~= player.position.height then
+        if player.heightTween then
+          player.heightTween:stop()
+        end
+        player.heightTween = flux.to(player.position, 0.1, {height=height})
+      end
+    end
   end
+    
+  local getTile = function(world, x, y)
+      local a = x/tileW
+      local b = y/tileH
+      local i = math.floor(a + b)
+      local j = math.floor(a - b)
+      if world and world[i] and world[i][j] then
+        return world[i][j]
+      end
+    end
+  
+  coordinator.getHeightAtPoint = function(x, y)
+      local target = getTile(world, x, y)
+      if target and target.height then
+        return target.height * tileH/2
+      end
+      return 0
+    end
+  
+  coordinator.canWalkAtPoint = function(x, y)
+    local target = getTile(world, x, y)
+    if target and target.notWalkable ~= nil then
+      return not target.notWalkable
+    end
+    return true
+  end
+  
+  local getState = function(oldX, oldY, newX, newY)
+      local moving = true
+      if oldX == newX and oldY == newY then
+        moving = false
+      end
+      local direction = nil
+      if moving then
+        local dirX, dirY = newX-oldX, newY-oldY
+        local mag = math.sqrt(dirX*dirX+dirY*dirY)
+        dirX, dirY = dirX/mag, dirY/mag
+        if dirY >= 0 then
+          direction = "F"
+        else
+          direction = "B"
+        end
+        if dirX > -0.1 then
+          direction = direction.."R"
+        else
+          direction = direction.."L"
+        end
+      end
+      return moving and "walking" or "standing", direction
+    end
+  
+  local character = require("client.src.character")  
+  
+  network.addHandler(network.enum.foreignPlayers, function(players)
+      if network.hash then
+        for _, player in ipairs(players) do
+          if coordinator.foreignPlayers[player.clientID] then
+            local target = coordinator.foreignPlayers[player.clientID]
+            local tween = target.tween
+            if target.tween then
+              target.tween:stop()
+            end
+            target.tween = flux.to(target.position, 0.1, player.position)
+            if target.character.id ~= player.character then
+              local success, state = pcall(require, "assets.characters."..(player.character or "duck1"))
+              if not success then
+                state = require("assets.characters.duck1")
+              end
+              target.character.characterState = state
+            end
+            local state, facing = getState(target.position.x, target.position.y, player.position.x, player.position.y)
+            target.character:setState(state)
+            if facing then
+              target.character:setDirection(facing)
+            end
+          elseif player.clientID ~= network.hash then
+            logger.info("Making character for", player.name)
+            local success, state = pcall(require, "assets.characters."..(player.character or "duck1"))
+            if not success then
+              state = require("assets.characters.duck1")
+            end
+            player.position.height = 0
+            coordinator.foreignPlayers[player.clientID] = {
+                name      = player.name,
+                position  = player.position,
+                character = character.new(state),
+              }
+          end
+        end
+      end
+    end)
+  
+  network.addHandler(network.enum.foreignDisconnect, function(clientID)
+      coordinator.foreignPlayers[clientID] = nil
+    end)
   
   local rand = function(seed)
     local x = math.sin(seed) * 43758.5453123
@@ -117,56 +231,17 @@ return function(coordinator)
         end
         lg.pop()
       end
-    end
-    
-  local getTile = function(world, x, y)
-      local a = x/tileW
-      local b = y/tileH
-      local i = math.floor(a + b)
-      local j = math.floor(a - b)
-      if world and world[i] and world[i][j] then
-        return world[i][j]
+      for _, player in pairs(coordinator.foreignPlayers) do
+        lg.push("all")
+        local char = player.character
+        local x, y = player.position.x, player.position.y
+        local height = player.position.height
+        local w, h = char:getDimensions()
+        lg.translate(x-w/2, y-height-h/1.5)
+        local z = (y-h/1.5)/coordinator.depthScale
+        char:draw(z)
+        lg.pop()
       end
     end
-  
-  coordinator.getHeightAtPoint = function(x, y)
-      local target = getTile(world, x, y)
-      if target and target.height then
-        return target.height * tileH/2
-      end
-      return 0
-    end
-  
-  coordinator.canWalkAtPoint = function(x, y)
-    local target = getTile(world, x, y)
-    if target and target.notWalkable ~= nil then
-      return not target.notWalkable
-    end
-    return true
-  end
-  
-  coordinator.foreignPlayers = {}
-  
-  network.addHandler(network.enum.foreignPlayers, function(players)
-      if network.hash then
-        for _, player in ipairs(players) do
-          if coordinator.foreignPlayers[player.clientID] then
-            local target = coordinator.foreignPlayers[player.clientID]
-            local tween = target.tween
-            if target.tween then
-              target.tween:stop()
-            end
-            target.tween = flux.to(target.position, 0.1, player.position)
-            target.character = player.charactr or "duck1"
-          elseif player.clientID ~= network.hash then
-            coordinator.foreignPlayers[player.clientID] = {
-                name      = player.name,
-                position  = player.position,
-                character = player.character or "duck1",
-              }
-          end
-        end
-      end
-    end)
   
 end

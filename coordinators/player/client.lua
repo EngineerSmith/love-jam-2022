@@ -8,13 +8,13 @@ local world = require("coordinators.world")
 
 return function(coordinator)
   
-  coordinator.position = {x=700,y=50,height=0}
+  coordinator.position = {x=0,y=0,height=0}
   local speed = coordinator.speed
   
   local p = coordinator.position
   coordinator.setPosition = function(x, y, height)
       p.x, p.y = x, y
-      p.height = height
+      p.height = height or p.height
     end
     
   local heightTween
@@ -80,7 +80,7 @@ return function(coordinator)
         newY = p.y + forceY
       end
       
-      if world.canWalkAtPoint(newX, newY) then
+      if (p.x ~= newX or p.y ~= newY) and world.canWalkAtPoint(newX, newY) then
         p.x, p.y = newX, newY
         moving = true
       end
