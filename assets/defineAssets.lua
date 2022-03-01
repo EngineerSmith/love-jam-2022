@@ -16,6 +16,11 @@ return {
     -- UI
     { "UI/logoES.png", "logo.ES", onLoad = pixelArt },
     { "UI/leglessduck.png", "ui.main.duck", onLoad = pixelArt },
+    { "UI/wheel.png", "ui.wheel", onLoad = pixelArt },
+    { "UI/wheel_NE.png", "ui.wheel.ne", onLoad = pixelArt },
+    { "UI/wheel_NW.png", "ui.wheel.nw", onLoad = pixelArt },
+    { "UI/wheel_SW.png", "ui.wheel.se", onLoad = pixelArt },
+    { "UI/wheel_SE.png", "ui.wheel.sw", onLoad = pixelArt },
     
     -- Tiles
     { "tiles/test1.png", "tiles.test1", onLoad = pixelArt },
