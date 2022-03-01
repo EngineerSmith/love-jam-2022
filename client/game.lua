@@ -59,6 +59,12 @@ local time = 0
 scene.update = function(dt)
   time = time + dt
   --input
+  local rightX, rightY, rightMag
+  if joystick then
+    rightX = joystick:getGamepadAxis("rightx")
+    rightY = joystick:getGamepadAxis("righty")
+    rightMag = sqrt(rightX*rightX+rightY*rightY)
+  end
   if not chatMode then
     local dirX, dirY = 0, 0
     -- Keyboard
@@ -93,18 +99,26 @@ scene.update = function(dt)
     player.moveTowardsDirection(dirX, dirY, dt)
     
   end
+  if rightMag then
+    if rightMag > 0.2 then
+      if not showTowerWheel then
+        showTowerWheel = love.timer.getTime()
+      end
+    else
+      showTowerWheel = nil
+    end
+  end
   if showTowerWheel then
-    local dirX, dirY = love.mouse.getPosition()
-    dirX, dirY = dirX-lg.getWidth()/2, dirY-lg.getHeight()/2
+    local dirX, dirY = 0,0
     
-    if joystick then
-      local rightX = joystick:getGamepadAxis("rightx")
-      local rightY = joystick:getGamepadAxis("righty")
-      local mag = sqrt(rightX*rightX+rightY*rightY)
-      if mag > 0.2 then -- deadzone
+    if rightMag then
+      if rightMag > 0.2 then -- deadzone
         dirX = dirX + rightX
         dirY = dirY + rightY
       end
+    else
+      dirX, dirY = love.mouse.getPosition()
+      dirX, dirY = dirX-lg.getWidth()/2, dirY-lg.getHeight()/2
     end
     
     local mag = 0
@@ -113,7 +127,7 @@ scene.update = function(dt)
       dirX, dirY = dirX/mag, dirY/mag
     end
     
-    tower.mousePosition(dirX, dirY, mag, scale)
+    tower.mousePosition(dirX, dirY, not rightMag and mag or math.huge, scale)
   end
   -- coordinators
   player.update()
