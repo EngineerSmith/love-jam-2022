@@ -1,5 +1,6 @@
 local logger = require("util.logger")
 local utf8 = require("libs.utf8")
+local assets = require("util.assets")
 
 local network = require("network.client")
 
@@ -11,8 +12,8 @@ return function(coordinator)
     end
   
   coordinator.addChatMessage = function(message)
-    if utf8.len(message) > 150 then
-      message = utf8.sub(message, 1, 150)
+    if utf8.len(message) > 100 then
+      message = utf8.sub(message, 1, 100)
     end
     coordinator.chat.insert(message)
   end
@@ -25,9 +26,10 @@ return function(coordinator)
   
   local lg = love.graphics
   coordinator.draw = function(chatMode, text, time)
-    lg.push()
-    local font = lg.getFont()
-    local width = lg.getWidth()/4*3
+    lg.push("all")
+    local font = assets["fonts.futile.24"]
+    lg.setFont(font)
+    local width = lg.getWidth()/10*4
     local height = font:getHeight()
     lg.setColor(.3,.3,.3,.7)
     if chatMode then
@@ -38,7 +40,6 @@ return function(coordinator)
       lg.print("> "..text, 0, lg.getHeight()-height)
       local chat = {}
       for i=#coordinator.chat, math.max(#coordinator.chat-8, 1), -1 do
-        print(i)
         local _, txt = font:getWrap(coordinator.chat[i], width)
         for j=#txt, 1, -1 do
           if #chat < 8 then
@@ -54,7 +55,6 @@ return function(coordinator)
     elseif #coordinator.chat > 0 then
       local chat = {}
       for i=#coordinator.chat, math.max(#coordinator.chat-3, 1), -1 do
-        print(i)
         local _, txt = font:getWrap(coordinator.chat[i], width)
         for j=#txt, 1, -1 do
           if #chat < 3 then

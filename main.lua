@@ -8,6 +8,14 @@ local flux = require("libs.flux")
 local utf8 = require("utf8")
 -- add utf8 len lib from lua lib
 require("libs.utf8").len = utf8.len
+require("libs.utf8").sub = function(str, i, j)
+  local offseti = utf8.offset(str, i or 1)
+  local offsetj = utf8.offset(str, j or 0)
+  if offseti and offsetj then
+    return str:sub(offseti, offsetj)
+  end
+  return str
+end
 
 local love = love
 local le, lg, lt = love.event, love.graphics, love.timer

@@ -17,8 +17,8 @@ return function(coordinator)
       if len == 0 then
         return
       end
-      if len > 150 then
-        message = utf8.sub(message, 1, 150)
+      if len > 100 then
+        message = utf8.sub(message, 1, 100)
       end
       coordinator.sendChatMessage(client.name.."> "..message)
     end

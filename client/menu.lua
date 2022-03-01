@@ -32,12 +32,10 @@ local names = {
   "Mark",
   "Jamie",
   "Santa",
-  "Batperson",
-  "DuckLover999",
+  "DuckLover",
   "LittleJohn",
   "Richard",
   "AppleTea",
-  "Celerations",
 }
 
 local lowGraphics = { text = "Low Graphics", checked = settings.client.lowGraphics }

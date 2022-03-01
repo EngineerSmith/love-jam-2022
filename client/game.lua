@@ -168,16 +168,34 @@ end
 
 local utf8 = require("utf8")
 
+local switch = false
 scene.textinput = function(t)
   if chatMode then
-    text = text .. t
+    if switch then
+      for _, chatButton in ipairs(settings.client.controls.chat) do
+        if t == chatButton then
+          return
+        end
+      end
+    end
+    local len = utf8.len(text..t)
+    if len <= 100-8 then
+      text = text .. t
+    end
   end
+  switch = false
 end
 
-scene.keypressed = function(key)
-  if key == "tab" then
-    chatMode = not chatMode
-    text = ""
+scene.keypressed = function(key, scancode)
+  if not chatMode then
+    for _, chatButton in ipairs(settings.client.controls.chat) do
+      if chatButton == scancode then
+        chatMode = not chatMode
+        text = ""
+        switch = true
+        return
+      end
+    end
   end
   if chatMode then
     if key == "backspace" then

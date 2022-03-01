@@ -17,6 +17,7 @@ local defaultSettings = {
           backward = { "s", "down",  },
           left     = { "a", "left",  },
           right    = { "d", "right", },
+          chat     = { "tab", "t"    },
         },
         lowGraphics = false,
       },
