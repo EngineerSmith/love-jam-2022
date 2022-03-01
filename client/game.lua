@@ -52,7 +52,9 @@ scene.load = function(name, address)
 end
 
 local chatMode = false
+local time = 0
 scene.update = function(dt)
+  time = time + dt
   --input
   if not chatMode then
     local dirX, dirY = 0, 0
@@ -149,11 +151,11 @@ scene.draw = function()
   end
   lg.setBlendMode("alpha")]]
   lg.clear(.1,.1,.1)
+  lg.push("all")
   lg.setBlendMode("alpha", "premultiplied")
   lg.draw(canvas[1], 0,0, 0, scale, scale)
-  lg.setBlendMode("alpha")
-  lg.setColor(1,1,1)
-  lg.print(text.."\n"..table.concat(chat.chat, "\n"))
+  lg.pop()
+  chat.draw(chatMode, text, time)
   lg.pop()
 end
 
@@ -175,6 +177,7 @@ end
 scene.keypressed = function(key)
   if key == "tab" then
     chatMode = not chatMode
+    text = ""
   end
   if chatMode then
     if key == "backspace" then

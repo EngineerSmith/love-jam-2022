@@ -22,4 +22,52 @@ return function(coordinator)
   network.addHandler(network.enum.disconnect, function(reason, code)
       coordinator.addChatMessage("Disconnected. Reason: "..tostring(reason)..", Code: "..tostring(code))
     end)
+  
+  local lg = love.graphics
+  coordinator.draw = function(chatMode, text, time)
+    lg.push()
+    local font = lg.getFont()
+    local width = lg.getWidth()/4*3
+    local height = font:getHeight()
+    lg.setColor(.3,.3,.3,.7)
+    if chatMode then
+      lg.rectangle("fill", 0, lg.getHeight()-height*9, width, height*8)
+      lg.setColor(.2,.2,.2,.7)
+      lg.rectangle("fill", 0, lg.getHeight()-height, width, height)
+      lg.setColor(1,1,1,1)
+      lg.print("> "..text, 0, lg.getHeight()-height)
+      local chat = {}
+      for i=#coordinator.chat, math.max(#coordinator.chat-8, 1), -1 do
+        print(i)
+        local _, txt = font:getWrap(coordinator.chat[i], width)
+        for j=#txt, 1, -1 do
+          if #chat < 8 then
+            table.insert(chat, txt[j])
+          else
+            break
+          end
+        end
+      end
+      for i, text in ipairs(chat) do
+        lg.print(text, 0, lg.getHeight()-height*i-height)
+      end
+    elseif #coordinator.chat > 0 then
+      local chat = {}
+      for i=#coordinator.chat, math.max(#coordinator.chat-3, 1), -1 do
+        print(i)
+        local _, txt = font:getWrap(coordinator.chat[i], width)
+        for j=#txt, 1, -1 do
+          if #chat < 3 then
+            table.insert(chat, txt[j])
+          end
+        end
+      end
+      lg.rectangle("fill", 0, lg.getHeight()-height*3, width, height*3)
+      lg.setColor(1,1,1)
+      for i, text in ipairs(chat) do
+        lg.print(text, 0, lg.getHeight()-height*i)
+      end
+    end
+    lg.pop()
+    end
 end

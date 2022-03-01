@@ -7,9 +7,9 @@ local chatCoordinator = {
 
 chatCoordinator.chat.insert = function(message)
   if #chatCoordinator.chat == chatCoordinator.chatLimit then
-    table.remove(chatCoordinator.chat, 100)
+    table.remove(chatCoordinator.chat, 1)
   end
-  table.insert(chatCoordinator.chat, 1, message)
+  table.insert(chatCoordinator.chat, message)
 end
 
 if args["-server"] then

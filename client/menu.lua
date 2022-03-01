@@ -33,7 +33,7 @@ local names = {
   "Jamie",
   "Santa",
   "Batperson",
-  "DuckLover9999",
+  "DuckLover999",
   "LittleJohn",
   "Richard",
   "AppleTea",
@@ -41,7 +41,7 @@ local names = {
 }
 
 local lowGraphics = { text = "Low Graphics", checked = settings.client.lowGraphics }
-local playerName = { text = "James" }
+local playerName = { text = names[love.math.random(1,#names)] }
 local serverAddress = { text = "localhost:20202" }
 -- for scene.draw
 local time = 0
