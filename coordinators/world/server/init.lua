@@ -26,12 +26,13 @@ return function(coordinator)
       local players = {}
       for clientID, client in pairs(network.clients) do
         if client.hash and client.position then
+          client.money = (client.money or 0) + 1
           insert(players, {
               clientID  = client.hash,
               name      = client.name,
               position  = client.position,
               character = client.character,
-              money     = client.money
+              money     = client.money,
             })
         end
       end

@@ -1,5 +1,6 @@
 local logger = require("util.logger")
 local network = require("network.client")
+local assets = require("util.assets")
 
 local lg = love.graphics
 local flux = require("libs.flux")
@@ -10,6 +11,8 @@ return function(coordinator)
   
   coordinator.position = {x=0,y=0,height=0}
   local speed = coordinator.speed
+  
+  coordinator.money = 0
   
   local p = coordinator.position
   coordinator.setPosition = function(x, y, height)
@@ -51,6 +54,29 @@ return function(coordinator)
         coordinator.character:draw(z)
         lg.pop()
       end
+    end
+  
+  local formatMoney = function(num)
+    local i, j, minus, int, fraction = tostring(num):find('([-]?)(%d+)([.]?%d*)')
+    int = int:reverse():gsub("(%d%d%d)", "%1,")
+    return minus..int:reverse():gsub("^,","")..fraction
+  end
+  
+  local coin = assets["ui.coin"]
+  coordinator.drawUI = function(windowScale)
+      local width, height = coin:getDimensions()
+      local coinScale = 1
+      local str = formatMoney(coordinator.money)
+      local strWidth = lg.getFont():getWidth(str)
+      lg.setColor(.9,.9,.9,.6)
+      --lg.rectangle("fill", lg.getWidth()-(width-strWidth)*windowScale, 5, (width+strWidth)*windowScale,(height*coinScale*windowScale)+5, 3)
+      lg.setColor(1,1,1)
+      width, height = width*coinScale*windowScale, height*coinScale*windowScale
+      lg.draw(coin, lg.getWidth()-width-10, 10, 0, coinScale*windowScale, coinScale*windowScale)
+      lg.setColor(.2,.2,.2)
+      
+      lg.print(str, lg.getWidth()-width-10-strWidth, 10+height/2-lg.getFont():getHeight()/2)
+      lg.setColor(1,1,1)
     end
   
   local tweenPositionTable, tween = {}, nil

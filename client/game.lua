@@ -196,6 +196,7 @@ scene.draw = function()
   lg.pop()
   chat.draw(chatMode, text, time)
   tower.draw(showTowerWheel, scale)
+  player.drawUI(scale)
   lg.pop()
 end
 

@@ -38,7 +38,7 @@ return function(coordinator)
     local height = font:getHeight() + 5
     lg.setColor(.3,.3,.3,.7)
     if chatMode then
-      lg.rectangle("fill", 0, lg.getHeight()-height*9, width, height*8)
+      lg.rectangle("fill", -8, lg.getHeight()-height*9, width+8, height*9+8, 8)
       lg.setColor(.2,.2,.2,.7)
       lg.rectangle("fill", 0, lg.getHeight()-height, width, height)
       lg.setColor(1,1,1,1)
@@ -67,7 +67,7 @@ return function(coordinator)
           end
         end
       end
-      lg.rectangle("fill", 0, lg.getHeight()-height*3, width, height*3)
+      lg.rectangle("fill", -8, lg.getHeight()-height*3, width+8, height*3+8, 8)
       lg.setColor(1,1,1)
       for i, text in ipairs(chat) do
         lg.print(text,7, lg.getHeight()-height*i)
