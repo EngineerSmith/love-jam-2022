@@ -23,6 +23,22 @@ local names = {
   "LittleJohn",
   "Richard",
   "AppleTea",
+  "JellyBabies",
+  "DigestiveB",
+  "LostPanda",
+  "LostWolf",
+  "Glove",
+  "Bot10101",
+  "Israphel",
+  "Dwarf",
+  "Spaceman",
+  "Yellow",
+  "Steve",
+  "Lilly",
+  "Tata",
+  "BlueTree",
+  "DumbOne",
+  "Missing",
 }
 
 local lowGraphics = { text = "Low Graphics", checked = settings.client.lowGraphics }
