@@ -3,12 +3,12 @@
 local BASE = (...):match('(.-)[^%.]+$')
 
 local theme = {}
-theme.cornerRadius = 4
+theme.cornerRadius = 3
 
 theme.color = {
-	normal   = {bg = { 0.25, 0.25, 0.25}, fg = {0.73,0.73,0.73}},
+	normal   = {bg = { .0000, .1568, .3490}, fg = {love.math.colorFromBytes(104,174,212)}},
 	hovered  = {bg = { 0.19,0.6,0.73}, fg = {1,1,1}},
-	active   = {bg = {1,0.6,  0}, fg = {1,1,1}}
+	active   = {bg = { love.math.colorFromBytes(124,179,217)}, fg = {1,1,1}}
 }
 
 
@@ -61,6 +61,8 @@ function theme.Button(text, opt, x,y,w,h)
 end
 
 function theme.Checkbox(chk, opt, x,y,w,h)
+  love.graphics.push()
+  love.graphics.translate(-5,0)
 	local c = theme.getColorForState(opt)
 	local th = opt.font:getHeight()
 
@@ -75,9 +77,12 @@ function theme.Checkbox(chk, opt, x,y,w,h)
 
 	if chk.text then
 		love.graphics.setFont(opt.font)
+    theme.drawBox(x+h,y,w-h*0.8,h, c, opt.cornerRadius)
 		y = y + theme.getVerticalOffsetForAlign(opt.valign, opt.font, h)
+    love.graphics.setColor(c.fg)
 		love.graphics.printf(chk.text, x + h, y, w - h, opt.align or "left")
 	end
+  love.graphics.pop()
 end
 
 function theme.Slider(fraction, opt, x,y,w,h)
