@@ -41,6 +41,8 @@ return {
     { "characters/duck2.png", "characters.duck2", onLoad = pixelArt },
     { "characters/duck1_standing1.png", "characters.duck1.standing1", onLoad = makePixelAnimation, 5, 30, 33, 0.2},
     { "characters/duck1_walking1.png", "characters.duck1.walking1", onLoad = makePixelAnimation, 5, 30, 33, 0.1},
+    { "characters/duck1_standing2.png", "characters.duck1.standing2", onLoad = makePixelAnimation, 5, 30, 32, 0.2},
+    { "characters/duck1_walking2.png", "characters.duck1.walking2", onLoad = makePixelAnimation, 5, 30, 32, 0.1},
 
     -- Game objects
     { "objects/towers/test.png", "objects.towers.test", onLoad = pixelArt },

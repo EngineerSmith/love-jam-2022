@@ -94,9 +94,9 @@ return function(coordinator)
           direction = "B"
         end
         if dirX > (direction == "F" and -0.1 or 0.1) then
-          direction = direction.."R"
+          direction = direction..(direction == "F" and "R" or "L")
         else
-          direction = direction.."L"
+          direction = direction..(direction == "F" and "L" or "R")
         end
         coordinator.character:setDirection(direction)
       end
