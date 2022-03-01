@@ -340,13 +340,13 @@ return function(coordinator)
   coordinator.drawArrowAt = function(tile, i, j, disabled)
       local x = j * tileW / 2 + i * tileW / 2
       local y = i * tileH / 2 - j * tileH / 2
-      local height = (tile.height or 0)*tileH/2
+      local height = tile.height*tileH/2
       local arrow = disabled and arrowDisabled or arrow
       if type(arrow) == "table" then
         local _, h = arrow:getDimensions()
         arrow:draw(arrow.image, x, y-height-h+16)
       else
-        lg.draw(arrow, x, y-height-arrow:getHeight()+32)
+        lg.draw(arrow, x, y-height-arrow:getHeight()+16)
       end
     end
 end

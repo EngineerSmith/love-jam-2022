@@ -14,6 +14,7 @@ return function(coordinator)
           client.money = client.money - tower.price
           tile.tower = towerID
           tile.owner = client.hash
+          tile.health = tower.health
           tile.notWalkable = true
           world.notifyTileUpdate(i, j)
         end
