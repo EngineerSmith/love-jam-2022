@@ -4,10 +4,10 @@ local assets = require("util.assets")
 
 local towerCoordinator = {
     towers = {
-      ["NE"] = { texture = assets["objects.towers.green"] , price = 50  },
-      ["NW"] = { texture = assets["objects.towers.purple"], price = 50  },
-      ["SE"] = { texture = assets["objects.towers.red"]   , price = 50  },
-      ["SW"] = { texture = assets["objects.towers.test"]  , price = 50  },
+      ["NE"] = { texture = assets["objects.towers.green"] , price = 100  },
+      ["NW"] = { texture = assets["objects.towers.purple"], price = 100  },
+      ["SE"] = { texture = assets["objects.towers.red"]   , price = 100  },
+      ["SW"] = { texture = assets["tiles.walls.horizontal"]  , price =  50  },
     }
   }
 

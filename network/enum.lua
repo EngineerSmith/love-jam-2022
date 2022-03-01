@@ -17,6 +17,8 @@ local enum = {
         worldData         = 'w',
         foreignPlayers    = 'f',
         foreignDisconnect = 'g',
+        placeTower        = 't',
+        tileUpdate        = 'u',
       },
   }
   

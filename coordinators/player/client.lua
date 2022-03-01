@@ -69,7 +69,6 @@ return function(coordinator)
       local str = formatMoney(coordinator.money)
       local strWidth = lg.getFont():getWidth(str)
       lg.setColor(.9,.9,.9,.6)
-      --lg.rectangle("fill", lg.getWidth()-(width-strWidth)*windowScale, 5, (width+strWidth)*windowScale,(height*coinScale*windowScale)+5, 3)
       lg.setColor(1,1,1)
       width, height = width*coinScale*windowScale, height*coinScale*windowScale
       lg.draw(coin, lg.getWidth()-width-10, 10, 0, coinScale*windowScale, coinScale*windowScale)

@@ -1,3 +1,4 @@
+local network = require("network.client")
 local assets = require("util.assets")
 
 local world = require("coordinators.world")
@@ -51,12 +52,13 @@ return function(coordinator)
         for direction, tower in pairs(towers) do
           local width, height = tower.texture:getDimensions()
           local _y, _x = lg.getHeight()/2 -height*scale*windowScale*.33, lg.getWidth()/2 - width*scale*windowScale*.33
-          if direction:sub(1,1) == "N" then
+          local dir = direction:sub(1,1)
+          if dir == "N" then
             _y = _y - (width*2*windowScale*scale)/2
           else
             _y = _y + (width*2*windowScale*scale)/2
           end
-          if direction:sub(2,2) == "W" then
+          if direction:sub(2,2) == (dir == "N" and "W" or "E") then
             _x = _x - (height*2*windowScale*scale)/2 + width*scale*windowScale
           else
             _x = _x + (height*2*windowScale*scale)/2 - width*scale*windowScale
@@ -74,8 +76,10 @@ return function(coordinator)
       end
     end
   
-  coordinator.mousepressed = function(tile)
-      tile.texture = 3
+  coordinator.mousepressed = function(tile, i, j)
+      if direction ~= "" then
+        network.send(network.enum.placeTower, i, j, direction)
+      end
       coordinator.direction = nil
       direction = ""
       love.mouse.setVisible(true)

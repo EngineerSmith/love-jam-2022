@@ -95,6 +95,15 @@ return function(coordinator)
       end
     end)
   
+  network.addHandler(network.enum.tileUpdate, function(i, j, tile)
+      if world then
+        if not world[i] then
+          world[i] = {}
+        end
+        world[i][j] = tile
+      end
+    end)
+  
   local getTexture = function(textureID)
     return texturemap[textureID]
   end
@@ -236,6 +245,7 @@ return function(coordinator)
   end
   
   coordinator.draw = function(shader)
+      local towers = require("coordinators.towers").towers
       if world then
         if sea then
           shader:send("scale", sea:getHeight()/4)
@@ -266,14 +276,36 @@ return function(coordinator)
             else
               lg.draw(img, x, y-height)
             end
-            local options = textureOptions[target.texture or 0]
-            if options then
-              local n = math.floor((rand(x * #world + y) * (#options*10)) + 1)
-              if n <= #options then
-                lg.push("all")
-                lg.setDepthMode("always", true)
-                lg.draw(options[n], x, y-height)
-                lg.pop()
+            if not target.tower then
+              local options = textureOptions[target.texture or 0]
+              if options then
+                local n = math.floor((rand(x * #world + y) * (#options*10)) + 1)
+                if n <= #options then
+                  lg.push("all")
+                  lg.setDepthMode("always", true)
+                  lg.draw(options[n], x, y-height)
+                  lg.pop()
+                end
+              end
+            else
+              local tower = towers[target.tower]
+              if tower then
+                local image = tower.texture
+                if type(image) == "table" then
+                  local w, h = image:getDimensions()
+                  shader:send("scale", h*.8)
+                  image:draw(image.image, x-tileW/2, y-height-h+tileH)
+                else
+                  local w, h = image:getDimensions()
+                  if w > tileW then
+                    shader:send("scale", h*.5)
+                    x = x - tileW/2
+                  else
+                    shader:send("scale", tileH*2)
+                  end
+                  lg.draw(image, x, y-height-h+tileH)
+                end
+                shader:send("scale", tileH*2)
               end
             end
           end

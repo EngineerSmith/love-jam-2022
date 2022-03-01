@@ -39,4 +39,17 @@ return function(coordinator)
       network.sendAll(network.enum.foreignPlayers, players)
     end
   
+  coordinator.getTile = function(i, j)
+      if world and world[i] then
+        return world[i][j]
+      end
+    end
+  
+  coordinator.notifyTileUpdate = function(i, j)
+      local tile = coordinator.getTile(i, j)
+      if tile then
+        network.sendAll(network.enum.tileUpdate, i, j, tile)
+      end
+    end
+  
 end
