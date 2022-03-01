@@ -293,7 +293,7 @@ return function(coordinator)
                 local image = tower.texture
                 if type(image) == "table" then
                   local w, h = image:getDimensions()
-                  shader:send("scale", h*.8)
+                  shader:send("scale", h*.5)
                   image:draw(image.image, x-tileW/2, y-height-h+tileH)
                 else
                   local w, h = image:getDimensions()
