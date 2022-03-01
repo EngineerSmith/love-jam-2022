@@ -3,7 +3,12 @@ local assets = require("util.assets")
 local suit = require("libs.suit").new()
 
 local lg = love.graphics
-lg.setNewFont("assets/fonts/FutilePro.ttf", 18)
+assets["fonts.futile.18"] = lg.newFont("assets/fonts/FutilePro.ttf", 18)
+assets["fonts.futile.18"]:getFilter("nearest", "nearest")
+assets["fonts.futile.12"] = lg.newFont("assets/fonts/FutilePro.ttf", 12)
+assets["fonts.futile.12"]:getFilter("nearest", "nearest")
+lg.setFont(assets["fonts.futile.18"])
+
 
 local scene = { }
 
