@@ -63,7 +63,7 @@ return function(coordinator)
   end
   
   local coin = assets["ui.coin"]
-  coordinator.drawUI = function(windowScale)
+  coordinator.drawUI = function(windowScale, subtract)
       local width, height = coin:getDimensions()
       local coinScale = 1
       local str = formatMoney(coordinator.money)
@@ -76,6 +76,12 @@ return function(coordinator)
       lg.setColor(.2,.2,.2)
       
       lg.print(str, lg.getWidth()-width-10-strWidth, 10+height/2-lg.getFont():getHeight()/2)
+      if subtract then
+        lg.setColor(.8,.2,.05)
+        local subStr = formatMoney(-subtract)
+        local subStrWidth = lg.getFont():getWidth(subStr)
+        lg.print(subStr, lg.getWidth()-width-10-subStrWidth, 10+height/2+lg.getFont():getHeight()/2)
+      end
       lg.setColor(1,1,1)
     end
   

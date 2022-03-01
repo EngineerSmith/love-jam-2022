@@ -19,7 +19,6 @@ return function(coordinator)
   end
   
   coordinator.clear = function()
-      print(1)
       coordinator.chat.clear()
     end
   

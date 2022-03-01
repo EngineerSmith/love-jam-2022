@@ -7,6 +7,17 @@ local floor = math.floor
 local logo = lg.newImage("assets/UI/logoES.png")
 logo:setFilter("nearest", "nearest")
 
+local assets = require("util.assets")
+assets["fonts.futile.24"] = lg.newFont("assets/fonts/FutilePro.ttf", 24)
+assets["fonts.futile.24"]:getFilter("nearest", "nearest")
+assets["fonts.futile.21"] = lg.newFont("assets/fonts/FutilePro.ttf", 21)
+assets["fonts.futile.21"]:getFilter("nearest", "nearest")
+assets["fonts.futile.18"] = lg.newFont("assets/fonts/FutilePro.ttf", 18)
+assets["fonts.futile.18"]:getFilter("nearest", "nearest")
+assets["fonts.futile.12"] = lg.newFont("assets/fonts/FutilePro.ttf", 12)
+assets["fonts.futile.12"]:getFilter("nearest", "nearest")
+lg.setFont(assets["fonts.futile.18"])
+
 local scene = { }
 local lily
 scene.load = function()
@@ -15,11 +26,18 @@ scene.load = function()
 end
 
 local percentage = 0
+local timer = nil
 scene.update = function(dt)
   percentage = lily:getLoadedCount() / lily:getCount()
   if lily:isComplete() then
-    logger.info("Finished loading, moving to menu")
-    require("util.sceneManager").changeScene("client.menu")
+    if timer == nil then
+      timer = 0
+    end
+    timer = timer + dt
+    if timer >= 1 then
+      logger.info("Finished loading, moving to menu")
+      require("util.sceneManager").changeScene("client.menu")
+    end
   end
 end
 local w, h = love.graphics.getDimensions()
@@ -47,6 +65,11 @@ scene.draw = function()
   lg.rectangle("fill", 0, 0, barW, barH)
   lg.setStencilTest()
   lg.rectangle("fill", lineWidth2, lineWidth2, (barW-lineWidth4)*percentage, barH-lineWidth4)
+  local str = lily:getLoadedCount().."/"..lily:getCount()
+  lg.pop()
+  lg.push()
+  lg.translate(w, h)
+  lg.print(str, -lg.getFont():getWidth(str)/2, lg.getFont():getHeight()+logo:getHeight()*(scale)/1.5)
   lg.pop()
 end
 

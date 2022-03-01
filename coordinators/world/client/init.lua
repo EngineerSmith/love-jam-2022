@@ -11,7 +11,7 @@ local texturemap = {
     [0] = assets["tiles.water2"],
     [1] = assets["tiles.sand"],
     [2] = assets["tiles.grass"],
-    [3] = assets["tiles.test1"],
+    [3] = assets["tiles.stone"],
     [4] = assets["tiles.test1"],
     [5] = assets["tiles.test1"],
     [6] = assets["tiles.test1"],
@@ -128,7 +128,17 @@ return function(coordinator)
       local b = y/tileH
       local i = math.floor(a + b)
       local j = math.floor(a - b)
-      if world and world[i] and world[i][j] then
+      if world and world[i] then
+        return world[i][j], i, j
+      end
+    end
+    
+  coordinator.getTile = function(x, y)
+      return getTile(world, x, y)
+    end
+  
+  coordinator.getTileAt = function(i, j)
+      if world and world[i] then
         return world[i][j]
       end
     end
@@ -265,14 +275,6 @@ return function(coordinator)
                 lg.draw(options[n], x, y-height)
                 lg.pop()
               end
-              --[[if n == 1 then
-                lg.push("all")
-                lg.setDepthMode("less", true)
-                local w, h = assets["objects.towers.test"]:getDimensions()
-                lg.draw(assets["objects.towers.test"], x-w/4, y-h)
-                target.notWalkable = true
-                lg.pop()
-              end]]
             end
           end
           ::continue::
@@ -301,4 +303,18 @@ return function(coordinator)
       end
     end
   
+  local arrow = assets["ui.arrow"]
+  local arrowDisabled = assets["ui.arrow.disabled"]
+  coordinator.drawArrowAt = function(tile, i, j, disabled)
+      local x = j * tileW / 2 + i * tileW / 2
+      local y = i * tileH / 2 - j * tileH / 2
+      local height = (tile.height or 0)*tileH/2
+      local arrow = disabled and arrowDisabled or arrow
+      if type(arrow) == "table" then
+        local _, h = arrow:getDimensions()
+        arrow:draw(arrow.image, x, y-height-h+16)
+      else
+        lg.draw(arrow, x, y-height-arrow:getHeight()+32)
+      end
+    end
 end

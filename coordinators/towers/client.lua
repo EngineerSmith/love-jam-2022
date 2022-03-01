@@ -1,21 +1,20 @@
 local assets = require("util.assets")
 
-local towers = {
-    ["NE"] = { texture = assets["objects.towers.green"] },
-    ["NW"] = { texture = assets["objects.towers.purple"]  },
-    ["SE"] = { texture = assets["objects.towers.red"]   },
-    ["SW"] = { texture = assets["objects.towers.test"]  },
-  }
+local world = require("coordinators.world")
 
 return function(coordinator)
   
+  local towers = coordinator.towers
+  
   local direction = "NE"
   coordinator.mousePosition = function(x, y, mag, windowScale)
+      love.mouse.setVisible(true)
+      direction = ""
+      coordinator.direction = nil
       if mag < 20*windowScale*2 then
-        direction = ""
+        coordinator.cost = nil
         return
       end
-      direction = ""
       if y > 0 then
         direction = direction.."S"
       else
@@ -26,6 +25,7 @@ return function(coordinator)
       else
         direction = direction..(direction == "N" and "W" or "E")
       end
+      coordinator.cost = towers[direction].price
     end
   
   local lg = love.graphics
@@ -64,6 +64,21 @@ return function(coordinator)
           lg.draw(tower.texture, _x, _y, 0, windowScale*scale*.75, windowScale*scale*.75)
         end
       end
+    end
+  
+  coordinator.letGo = function()
+      if direction ~= "" then
+        love.mouse.setVisible(false)
+        coordinator.direction = direction
+        coordinator.cost = nil
+      end
+    end
+  
+  coordinator.mousepressed = function(tile)
+      tile.texture = 3
+      coordinator.direction = nil
+      direction = ""
+      love.mouse.setVisible(true)
     end
   
 end

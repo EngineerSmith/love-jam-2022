@@ -13,7 +13,6 @@ end
 
 local clear
 clear = function()
-  print(2)
   chatCoordinator.chat = {}
   chatCoordinator.chat.insert = insert
   chatCoordinator.chat.clear = clear

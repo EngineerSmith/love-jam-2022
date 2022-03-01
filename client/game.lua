@@ -38,7 +38,8 @@ scene.resize = function(w, h)
     depthstencil = lg.newCanvas(width, height, { format = "depth24" }),
   }
   canvas[1]:setFilter("nearest", "nearest")
-  camera = require("libs.stalker-x")(0, 0, width, height)
+  local x, y = player.position and player.position.x or 0, player.position and player.position.y or 0
+  camera = require("libs.stalker-x")(x, y, width, height)
   --camera.draw_deadzone = true
   camera:setFollowLerp(0.2)
   camera:setFollowStyle('TOPDOWN')
@@ -158,6 +159,7 @@ vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 ])]]
 
 local text = ""
+local disabledArrow = false
 scene.draw = function()
   lg.push()
   lg.origin()
@@ -171,6 +173,16 @@ scene.draw = function()
     lg.setShader(depthShader)
     lg.setFont(assets["fonts.futile.12"])
     world.draw(depthShader)
+    if tower.direction then
+      local x, y = love.mouse.getPosition()
+      local mx, my = camera:toWorldCoords(x/scale, y/scale)
+      local tile, i, j = world.getTile(mx, my-4)
+      local _, pi, pj = world.getTile(player.position.x, player.position.y)
+      local a, b = i-pi, j-pj
+      local mag = sqrt(a*a+b*b)
+      disabledArrow = mag > 6 or tile.texture == nil or tile.texture == 0
+      world.drawArrowAt(tile, i, j, disabledArrow)
+    end
     lg.setFont(assets["fonts.futile.18"])
     player.draw()
     lg.pop()
@@ -196,7 +208,7 @@ scene.draw = function()
   lg.pop()
   chat.draw(chatMode, text, time)
   tower.draw(showTowerWheel, scale)
-  player.drawUI(scale)
+  player.drawUI(scale, tower.cost)
   lg.pop()
 end
 
@@ -275,10 +287,19 @@ scene.joystickremoved = function(js)
   end
 end
 
+local tileW, tileH = 32, 16
+local oldX, oldY
 scene.mousepressed = function(x, y, button)
-  if not chatMode then
-    if button == 2 then
-      showTowerWheel = love.timer.getTime()
+  if button == 2 and not chatMode then
+    oldX, oldY = x, y
+    love.mouse.setPosition(lg.getWidth()/2, lg.getHeight()/2)
+    showTowerWheel = love.timer.getTime()
+  end
+  if button == 1 and tower.direction and not disabledArrow then
+    local mx, my = camera:toWorldCoords(x/scale, y/scale)
+    local tile = world.getTile(mx, my-4)
+    if tile then
+      tower.mousepressed(tile)
     end
   end
 end
@@ -286,7 +307,9 @@ end
 scene.mousereleased = function(x, y, button)
   if not chatMode then
     if button == 2 and showTowerWheel then
+      love.mouse.setPosition(oldX, oldY)
       showTowerWheel = nil
+      tower.letGo()
     end
   end
 end
