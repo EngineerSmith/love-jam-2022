@@ -29,15 +29,15 @@ return function(coordinator)
     lg.push("all")
     local font = assets["fonts.futile.21"]
     lg.setFont(font)
-    local width = lg.getWidth()/10*4
-    local height = font:getHeight()
+    local width = lg.getWidth()/10*4 + 10
+    local height = font:getHeight() + 5
     lg.setColor(.3,.3,.3,.7)
     if chatMode then
       lg.rectangle("fill", 0, lg.getHeight()-height*9, width, height*8)
       lg.setColor(.2,.2,.2,.7)
       lg.rectangle("fill", 0, lg.getHeight()-height, width, height)
       lg.setColor(1,1,1,1)
-      lg.print("> "..text, 0, lg.getHeight()-height)
+      lg.print("> "..text, 7, lg.getHeight()-height)
       local chat = {}
       for i=#coordinator.chat, math.max(#coordinator.chat-8, 1), -1 do
         local _, txt = font:getWrap(coordinator.chat[i], width)
@@ -50,7 +50,7 @@ return function(coordinator)
         end
       end
       for i, text in ipairs(chat) do
-        lg.print(text, 0, lg.getHeight()-height*i-height)
+        lg.print(text, 7, lg.getHeight()-height*i-height)
       end
     elseif #coordinator.chat > 0 then
       local chat = {}
@@ -65,7 +65,7 @@ return function(coordinator)
       lg.rectangle("fill", 0, lg.getHeight()-height*3, width, height*3)
       lg.setColor(1,1,1)
       for i, text in ipairs(chat) do
-        lg.print(text, 0, lg.getHeight()-height*i)
+        lg.print(text,7, lg.getHeight()-height*i)
       end
     end
     lg.pop()
