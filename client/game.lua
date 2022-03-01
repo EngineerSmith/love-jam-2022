@@ -237,6 +237,10 @@ scene.keypressed = function(key, scancode)
       end
     end
   end
+  if chatMode and key == "tab" or key == "escape" then
+    text = ""
+    chatMode = false
+  end
   if chatMode then
     if key == "backspace" then
       local byteoffset = utf8.offset(text, -1)
@@ -246,8 +250,8 @@ scene.keypressed = function(key, scancode)
     elseif key == "return" then
       if text == "disconnect" then
         network.disconnect()
-        -- TODO go back to menu
-        love.event.quit()
+        chat.clear()
+        require("util.sceneManager").changeScene("client.menu", "normal")
       elseif text ~= "" then
         chat.sendChatMessage(text)
         text = ""

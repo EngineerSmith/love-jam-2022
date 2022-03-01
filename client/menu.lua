@@ -15,13 +15,7 @@ lg.setFont(assets["fonts.futile.18"])
 
 local scene = { }
 local disconnect
-
-scene.load = function(disconnectReason)
-  disconnect = disconnectReason
-end
-
-local showSettings = false
-local showGameMenu = false
+local dontConnect = 0
 
 local names = {
   "James",
@@ -41,8 +35,23 @@ local names = {
 }
 
 local lowGraphics = { text = "Low Graphics", checked = settings.client.lowGraphics }
+local fullscreen = { text = "Fullscreen", checked = settings.client.windowfullscreen }
 local playerName = { text = names[love.math.random(1,#names)] }
 local serverAddress = { text = "localhost:20202" }
+
+scene.load = function(disconnectReason)
+  disconnect = disconnectReason
+  if disconnect then
+    if disconnect == "normal" then
+      dontConnect = 2
+      disconnect = nil
+    end
+  end
+end
+
+local showSettings = false
+local showGameMenu = false
+
 -- for scene.draw
 local time = 0
 scene.update = function(dt)
@@ -67,8 +76,13 @@ scene.update = function(dt)
     end
     if showGameMenu and not showSettings then
       if suit:Button("Connect", suit.layout:up()).hit then
-        if #playerName.text <= 12 then
-          require("util.sceneManager").changeScene("client.game", playerName.text, serverAddress.text)
+        if dontConnect == 0 then
+          --dontConnect = false
+          if #playerName.text <= 12 then
+            require("util.sceneManager").changeScene("client.game", playerName.text, serverAddress.text)
+          end
+        else
+          dontConnect = dontConnect - 1
         end
       end
       if #playerName.text > 12 then
@@ -87,6 +101,10 @@ scene.update = function(dt)
     if showSettings and not showGameMenu then
       if suit:Checkbox(lowGraphics, {align='right'}, suit.layout:up()).hit then
         settings.client.lowGraphics = lowGraphics.checked
+      end
+      if suit:Checkbox(fullscreen, {align="right"}, suit.layout:up()).hit then
+        settings.client.windowfullscreen = fullscreen.checked
+        love.window.setFullscreen(settings.client.windowfullscreen)
       end
     end
   end

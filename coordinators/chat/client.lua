@@ -18,6 +18,11 @@ return function(coordinator)
     coordinator.chat.insert(message)
   end
   
+  coordinator.clear = function()
+      print(1)
+      coordinator.chat.clear()
+    end
+  
   network.addHandler(network.enum.chatMessage, coordinator.addChatMessage)
   
   network.addHandler(network.enum.disconnect, function(reason, code)
