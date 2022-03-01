@@ -10,11 +10,6 @@ local player = require("coordinators.player")
 
 local character = require("client.src.character")
 
-local camera = require("libs.stalker-x")()
-camera.scale = 2
-camera:setFollowLerp(0.2)
-camera:setFollowStyle('TOPDOWN')
-
 local lg, lk, lj = love.graphics, love.keyboard, love.joystick
 local sqrt = math.sqrt
 
@@ -22,7 +17,33 @@ local joystick
 
 local scene = { }
 
+local canvas, scale
+local camera
+
+scene.resize = function(w, h)
+  local width, height = 400, 300
+  local scaleW, scaleH = w/width, h/height
+  if scaleW > scaleH then
+    scale = scaleH
+    width = width + (w - width*scale)/scale
+  else
+    scale = scaleW
+    height = height + (h - height*scale)/scale
+  end
+  canvas = {
+    lg.newCanvas(width, height),
+    depthstencil = lg.newCanvas(width, height, { format = "depth24" }),
+  }
+  canvas[1]:setFilter("nearest", "nearest")
+  camera = require("libs.stalker-x")(0, 0, width, height)
+  camera.draw_deadzone = true
+  camera:setFollowLerp(0.2)
+  camera:setFollowStyle('TOPDOWN')
+  print(width, height)
+end
+
 scene.load = function(name, address)
+  scene.resize(lg.getDimensions())
   player.setCharacter(character.new(require("assets.characters.duck1")))
   network.connect(address, { name = name })
   local joysticks = lj.getJoysticks()
@@ -98,7 +119,9 @@ vec4 effect(vec4 color, Image tex, vec2 texture_coords, vec2 screen_coords)
 
 local text = ""
 scene.draw = function()
-  --lg.setCanvas(canvas)
+  lg.push()
+  lg.origin()
+  lg.setCanvas(canvas)
   lg.clear(.1,.1,.1)
   lg.setColor(1,1,1)
   camera:attach()
@@ -112,6 +135,7 @@ scene.draw = function()
   end
   camera:detach()
   camera:draw()
+  lg.setCanvas()
   --[[lg.setCanvas()
   lg.clear(.1,.1,.1)
   lg.setBlendMode("alpha", "premultiplied")
@@ -123,8 +147,13 @@ scene.draw = function()
     lg.setShader()
   end
   lg.setBlendMode("alpha")]]
+  lg.clear(.1,.1,.1)
+  lg.setBlendMode("alpha", "premultiplied")
+  lg.draw(canvas[1], 0,0, 0, scale, scale)
+  lg.setBlendMode("alpha")
   lg.setColor(1,1,1)
   lg.print(text.."\n"..table.concat(chat.chat, "\n"))
+  lg.pop()
 end
 
 scene.threaderror = function(...)
@@ -163,13 +192,6 @@ scene.keypressed = function(key)
       end
     end
   end
-end
-
-scene.resize = function(w, h)
-  camera.screen_x = w/2
-  camera.screen_y = h/2
-  camera.w = w
-  camera.h = h
 end
 
 scene.joystickadded = function(js)
