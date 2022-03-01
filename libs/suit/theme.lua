@@ -43,8 +43,10 @@ end
 -- WIDGET VIEWS
 function theme.Label(text, opt, x,y,w,h)
 	y = y + theme.getVerticalOffsetForAlign(opt.valign, opt.font, h)
-
-	love.graphics.setColor((opt.color and opt.color.normal or {}).fg or theme.color.normal.fg)
+  local c = {bg={theme.color.normal.bg[1]+.1, theme.color.normal.bg[2]+.1, theme.color.normal.bg[3]+.1}}
+  theme.drawBox(x,y-5,w,h, c, opt.cornerRadius)
+  local c = (opt.color and opt.color.normal or {}).fg or theme.color.normal.fg
+	love.graphics.setColor(c[1]-.2, c[2]-.2, c[3]-.2)
 	love.graphics.setFont(opt.font)
 	love.graphics.printf(text, x+2, y, w-4, opt.align or "center")
 end
