@@ -32,4 +32,9 @@ return function(coordinator)
       coordinator.movePlayer(client, 700, 50)
     end)
   
+  network.getCurrency = function(client)
+      client.money = client.money or 0
+      return client.money
+    end
+  
 end

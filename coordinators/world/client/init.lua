@@ -209,6 +209,8 @@ return function(coordinator)
                 position  = player.position,
                 character = character.new(state),
               }
+          elseif player.clientID == network.hash then
+            require("coordinators.player").setMoney(player.money)
           end
         end
       end

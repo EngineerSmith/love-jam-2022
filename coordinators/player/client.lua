@@ -102,4 +102,8 @@ return function(coordinator)
       end
     end
   
+  coordinator.setMoney = function(money)
+      coordinator.money = money
+    end
+  
 end

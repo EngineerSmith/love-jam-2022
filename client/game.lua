@@ -7,6 +7,7 @@ local settings = require("util.settings")
 local chat = require("coordinators.chat")
 local world = require("coordinators.world")
 local player = require("coordinators.player")
+local tower = require("coordinators.towers")
 
 local character = require("client.src.character")
 
@@ -19,6 +20,8 @@ local scene = { }
 
 local canvas, scale
 local camera
+
+local showTowerWheel = nil
 
 scene.resize = function(w, h)
   local width, height = 400, 300
@@ -90,6 +93,28 @@ scene.update = function(dt)
     player.moveTowardsDirection(dirX, dirY, dt)
     
   end
+  if showTowerWheel then
+    local dirX, dirY = love.mouse.getPosition()
+    dirX, dirY = dirX-lg.getWidth()/2, dirY-lg.getHeight()/2
+    
+    if joystick then
+      local rightX = joystick:getGamepadAxis("rightx")
+      local rightY = joystick:getGamepadAxis("righty")
+      local mag = sqrt(rightX*rightX+rightY*rightY)
+      if mag > 0.2 then -- deadzone
+        dirX = dirX + rightX
+        dirY = dirY + rightY
+      end
+    end
+    
+    local mag = 0
+    if dirX ~= 0 and dirY ~= 0 then
+      mag = sqrt(dirX*dirX+dirY*dirY)
+      dirX, dirY = dirX/mag, dirY/mag
+    end
+    
+    tower.mousePosition(dirX, dirY, mag, scale)
+  end
   -- coordinators
   player.update()
   world.update(dt)
@@ -156,6 +181,7 @@ scene.draw = function()
   lg.draw(canvas[1], 0,0, 0, scale, scale)
   lg.pop()
   chat.draw(chatMode, text, time)
+  tower.draw(showTowerWheel, scale)
   lg.pop()
 end
 
@@ -187,7 +213,7 @@ scene.textinput = function(t)
 end
 
 scene.keypressed = function(key, scancode)
-  if not chatMode then
+  if not showTowerWheel and not chatMode then
     for _, chatButton in ipairs(settings.client.controls.chat) do
       if chatButton == scancode then
         chatMode = not chatMode
@@ -226,6 +252,22 @@ scene.joystickremoved = function(js)
     local joysticks = lj.getJoysticks()
     if joysticks[1] then
       joystick = joysticks[1]
+    end
+  end
+end
+
+scene.mousepressed = function(x, y, button)
+  if not chatMode then
+    if button == 2 then
+      showTowerWheel = love.timer.getTime()
+    end
+  end
+end
+
+scene.mousereleased = function(x, y, button)
+  if not chatMode then
+    if button == 2 and showTowerWheel then
+      showTowerWheel = nil
     end
   end
 end

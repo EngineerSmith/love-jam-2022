@@ -31,6 +31,7 @@ return function(coordinator)
               name      = client.name,
               position  = client.position,
               character = client.character,
+              money     = client.money
             })
         end
       end

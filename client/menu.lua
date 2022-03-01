@@ -5,6 +5,8 @@ local suit = require("libs.suit").new()
 local lg = love.graphics
 assets["fonts.futile.24"] = lg.newFont("assets/fonts/FutilePro.ttf", 24)
 assets["fonts.futile.24"]:getFilter("nearest", "nearest")
+assets["fonts.futile.21"] = lg.newFont("assets/fonts/FutilePro.ttf", 21)
+assets["fonts.futile.21"]:getFilter("nearest", "nearest")
 assets["fonts.futile.18"] = lg.newFont("assets/fonts/FutilePro.ttf", 18)
 assets["fonts.futile.18"]:getFilter("nearest", "nearest")
 assets["fonts.futile.12"] = lg.newFont("assets/fonts/FutilePro.ttf", 12)

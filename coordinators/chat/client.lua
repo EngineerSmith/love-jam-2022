@@ -27,7 +27,7 @@ return function(coordinator)
   local lg = love.graphics
   coordinator.draw = function(chatMode, text, time)
     lg.push("all")
-    local font = assets["fonts.futile.24"]
+    local font = assets["fonts.futile.21"]
     lg.setFont(font)
     local width = lg.getWidth()/10*4
     local height = font:getHeight()
