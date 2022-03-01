@@ -15,6 +15,7 @@ end
 return { 
     -- UI
     { "UI/logoES.png", "logo.ES", onLoad = pixelArt },
+    { "UI/leglessduck.png", "ui.main.duck", onLoad = pixelArt },
     
     -- Tiles
     { "tiles/test1.png", "tiles.test1", onLoad = pixelArt },

@@ -36,10 +36,9 @@ scene.resize = function(w, h)
   }
   canvas[1]:setFilter("nearest", "nearest")
   camera = require("libs.stalker-x")(0, 0, width, height)
-  camera.draw_deadzone = true
+  --camera.draw_deadzone = true
   camera:setFollowLerp(0.2)
   camera:setFollowStyle('TOPDOWN')
-  print(width, height)
 end
 
 scene.load = function(name, address)
@@ -189,6 +188,7 @@ scene.keypressed = function(key)
       elseif text ~= "" then
         chat.sendChatMessage(text)
         text = ""
+        chatMode = false
       end
     end
   end

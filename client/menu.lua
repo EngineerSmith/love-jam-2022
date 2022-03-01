@@ -3,7 +3,7 @@ local assets = require("util.assets")
 local suit = require("libs.suit").new()
 
 local lg = love.graphics
-lg.setNewFont(15)
+lg.setNewFont("assets/fonts/FutilePro.ttf", 18)
 
 local scene = { }
 
@@ -71,6 +71,12 @@ scene.draw = function()
     tile:draw(tile.image, x + (shift and tileW/2 or 0), y+(math.sin(x+y+time)*4.5))
   end
   end
+  local w, h = assets["ui.main.duck"]:getDimensions()
+  local x, y = (lg.getWidth()/scale/2), (lg.getHeight()/scale/1.5+h/2)
+  local height = math.sin(x+y+time)*4.5
+  local r = math.cos(x+y+time)*0.2
+  lg.translate(x, y + height)
+  lg.draw(assets["ui.main.duck"], 0, 0, r, 1,1, w/2, h)
   lg.pop()
   suit:draw()
 end
