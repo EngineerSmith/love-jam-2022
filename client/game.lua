@@ -283,9 +283,12 @@ scene.keypressed = function(key, scancode)
       end
     end
   end
-  if chatMode and key == "tab" or key == "escape" then
+  if chatMode and (key == "tab" or key == "escape") then
     text = ""
     chatMode = false
+  end
+  if showReadyUp and key == "escape" then
+    showReadyUp = false
   end
   if chatMode then
     if key == "backspace" then
@@ -295,6 +298,7 @@ scene.keypressed = function(key, scancode)
       end
     elseif key == "return" then
       if text == "disconnect" then
+        text = ""
         network.disconnect()
         chat.clear()
         require("util.sceneManager").changeScene("client.menu", "normal")
