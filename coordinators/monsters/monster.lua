@@ -3,7 +3,7 @@ monster.__index = monster
 
 monster.new = function(characterState)
   return setmetatable({
-    characterState = characterState,
+      characterState = characterState,
     }, monster)
 end
 

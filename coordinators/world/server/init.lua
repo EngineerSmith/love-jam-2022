@@ -112,6 +112,16 @@ return function(coordinator)
       end
     end
   
+  coordinator.getTileAtPixels = function(x, y)
+      local a = x/32
+      local b = y/16
+      local i = math.floor(a + b)
+      local j = math.floor(a - b)
+      if world and world[i] then
+        return world[i][j], i, j
+      end
+    end
+  
   coordinator.notifyTileUpdate = function(i, j)
       local tile = coordinator.getTile(i, j)
       if tile then
