@@ -20,6 +20,7 @@ local defaultSettings = {
           chat     = { "tab", "t"    },
         },
         lowGraphics = false,
+        disableShaking = false,
       },
     server = {
         port = 20202,

@@ -46,6 +46,7 @@ scene.resize = function(w, h)
   --camera.draw_deadzone = true
   camera:setFollowLerp(0.2)
   camera:setFollowStyle('TOPDOWN')
+  world.setCamera(camera)
 end
 
 scene.load = function(name, address)
@@ -69,7 +70,7 @@ scene.update = function(dt)
     rightY = joystick:getGamepadAxis("righty")
     rightMag = sqrt(rightX*rightX+rightY*rightY)
   end
-  if not chatMode and not showReadyUp then
+  if not chatMode and not showReadyUp and not world.boolTriggerEarthquake then
     local dirX, dirY = 0, 0
     -- Keyboard
     if lk.isScancodeDown(unpack(settings.client.controls.forward)) then
@@ -152,8 +153,9 @@ scene.update = function(dt)
   if not world.boolTriggerEarthquake then
     camera:follow(player.position.x, player.position.y-player.position.height)
   else
-    camera.x, camera.y = world.getEarthquakeLocation()
     world.triggerEarthquake(dt)
+    camera:follow(world.getEarthquakeLocation())
+    chatMode = false
   end
 end
 
@@ -270,7 +272,7 @@ scene.textinput = function(t)
 end
 
 scene.keypressed = function(key, scancode)
-  if not showReadyUp and not showTowerWheel and not chatMode then
+  if not showReadyUp and not showTowerWheel and not chatMode and not world.boolTriggerEarthquake then
     for _, chatButton in ipairs(settings.client.controls.chat) do
       if chatButton == scancode then
         chatMode = not chatMode
@@ -302,7 +304,7 @@ scene.keypressed = function(key, scancode)
       end
     end
   end
-  if not showTowerWheel and world.readyUpState and scancode == "space" then
+  if not world.boolTriggerEarthquake and not showTowerWheel and world.readyUpState and scancode == "space" then
     showReadyUp = not showReadyUp
   end
 end
@@ -323,7 +325,7 @@ end
 local tileW, tileH = 32, 16
 local oldX, oldY
 scene.mousepressed = function(x, y, button)
-  if button == 2 and not chatMode and not showReadyUp then
+  if button == 2 and not chatMode and not showReadyUp and not world.boolTriggerEarthquake then
     oldX, oldY = x, y
     love.mouse.setPosition(lg.getWidth()/2, lg.getHeight()/2)
     showTowerWheel = love.timer.getTime()
@@ -338,7 +340,7 @@ scene.mousepressed = function(x, y, button)
 end
 
 scene.mousereleased = function(x, y, button)
-  if not chatMode then
+  if not chatMode and not world.boolTriggerEarthquake and not showReadyUp then
     if button == 2 and showTowerWheel then
       love.mouse.setPosition(oldX, oldY)
       showTowerWheel = nil

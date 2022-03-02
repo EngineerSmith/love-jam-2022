@@ -48,6 +48,7 @@ return function(coordinator)
       -- process world into something that can be used
       earthquake = {}
       local count = 0
+      sea, seaOffset = nil, nil
       world = worldData
       
       -- LAZY CODE TO FIND SMALLEST AND BIGGEST Y
@@ -138,11 +139,20 @@ return function(coordinator)
       end
     end
   
+  local camera
+  coordinator.setCamera = function(_camera)
+      camera = _camera
+    end
+  
   coordinator.setWaveNum = function(waveNum)
       if waveNum ~= "nil" then
         coordinator.waveNum = waveNum
         if earthquake[waveNum] then
           coordinator.boolTriggerEarthquake = true
+          if not settings.client.disableShaking then
+            camera:shake(5, 2, 40)
+            camera.x, camera.y = coordinator.getEarthquakeLocation()
+          end
         end
       end
     end

@@ -43,6 +43,7 @@ local names = {
 
 local lowGraphics = { text = "Low Graphics", checked = settings.client.lowGraphics }
 local fullscreen = { text = "Fullscreen", checked = settings.client.windowfullscreen }
+local disableShaking = { text = "Disable Shaking", checked = settings.client.disableShaking}
 local playerName = { text = names[love.math.random(1,#names)] }
 local serverAddress = { text = "localhost:20202" }
 
@@ -112,6 +113,9 @@ scene.update = function(dt)
       if suit:Checkbox(fullscreen, {align="right"}, suit.layout:up()).hit then
         settings.client.windowfullscreen = fullscreen.checked
         love.window.setFullscreen(settings.client.windowfullscreen)
+      end
+      if suit:Checkbox(disableShaking, {align="right"}, suit.layout:up()).hit then
+        settings.client.disableShaking = disableShaking.checked
       end
     end
   end
