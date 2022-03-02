@@ -39,10 +39,12 @@ return function(coordinator)
   local tileW, tileH = 32, 16
   
   local world
+  local earthquake
   local sea, seaOffset
   
   network.addHandler(network.enum.worldData, function(worldData)
       -- process world into something that can be used
+      earthquake = {}
       world = worldData
       
       -- LAZY CODE TO FIND SMALLEST AND BIGGEST Y
@@ -66,6 +68,12 @@ return function(coordinator)
           end
           if bigx < x then
             bigx = x
+          end
+          if target.earthquake then
+            if not earthquake[target.earthquake] then
+              earthquake[target.earthquake] = {}
+            end
+            table.insert(earthquake[target.earthquake], target)
           end
         end
       end
@@ -94,6 +102,22 @@ return function(coordinator)
         sea = lg.newImage(canvas:newImageData())
       end
     end)
+  
+  local speed = 10
+  coordinator.triggerEarthquake = function(level, dt)
+      if earthquake[level] then
+        local count = 0
+        for _, tile in ipairs(earthquake[level]) do
+          if tile.height > -2 then
+            tile.height = (tile.height or 0) - speed*dt
+          else
+            count = count + 1
+          end
+        end
+        return count == #earthquake[level]
+      end
+      return true
+    end
   
   network.addHandler(network.enum.tileUpdate, function(i, j, tile)
       if world then
@@ -311,7 +335,7 @@ return function(coordinator)
                     state = state + tower.states.left
                   end
                 end
-                local image = tower:getTexture(state)
+                local image = tower:getTexture(state, target.health/target.maxhealth)
                 if type(image) == "table" then
                   local w, h = image:getDimensions()
                   shader:send("scale", h*.5)
@@ -359,7 +383,7 @@ return function(coordinator)
         lg.setDepthMode("always", false)
         local textW = lg.getFont():getWidth(player.name)
         lg.setColor(.7,.7,.7)
-        lg.print(player.name, w/2-textW/2, -10)
+        lg.print(player.name, math.floor(w/2-textW/2), -10)
         lg.pop()
         lg.pop()
       end

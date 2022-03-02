@@ -68,6 +68,7 @@ return {
     { "objects/towers/test.png", "objects.towers.test", onLoad = pixelArt },
     { "objects/towers/green.png", "objects.towers.green", onLoad = pixelArt },
     { "objects/towers/red.png", "objects.towers.red", onLoad = pixelArt },
+    { "objects/towers/purple.png", "objects.towers.purple", onLoad = pixelArt },
     { "objects/towers/greencharging.png", "objects.towers.greencharging", onLoad = makePixelAnimation, 33, 64, 128, 0.04 },
     { "objects/towers/redcharging.png", "objects.towers.redcharging", onLoad = makePixelAnimation, 27, 64, 128, 0.04 },
     { "objects/towers/purplecharging.png", "objects.towers.purplecharging", onLoad = makePixelAnimation, 42, 64, 128, 0.04 },

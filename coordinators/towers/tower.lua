@@ -35,19 +35,41 @@ tower.setStateTexture = function(self, state, texture)
   self.textures[state] = texture
 end
 
+local sortDamage = function(a, b)
+  return a.state > b.state
+end
+
+tower.setDamageStateTexture = function(self, state, texture)
+  if not self.damageStates then
+    self.damageStates = {}
+  end
+  table.insert(self.damageStates, {texture = texture, state = state})
+  table.sort(self.damageStates, sortDamage)
+end
+
 tower.hasState = function(self)
   return self.textures ~= nil
 end
 
-tower.getTexture = function(self, state)
+tower.getTexture = function(self, state, damagePercentage)
   if not state or not self.textures then
     return self.wheel
   end
   if state < 0 or state > 15 then
     error("Incorrect state for tower: "..state)
   end
-  --print(state, self.textures[state])
+  
+  if self.damageStates and damagePercentage then
+    for _, state in ipairs(self.damageStates) do
+      if state.state > damagePercentage then
+        return state.texture
+      end
+    end
+  end
+  
   return self.textures[state] or self.textures[tower.states.rightleft] or self.wheel
+  
+  
 end
 
 return tower

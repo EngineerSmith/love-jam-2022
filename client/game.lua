@@ -22,6 +22,7 @@ local canvas, scale
 local camera
 
 local showTowerWheel = nil
+local showReadyUp = false
 
 scene.resize = function(w, h)
   local width, height = 400, 300
@@ -66,7 +67,7 @@ scene.update = function(dt)
     rightY = joystick:getGamepadAxis("righty")
     rightMag = sqrt(rightX*rightX+rightY*rightY)
   end
-  if not chatMode then
+  if not chatMode and not showReadyUp then
     local dirX, dirY = 0, 0
     -- Keyboard
     if lk.isScancodeDown(unpack(settings.client.controls.forward)) then
@@ -209,6 +210,16 @@ scene.draw = function()
   chat.draw(chatMode, text, time)
   tower.draw(showTowerWheel, scale)
   player.drawUI(scale, tower.cost)
+  if showReadyUp then
+    lg.push("all")
+    lg.setColor(.7,.7,.7,.3)
+    lg.rectangle("fill",0,0,lg.getDimensions())
+    lg.setColor(1,1,1,1)
+    lg.setFont(assets["fonts.futile.28"])
+    local readyStr = "Ready up?"
+    lg.print(readyStr, math.floor(lg.getWidth()/2-lg.getFont():getWidth(readyStr)/2), math.floor(lg.getHeight()/2)-lg.getFont():getHeight())
+    lg.pop()
+  end
   lg.pop()
 end
 
@@ -240,7 +251,7 @@ scene.textinput = function(t)
 end
 
 scene.keypressed = function(key, scancode)
-  if not showTowerWheel and not chatMode then
+  if not showReadyUp and not showTowerWheel and not chatMode then
     for _, chatButton in ipairs(settings.client.controls.chat) do
       if chatButton == scancode then
         chatMode = not chatMode
@@ -272,6 +283,9 @@ scene.keypressed = function(key, scancode)
       end
     end
   end
+  if not showTowerWheel and world.readyUpState and scancode == "space" then
+    showReadyUp = not showReadyUp
+  end
 end
 
 scene.joystickadded = function(js)
@@ -290,7 +304,7 @@ end
 local tileW, tileH = 32, 16
 local oldX, oldY
 scene.mousepressed = function(x, y, button)
-  if button == 2 and not chatMode then
+  if button == 2 and not chatMode and not showReadyUp then
     oldX, oldY = x, y
     love.mouse.setPosition(lg.getWidth()/2, lg.getHeight()/2)
     showTowerWheel = love.timer.getTime()

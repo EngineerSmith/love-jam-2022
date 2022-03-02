@@ -15,6 +15,7 @@ return function(coordinator)
           tile.tower = towerID
           tile.owner = client.hash
           tile.health = tower.health
+          tile.maxhealth = tower.health
           tile.notWalkable = true
           world.notifyTileUpdate(i, j)
         end

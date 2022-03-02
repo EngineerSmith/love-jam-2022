@@ -9,13 +9,57 @@ local insert = table.insert
 return function(coordinator)
   
   local world
+  local earthquake = {}
+  coordinator.readyUpState = true
   
   coordinator.generateWorld = function()
       world = worldGen()
+      local TOWERS = require("coordinators.towers")
+      local MONSTERS = require("coordinators.monsters")
+      for i=0, #world do
+        if world[i] then
+      for j=#world[i], 0, -1 do
+        local target = world[i][j]
+        if target then
+          if target.tower then
+            local t = TOWERS.towers[target.tower]
+            if not t then
+              print("CANNOT FIND TOWER ID: "..tostring(target.tower).."(world.server.init.L24)")
+            else
+              target.health = t.health
+              target.maxhealth = t.health
+              target.owner = "server"
+              target.notWalkable = true
+            end
+          end
+          if target.earthquake then
+            MONSTERS.addSpawnTile(target.earthquake, i, j)
+            if not earthquake[target.earthquake] then
+              earthquake[target.earthquake] = {}
+            end
+            insert(earthquake[target.earthquake], target)
+          end
+        end
+      end
+      end
+      end
     end
+  
+  local speed = 10
+  coordinator.triggerEarthquake = function(level)
+      if earthquake[level] then
+        for _, tile in ipairs(earthquake[level]) do
+          if tile.height > -2 then
+            tile.height = -2
+          end
+        end
+      end
+    end
+  
   
   network.addHandler(network.enum.confirmConnection, function(client)
       network.send(client, network.enum.worldData, world)
+      network.send(client, network.enum.readyUpState, coordinator.readyUpState)
     end)
   
   network.addHandler(network.enum.disconnect, function(client)

@@ -8,6 +8,8 @@ local logo = lg.newImage("assets/UI/logoES.png")
 logo:setFilter("nearest", "nearest")
 
 local assets = require("util.assets")
+assets["fonts.futile.28"] = lg.newFont("assets/fonts/FutilePro.ttf", 28)
+assets["fonts.futile.28"]:getFilter("nearest", "nearest")
 assets["fonts.futile.24"] = lg.newFont("assets/fonts/FutilePro.ttf", 24)
 assets["fonts.futile.24"]:getFilter("nearest", "nearest")
 assets["fonts.futile.21"] = lg.newFont("assets/fonts/FutilePro.ttf", 21)

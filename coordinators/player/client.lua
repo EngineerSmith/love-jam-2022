@@ -103,6 +103,10 @@ return function(coordinator)
       end
     end)
   
+  network.addHandler(network.enum.readyUpState, function(readyUpState)
+      world.readyUpState = readyUpState
+    end)
+  
   coordinator.moveTowardsDirection = function(dirX, dirY, dt)
       local moving = false
       local newX, newY = p.x, p.y

@@ -29,12 +29,26 @@ return function(coordinator)
     end
   
   network.addHandler(network.enum.confirmConnection, function(client)
-      coordinator.movePlayer(client, 700, 50)
+      coordinator.movePlayer(client, 1200, -20)
     end)
   
-  network.getCurrency = function(client)
+  coordinator.getCurrency = function(client)
       client.money = client.money or 0
       return client.money
     end
   
+  network.addHandler(network.enum.readyUpState, function(client, ready)
+      client.ready = ready or false
+    end)
+  
+  coordinator.areAllPlayersReady = function()
+      for clientID, client in pairs(network.clients) do
+        if client.hash and client.position then
+          if not client.ready then
+            return false
+          end
+        end
+      end
+      return true
+    end
 end

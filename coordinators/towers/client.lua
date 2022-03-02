@@ -50,20 +50,22 @@ return function(coordinator)
           lg.draw(wheels[direction], x, y, 0, 2*windowScale*scale, 2*windowScale*scale)
         end
         for direction, tower in pairs(towers) do
-          local width, height = tower.wheel:getDimensions()
-          local _y, _x = lg.getHeight()/2 -height*scale*windowScale*.33, lg.getWidth()/2 - width*scale*windowScale*.33
-          local dir = direction:sub(1,1)
-          if dir == "N" then
-            _y = _y - (width*2*windowScale*scale)/2
-          else
-            _y = _y + (width*2*windowScale*scale)/2
+          if (direction == "NE" or direction == "NW" or direction == "SW" or direction == "SE") and tower.wheel then
+            local width, height = tower.wheel:getDimensions()
+            local _y, _x = lg.getHeight()/2 -height*scale*windowScale*.33, lg.getWidth()/2 - width*scale*windowScale*.33
+            local dir = direction:sub(1,1)
+            if dir == "N" then
+              _y = _y - (width*2*windowScale*scale)/2
+            else
+              _y = _y + (width*2*windowScale*scale)/2
+            end
+            if direction:sub(2,2) == (dir == "N" and "W" or "E") then
+              _x = _x - (height*2*windowScale*scale)/2 + width*scale*windowScale
+            else
+              _x = _x + (height*2*windowScale*scale)/2 - width*scale*windowScale
+            end
+            lg.draw(tower.wheel, _x, _y, 0, windowScale*scale*.75, windowScale*scale*.75)
           end
-          if direction:sub(2,2) == (dir == "N" and "W" or "E") then
-            _x = _x - (height*2*windowScale*scale)/2 + width*scale*windowScale
-          else
-            _x = _x + (height*2*windowScale*scale)/2 - width*scale*windowScale
-          end
-          lg.draw(tower.wheel, _x, _y, 0, windowScale*scale*.75, windowScale*scale*.75)
         end
       end
     end

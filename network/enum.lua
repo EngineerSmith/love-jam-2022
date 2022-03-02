@@ -19,6 +19,7 @@ local enum = {
         foreignDisconnect = 'g',
         placeTower        = 't',
         tileUpdate        = 'u',
+        readyUpState      = 'e',
       },
   }
   
