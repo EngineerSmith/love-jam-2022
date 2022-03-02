@@ -60,8 +60,9 @@ love.run = function()
     return function()
       local quit = processEvents()
       if quit then return quit end
-      love.update()
-      networkDelt = networkDelt + lt.step()
+      local dt = lt.step()
+      love.update(dt)
+      networkDelt = networkDelt + dt
       if networkDelt > 1/10 then
         love.updateNetwork()
         networkDelt = 0

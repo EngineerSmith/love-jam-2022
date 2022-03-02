@@ -33,7 +33,7 @@ return function(coordinator)
         if heightTween then
           heightTween:stop()
         end
-        heightTween = flux.to(p, 0.1, {height=height})
+        heightTween = flux.to(p, 1/10, {height=height})
       end
     end
   
@@ -104,7 +104,7 @@ return function(coordinator)
         coordinator.setPosition(x, y)
       else
         tweenPositionTable.x, tweenPositionTable.y = x, y
-        tween = flux.to(coordinator.position, 0.2, tweenPositionTable)
+        tween = flux.to(coordinator.position, 1/5, tweenPositionTable)
       end
     end)
   

@@ -5,6 +5,7 @@ local chat = require("coordinators.chat")
 local world = require("coordinators.world")
 local player = require("coordinators.player")
 local tower = require("coordinators.towers")
+local monsters = require("coordinators.monsters")
 
 local scene = { }
 
@@ -13,8 +14,13 @@ scene.load = function(port)
   network.start(port)
 end
 
+scene.update = function(dt)
+  monsters.update(dt)
+end
+
 scene.updateNetwork = function()
   world.updateNetwork()
+  monsters.updateNetwork()
 end
 
 scene.threaderror = function(...)

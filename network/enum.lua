@@ -20,6 +20,7 @@ local enum = {
         placeTower        = 't',
         tileUpdate        = 'u',
         readyUpState      = 'e',
+        monsters          = 'o',
       },
   }
   

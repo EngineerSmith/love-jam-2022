@@ -2,14 +2,23 @@ local character = {}
 character.__index = character
 
 local lg = love.graphics
-
-local cdepthShader = lg.newShader("assets/shaders/characterDepth.glsl")
-
+local cdepthShader
+if lg then
+  cdepthShader = lg.newShader("assets/shaders/characterDepth.glsl")
+end
 character.new = function(characterState)
   return setmetatable({
       characterState = characterState,
       facing = "FR",
       state = "standing",
+    }, character)
+end
+
+character.clone = function(self)
+  return setmetatable({
+      characterState = self.characterState,
+      facing         = self.facing,
+      state          = self.state,
     }, character)
 end
 
