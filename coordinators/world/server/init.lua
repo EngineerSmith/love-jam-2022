@@ -12,6 +12,8 @@ return function(coordinator)
   local waveNum = nil
   local earthquake = {}
   coordinator.readyUpState = true
+  local nests = {}
+  local targets = {}
   
   coordinator.generateWorld = function()
       world = worldGen()
@@ -31,6 +33,8 @@ return function(coordinator)
               target.maxhealth = t.health
               target.owner = "server"
               target.notWalkable = true
+              table.insert(nests, {i, j})
+              target.nestPos = #nests
             end
           end
           if target.earthquake then
@@ -43,6 +47,23 @@ return function(coordinator)
         end
       end
       end
+      end
+    end
+  
+  coordinator.addTarget = function(i, j)
+      table.insert(targets, {i, j})
+      return #targets
+    end
+  
+  coordinator.getMonsterPath = function(fromI, fromJ)
+      local target = nests[love.math.random(1,#nests)]
+      local current = {fromI, fromJ} -- calculate dist to goal
+      local set = {current}
+      while #set do
+        -- pop from list
+        -- for each neighbour check if goal + calculate dist
+          -- if goal, make path to goal
+          -- sort insert into set
       end
     end
   

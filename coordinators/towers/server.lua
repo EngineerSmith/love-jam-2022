@@ -17,6 +17,7 @@ return function(coordinator)
           tile.health = tower.health
           tile.maxhealth = tower.health
           tile.notWalkable = true
+          tile.targetPos = world.addTarget(i, j)
           world.notifyTileUpdate(i, j)
         end
       end
