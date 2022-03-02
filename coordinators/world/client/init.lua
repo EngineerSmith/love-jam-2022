@@ -290,11 +290,33 @@ return function(coordinator)
             else
               local tower = towers[target.tower]
               if tower then
-                local image = tower.texture
+                local state = nil
+                local _h
+                if tower:hasState() then
+                  state = 0
+                  local up = world[i] and world[i+1][j]
+                  local right = world[i] and world[i][j+1]
+                  local down = world[i] and world[i-1][j]
+                  local left = world[i] and world[i][j-1]
+                  if up and up.tower == target.tower then
+                    state = state + tower.states.up
+                  end
+                  if right and right.tower == target.tower then
+                    state = state + tower.states.right
+                  end
+                  if down and down.tower == target.tower then
+                    state = state + tower.states.down
+                  end
+                  if left and left.tower == target.tower then
+                    state = state + tower.states.left
+                  end
+                end
+                local image = tower:getTexture(state)
                 if type(image) == "table" then
                   local w, h = image:getDimensions()
                   shader:send("scale", h*.5)
                   image:draw(image.image, x-tileW/2, y-height-h+tileH)
+                  _h = h
                 else
                   local w, h = image:getDimensions()
                   if w > tileW then
@@ -304,7 +326,15 @@ return function(coordinator)
                     shader:send("scale", tileH*2)
                   end
                   lg.draw(image, x, y-height-h+tileH)
+                  _h = h
                 end
+                lg.push("all")
+                lg.setShader()
+                lg.setDepthMode("always", false)
+                if state and _h then
+                  lg.print(state, x, y-height-_h+tileH)
+                end
+                lg.pop()
                 shader:send("scale", tileH*2)
               end
             end

@@ -47,7 +47,7 @@ end
 
 scene.load = function(name, address)
   scene.resize(lg.getDimensions())
-  player.setCharacter(character.new(require("assets.monsters.duck1")))
+  player.setCharacter(character.new(require("assets.characters.duck1")))
   network.connect(address, { name = name })
   local joysticks = lj.getJoysticks()
   if joysticks[1] then
