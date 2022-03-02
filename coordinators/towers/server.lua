@@ -8,7 +8,7 @@ return function(coordinator)
   
   network.addHandler(network.enum.placeTower, function(client, i, j, towerID)
       local tile = world.getTile(i, j)
-      if tile and tile.tower == nil then
+      if tile and tile.tower == nil and tile.earthquake == nil then
         local tower = towers[towerID]
         for _, client in pairs(network.clients) do
           if client.position then
