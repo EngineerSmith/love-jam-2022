@@ -24,6 +24,7 @@ return function(coordinator)
       for j=#world[i], 0, -1 do
         local target = world[i][j]
         if target then
+          target.i, target.j = i, j
           if target.tower then
             local t = TOWERS.towers[target.tower]
             if not t then
@@ -33,7 +34,7 @@ return function(coordinator)
               target.maxhealth = t.health
               target.owner = "server"
               target.notWalkable = true
-              table.insert(nests, {i, j})
+              table.insert(nests, target)
               target.nestPos = #nests
             end
           end
@@ -50,122 +51,223 @@ return function(coordinator)
       end
     end
   
-  coordinator.addTarget = function(i, j)
-      table.insert(targets, {i, j})
+  coordinator.addTarget = function(tile)
+      table.insert(targets, tile)
       return #targets
     end
   
-  local calculateDist = function(ax, ay, bx, by)
-      local x = bx - ax
-      local y = by - by
-      return x*x+y*y
+  local calculateDist = function(a, b)
+    local i = b.i - a.i
+    local j = b.j - a.j
+    return i*i+j*j
+  end
+
+local popBestNode = function(set, score)
+  local best, node = inf, nil
+  for k, v in pairs(set) do
+    local s = score[k]
+    if s < best then
+      best, node = s, k
     end
-  
-  local sortInsert = function(array, dist, tbl)
-      for index, tar in ipairs(array) do
-        if tar[3]+tar[4] > dist+realDist then
-          table.insert(array, index, tbl)
-          return
-        end
-      end
-      table.insert(array, tbl) -- add to end
-    end
-  
-  local sqrtOne = math.sqrt(1) -- diagonal distance 
-  coordinator.getMonsterPath = function(fromI, fromJ)
-      local target = nests[love.math.random(1,#nests)]
-      local tI, tJ = target[1], target[2]
-      local current = {fromI, fromJ} -- calculate dist to goal
-      local di, dj = tI - fromI, tJ - fromJ
-      local unexplored = {{fromI, fromJ, di*di+dj*dj, 0}}
-      while #unexplored ~= 0 do
-        local current = unexplored[1]
-        table.remove(unexplored, 1)
-        local ci, cj = current[1], current[2]
-        local currentDist = current[4]
-        
-        if ci+1 == tI and cj == tJ then
-          error("TODO found")
-        end
-        local a = world[ci+1] and world[ci+1][cj]
-        if a and not a.notWalkable then
-          local dist = calculateDist(tI, tJ, ci+1, cj)
-          sortInsert(unexplored, dist+currentDist+1, {ci+1, cj, dist, currentDist+1})
-        else
-          a = nil
-        end
-        if ci-1 == tI and cj == tJ then
-          error("TODO found")
-        end
-        local b = world[ci-1] and world[ci-1][cj]
-        if b and not b.notWalkable then
-          local dist = calculateDist(tI, tJ, ci-1, cj)
-          sortInsert(unexplored, dist+currentDist+1, {ci-1, cj, dist, currentDist+1})
-        else
-          b = nil
-        end
-        if ci == tI and cj == tJ+1 then
-          error("TODO found")
-        end
-        local c = world[ci] and world[ci][cj+1]
-        if c and not c.notWalkable then
-          local dist = calculateDist(tI, tJ, ci, cj+1)
-          sortInsert(unexplored, dist+currentDist+1, {ci, cj+1, dist, currentDist+1})
-        else
-          c = nil
-        end
-        if ci == tI and cj == tJ-1 then
-          error("TODO found")
-        end
-        local d = world[ci] and world[ci][cj-1]
-        if d and not d.notWalkable then
-          local dist = calculateDist(tI, tJ, ci, cj-1)
-          sortInsert(unexplored, dist+currentDist+1, {ci, cj-1, dist, currentDist+1})
-        else
-          c = nil
-        end
-        if a and c then
-          if ci+1 == tI and cj+1 == tJ then
-            error("TODO found")
-          end
-          local z = world[ci+1] and world[ci+1][cj+1]
-          if z and not z.notWalkable then
-            local dist = calculateDist(tI, tJ, ci+1, cj+1)
-            sortInsert(unexplored, dist+currentDist+sqrtOne, {ci+1, cj+1, dist, currentDist+sqrtOne})
-          end
-        end
-        if a and d then
-          if ci+1 == tI and cj-1 == tJ then
-            error("TODO found")
-          end
-          local z = world[ci+1] and world[ci+1][cj-1]
-          if z and not z.notWalkable then
-            local dist = calculateDist(tI, tJ, ci+1, cj-1)
-            sortInsert(unexplored, dist+currentDist+sqrtOne, {ci+1, cj-1, dist, currentDist+sqrtOne})
-          end
-        end
-        if b and c then
-          if ci-1 == tI and cj+1 == tJ then
-            error("TODO found")
-          end
-          local z = world[ci-1] and world[ci-1][cj+1]
-          if z and not z.notWalkable then
-            local dist = calculateDist(tI, tJ, ci-1, cj+1)
-            sortInsert(unexplored, dist+currentDist+sqrtOne, {ci-1, cj+1, dist, currentDist+sqrtOne})
-          end
-        end
-        if b and d then
-          if ci-1 == tI and cj-1 == tJ then
-            error("TODO found")
-          end
-          local z = world[ci-1] and world[ci-1][cj-1]
-          if z and not z.notWalkable then
-            local dist = calculateDist(tI, tJ, ci-1, cj-1)
-            sortInsert(unexplored, dist+currentDist+sqrtOne, {ci-1, cj-1, dist, currentDist+sqrtOne})
-          end
-        end
+  end
+  if not node then return end
+  set[node] = nil
+  return node
+end
+
+local getNode = function(i, j)
+  return world[i] and world[i][j]
+end
+
+local sO = math.sqrt(1)
+local neighboursOffset = {
+  {-1, 0, 1}, { 1, 0, 1},
+  { 0,-1, 1}, { 0,-1, 1},
+  {-1, 1,sO}, { 1, 1,sO},
+  {-1,-1,sO}, {-1,-1,sO},
+}
+local towerCost = 4.5
+local getNeighbours = function(node)
+  local nodes, costs, i = {}, {}, 1
+  local a = getNode(node.i-1, node.j)
+  if a then
+    local extraCost = 0
+    if a.notWalkable then
+      if a.tower then
+        extraCost = towerCost
+      else
+        a = nil
+        goto continuea
       end
     end
+    nodes[i] = a
+    costs[i] = 1 + extraCost
+    i = i +1
+  end
+  ::continuea::
+  local b = getNode(node.i+1, node.j)
+  if b then
+    local extraCost = 0
+    if b.notWalkable then
+      if b.tower then
+        extraCost = towerCost
+      else
+        b = nil
+        goto continueb
+      end
+    end
+    nodes[i] = b
+    costs[i] = 1 + extraCost
+    i = i +1
+  end
+  ::continueb::
+  local c = getNode(node.i, node.j+1)
+  if c then
+    local extraCost = 0
+    if c.notWalkable then
+      if c.tower then
+        extraCost = towerCost
+      else
+        c = nil
+        goto continuec
+      end
+    end
+    nodes[i] = c
+    costs[i] = 1 + extraCost
+    i = i +1
+  end
+  ::continuec::
+  local d = getNode(node.i, node.j-1)
+  if d then
+    local extraCost = 0
+    if d.notWalkable then
+      if d.tower then
+        extraCost = towerCost
+      else
+        d = nil
+        goto continued
+      end
+    end
+    nodes[i] = d
+    costs[i] = 1 + extraCost
+    i = i +1
+  end
+  ::continued::
+  if a and c then
+    local z = getNode(node.i-1,node.j+1)
+    if z then
+      local extraCost = 0
+      if z.notWalkable then
+        if z.tower then
+          extraCost = towerCost
+        else
+          goto continuee
+        end
+      end
+      nodes[i] = z
+      costs[i] = sO + extraCost
+      i = i + 1
+    end
+  end
+  ::continuee::
+  if a and d then
+    local z = getNode(node.i-1,node.j-1)
+    if z then
+      local extraCost = 0
+      if z.notWalkable then
+        if z.tower then
+          extraCost = towerCost
+        else
+          goto continuef
+        end
+      end
+      nodes[i] = z
+      costs[i] = sO + extraCost
+      i = i + 1
+    end
+  end
+  ::continuef::
+  if b and c then
+    local z = getNode(node.i+1,node.j+1)
+    if z then
+      local extraCost = 0
+      if z.notWalkable then
+        if z.tower then
+          extraCost = towerCost
+        else
+          goto continueg
+        end
+      end
+      nodes[i] = z
+      costs[i] = sO + extraCost
+      i = i + 1
+    end
+  end
+  ::continueg::
+  if b and d then
+    local z = getNode(node.i+1,node.j-1)
+    if z then
+      local extraCost = 0
+      if z.notWalkable then
+        if z.tower then
+          extraCost = towerCost
+        else
+          goto continueh
+        end
+      end
+      nodes[i] = z
+      costs[i] = sO + extraCost
+      i = i + 1
+    end
+  end
+  ::continueh::
+  return nodes, costs
+end
+
+local unwindPath
+unwindPath = function(flat, map, current)
+  if map[current] then
+    table.insert(flat, 1, map[current])
+    return unwindPath(flat, map, map[current])
+  else
+    return flat
+  end
+end
+
+coordinator.getMonsterPath = function(from)
+    local goal = nests[love.math.random(1,#nests)]
+    
+    local start = {fromI, fromJ}
+    local openset = {[start] = true}
+    local closeset = {}
+    local cameFrom = {}
+    local gscore, hscore, fscore = {}, {}, {}
+    gscore[start] = 0
+    hscore[start] = calculateDist(goal, start)
+    fscore[start] = hscore[start]
+    while next(openset) do
+      local current = popBestNode(openset, fscore)
+      openset[current] = nil
+      if current == goal then
+        local path = unwindPath({}, cameFrom, goal)
+        table.insert(path, goal)
+        return path
+      end
+      closeset[current] = true
+      local neighbours, costs = getNeighbours(current)
+      for _, neighbour in ipairs(neighbours) do
+        local tentativeGscore = gscore[current] + costs[_]
+        if not openset[neighbour] or tentativeGscore < gscore[neighbour] then
+          cameFrom[neighbour] = current
+          gscore[neighbour] = tentativeGscore
+          hscore[neighbour] = hscore[neighbour] or calculateDist(goal, neighbour)
+          fscore[neighbour] = tentativeGscore + hscore[neighbour]
+          openset[neighbour] = true
+        end
+      end
+    end
+    return nil
+  end
   
   local speed = 10
   coordinator.triggerEarthquake = function(level)
