@@ -55,15 +55,115 @@ return function(coordinator)
       return #targets
     end
   
+  local calculateDist = function(ax, ay, bx, by)
+      local x = bx - ax
+      local y = by - by
+      return x*x+y*y
+    end
+  
+  local sortInsert = function(array, dist, tbl)
+      for index, tar in ipairs(array) do
+        if tar[3]+tar[4] > dist+realDist then
+          table.insert(array, index, tbl)
+          return
+        end
+      end
+      table.insert(array, tbl) -- add to end
+    end
+  
+  local sqrtOne = math.sqrt(1) -- diagonal distance 
   coordinator.getMonsterPath = function(fromI, fromJ)
       local target = nests[love.math.random(1,#nests)]
+      local tI, tJ = target[1], target[2]
       local current = {fromI, fromJ} -- calculate dist to goal
-      local set = {current}
-      while #set do
-        -- pop from list
-        -- for each neighbour check if goal + calculate dist
-          -- if goal, make path to goal
-          -- sort insert into set
+      local di, dj = tI - fromI, tJ - fromJ
+      local unexplored = {{fromI, fromJ, di*di+dj*dj, 0}}
+      while #unexplored ~= 0 do
+        local current = unexplored[1]
+        table.remove(unexplored, 1)
+        local ci, cj = current[1], current[2]
+        local currentDist = current[4]
+        
+        if ci+1 == tI and cj == tJ then
+          error("TODO found")
+        end
+        local a = world[ci+1] and world[ci+1][cj]
+        if a and not a.notWalkable then
+          local dist = calculateDist(tI, tJ, ci+1, cj)
+          sortInsert(unexplored, dist+currentDist+1, {ci+1, cj, dist, currentDist+1})
+        else
+          a = nil
+        end
+        if ci-1 == tI and cj == tJ then
+          error("TODO found")
+        end
+        local b = world[ci-1] and world[ci-1][cj]
+        if b and not b.notWalkable then
+          local dist = calculateDist(tI, tJ, ci-1, cj)
+          sortInsert(unexplored, dist+currentDist+1, {ci-1, cj, dist, currentDist+1})
+        else
+          b = nil
+        end
+        if ci == tI and cj == tJ+1 then
+          error("TODO found")
+        end
+        local c = world[ci] and world[ci][cj+1]
+        if c and not c.notWalkable then
+          local dist = calculateDist(tI, tJ, ci, cj+1)
+          sortInsert(unexplored, dist+currentDist+1, {ci, cj+1, dist, currentDist+1})
+        else
+          c = nil
+        end
+        if ci == tI and cj == tJ-1 then
+          error("TODO found")
+        end
+        local d = world[ci] and world[ci][cj-1]
+        if d and not d.notWalkable then
+          local dist = calculateDist(tI, tJ, ci, cj-1)
+          sortInsert(unexplored, dist+currentDist+1, {ci, cj-1, dist, currentDist+1})
+        else
+          c = nil
+        end
+        if a and c then
+          if ci+1 == tI and cj+1 == tJ then
+            error("TODO found")
+          end
+          local z = world[ci+1] and world[ci+1][cj+1]
+          if z and not z.notWalkable then
+            local dist = calculateDist(tI, tJ, ci+1, cj+1)
+            sortInsert(unexplored, dist+currentDist+sqrtOne, {ci+1, cj+1, dist, currentDist+sqrtOne})
+          end
+        end
+        if a and d then
+          if ci+1 == tI and cj-1 == tJ then
+            error("TODO found")
+          end
+          local z = world[ci+1] and world[ci+1][cj-1]
+          if z and not z.notWalkable then
+            local dist = calculateDist(tI, tJ, ci+1, cj-1)
+            sortInsert(unexplored, dist+currentDist+sqrtOne, {ci+1, cj-1, dist, currentDist+sqrtOne})
+          end
+        end
+        if b and c then
+          if ci-1 == tI and cj+1 == tJ then
+            error("TODO found")
+          end
+          local z = world[ci-1] and world[ci-1][cj+1]
+          if z and not z.notWalkable then
+            local dist = calculateDist(tI, tJ, ci-1, cj+1)
+            sortInsert(unexplored, dist+currentDist+sqrtOne, {ci-1, cj+1, dist, currentDist+sqrtOne})
+          end
+        end
+        if b and d then
+          if ci-1 == tI and cj-1 == tJ then
+            error("TODO found")
+          end
+          local z = world[ci-1] and world[ci-1][cj-1]
+          if z and not z.notWalkable then
+            local dist = calculateDist(tI, tJ, ci-1, cj-1)
+            sortInsert(unexplored, dist+currentDist+sqrtOne, {ci-1, cj-1, dist, currentDist+sqrtOne})
+          end
+        end
       end
     end
   
