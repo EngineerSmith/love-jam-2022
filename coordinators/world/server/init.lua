@@ -9,6 +9,7 @@ local insert = table.insert
 return function(coordinator)
   
   local world
+  local waveNum = nil
   local earthquake = {}
   coordinator.readyUpState = true
   
@@ -59,7 +60,7 @@ return function(coordinator)
   
   network.addHandler(network.enum.confirmConnection, function(client)
       network.send(client, network.enum.worldData, world)
-      network.send(client, network.enum.readyUpState, coordinator.readyUpState)
+      network.send(client, network.enum.readyUpState, coordinator.readyUpState, waveNum or "nil")
     end)
   
   network.addHandler(network.enum.disconnect, function(client)
@@ -94,6 +95,12 @@ return function(coordinator)
       if tile then
         network.sendAll(network.enum.tileUpdate, i, j, tile)
       end
+    end
+  
+  coordinator.itsGoTime = function()
+      waveNum = (waveNum or -1) + 1
+      network.sendAll(network.enum.readyUpState, true, waveNum)
+      --coordinator.readyUpState = false
     end
   
 end

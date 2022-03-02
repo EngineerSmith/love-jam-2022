@@ -103,9 +103,16 @@ return function(coordinator)
       end
     end)
   
-  network.addHandler(network.enum.readyUpState, function(readyUpState)
+  network.addHandler(network.enum.readyUpState, function(readyUpState, waveNum)
       world.readyUpState = readyUpState
+      world.setWaveNum(waveNum)
+      coordinator.ready = false
     end)
+  
+  coordinator.setReadyState = function(ready)
+      coordinator.ready = ready or false
+      network.send(network.enum.readyUpState, ready or false)
+    end
   
   coordinator.moveTowardsDirection = function(dirX, dirY, dt)
       local moving = false

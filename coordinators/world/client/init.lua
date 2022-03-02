@@ -41,10 +41,13 @@ return function(coordinator)
   local world
   local earthquake
   local sea, seaOffset
+  coordinator.waveNum = 0
+  local locationX, locationY = 0,0
   
   network.addHandler(network.enum.worldData, function(worldData)
       -- process world into something that can be used
       earthquake = {}
+      local count = 0
       world = worldData
       
       -- LAZY CODE TO FIND SMALLEST AND BIGGEST Y
@@ -74,11 +77,18 @@ return function(coordinator)
               earthquake[target.earthquake] = {}
             end
             table.insert(earthquake[target.earthquake], target)
+            locationX = locationX + x
+            locationY = locationY + y
+            count = count + 1
           end
         end
       end
         end
       end
+      locationX = locationX / count
+      locationY = locationY / count
+      
+      
       coordinator.depthScale = big > math.abs(small) and big or math.abs(small)
       if settings.client.lowGraphics then
         local canvas = lg.newCanvas(bigx-smallx, big-small)
@@ -103,20 +113,44 @@ return function(coordinator)
       end
     end)
   
-  local speed = 10
-  coordinator.triggerEarthquake = function(level, dt)
-      if earthquake[level] then
-        local count = 0
-        for _, tile in ipairs(earthquake[level]) do
-          if tile.height > -2 then
-            tile.height = (tile.height or 0) - speed*dt
-          else
-            count = count + 1
+  local speed = 2
+  coordinator.triggerEarthquake = function(dt)
+      local level = coordinator.waveNum
+      for i=-1, level do
+        if earthquake[i] then
+          local count = 0
+          for _, tile in ipairs(earthquake[i]) do
+            tile.notWalkable = true
+            if (tile.height or 0) > -2 then
+              tile.height = (tile.height or 0) - speed*dt
+            else
+              count = count + 1
+            end
+          end
+          if i == level and count == #earthquake[level] then
+            coordinator.finishedEarthquake()
+            return
           end
         end
-        return count == #earthquake[level]
       end
-      return true
+      if #earthquake[level] == 0 then
+        coordinator.finishedEarthquake()
+      end
+    end
+  
+  coordinator.setWaveNum = function(waveNum)
+      if waveNum ~= "nil" then
+        coordinator.waveNum = waveNum
+        coordinator.boolTriggerEarthquake = true
+      end
+    end
+  
+  coordinator.finishedEarthquake = function()
+      coordinator.boolTriggerEarthquake = false
+    end
+  
+  coordinator.getEarthquakeLocation = function()
+      return locationX, locationY
     end
   
   network.addHandler(network.enum.tileUpdate, function(i, j, tile)

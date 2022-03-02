@@ -25,6 +25,8 @@ return {
     { "UI/arrow.png", "ui.arrow", onLoad = makePixelAnimation, 15, 32, 64, 0.08 },
     { "UI/disabledArrow.png", "ui.arrow.disabled", onLoad = pixelArt },
     { "UI/wall_wheelGraphic.png", "ui.wheel.wall", onLoad = pixelArt },
+    { "UI/cross.png", "ui.cross", onLoad = pixelArt },
+    { "UI/tick.png", "ui.tick", onLoad = pixelArt },
     
     -- Tiles
     { "tiles/test1.png", "tiles.test1", onLoad = pixelArt },

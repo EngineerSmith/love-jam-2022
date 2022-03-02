@@ -2,6 +2,8 @@ local logger = require("util.logger")
 
 local network = require("network.server")
 
+local world = require("coordinators.world")
+
 return function(coordinator)
   
   local speed = coordinator.speed
@@ -39,6 +41,10 @@ return function(coordinator)
   
   network.addHandler(network.enum.readyUpState, function(client, ready)
       client.ready = ready or false
+      if coordinator.areAllPlayersReady() then
+        coordinator.resetPlayerReady()
+        world.itsGoTime()
+      end
     end)
   
   coordinator.areAllPlayersReady = function()
@@ -51,4 +57,13 @@ return function(coordinator)
       end
       return true
     end
+  
+  coordinator.resetPlayerReady = function()
+      for clientID, client in pairs(network.clients) do
+        if client.hash and client.position then
+          client.ready = false
+        end
+      end
+    end
+  
 end

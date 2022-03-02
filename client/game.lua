@@ -11,6 +11,8 @@ local tower = require("coordinators.towers")
 
 local character = require("client.src.character")
 
+local suit = require("libs.suit").new()
+
 local lg, lk, lj = love.graphics, love.keyboard, love.joystick
 local sqrt = math.sqrt
 
@@ -131,12 +133,28 @@ scene.update = function(dt)
     
     tower.mousePosition(dirX, dirY, not rightMag and mag or math.huge, scale)
   end
+  if showReadyUp then
+    if world.readyUpState then
+      local img = player.ready and assets["ui.cross"] or assets["ui.tick"]
+      if suit:ImageButton(img, lg.getWidth()/2-img:getWidth()/2, lg.getHeight()/2-img:getHeight()/2).hit then
+        player.setReadyState(not player.ready)
+        showReadyUp = false
+      end
+    else
+      showReadyUp = false
+    end
+  end
   -- coordinators
   player.update()
   world.update(dt)
   -- camera
   camera:update(dt)
-  camera:follow(player.position.x, player.position.y-player.position.height)
+  if not world.boolTriggerEarthquake then
+    camera:follow(player.position.x, player.position.y-player.position.height)
+  else
+    camera.x, camera.y = world.getEarthquakeLocation()
+    world.triggerEarthquake(dt)
+  end
 end
 
 scene.updateNetwork = function()
@@ -217,9 +235,10 @@ scene.draw = function()
     lg.setColor(1,1,1,1)
     lg.setFont(assets["fonts.futile.28"])
     local readyStr = "Ready up?"
-    lg.print(readyStr, math.floor(lg.getWidth()/2-lg.getFont():getWidth(readyStr)/2), math.floor(lg.getHeight()/2)-lg.getFont():getHeight())
+    lg.print(readyStr, math.floor(lg.getWidth()/2-lg.getFont():getWidth(readyStr)/2), math.floor(lg.getHeight()/2)-lg.getFont():getHeight()-assets["ui.tick"]:getHeight()/2*1.1)
     lg.pop()
   end
+  suit:draw()
   lg.pop()
 end
 
