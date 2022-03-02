@@ -33,6 +33,7 @@ return {
     { "tiles/test2.png", "tiles.test2", onLoad = pixelArt },
     { "tiles/test3.png", "tiles.test3", onLoad = pixelArt },
     { "tiles/grass.png", "tiles.grass", onLoad = pixelArt },
+    { "tiles/grass_darkbottom.png", "tiles.grass.dark", onLoad = pixelArt },
     { "tiles/stone.png", "tiles.stone", onLoad = pixelArt },
     { "tiles/sand.png", "tiles.sand", onLoad = pixelArt },
     { "tiles/water.png", "tiles.water", onLoad = makePixelAnimation, 8, 32, 32, 0.2},

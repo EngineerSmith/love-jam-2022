@@ -10,7 +10,7 @@ local lg = love.graphics
 local texturemap = {
     [0] = assets["tiles.water2"],
     [1] = assets["tiles.sand"],
-    [2] = assets["tiles.grass"],
+    [2] = assets["tiles.grass.dark"],
     [3] = assets["tiles.stone"],
     [4] = assets["tiles.test1"],
     [5] = assets["tiles.test1"],
@@ -133,7 +133,7 @@ return function(coordinator)
           end
         end
       end
-      if #earthquake[level] == 0 then
+      if not earthquake[level] or #earthquake[level] == 0 then
         coordinator.finishedEarthquake()
       end
     end
@@ -141,7 +141,9 @@ return function(coordinator)
   coordinator.setWaveNum = function(waveNum)
       if waveNum ~= "nil" then
         coordinator.waveNum = waveNum
-        coordinator.boolTriggerEarthquake = true
+        if earthquake[level] then
+          coordinator.boolTriggerEarthquake = true
+        end
       end
     end
   

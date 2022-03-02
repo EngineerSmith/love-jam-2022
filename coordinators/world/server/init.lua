@@ -52,6 +52,7 @@ return function(coordinator)
         for _, tile in ipairs(earthquake[level]) do
           if tile.height > -2 then
             tile.height = -2
+            tile.notWalkable = true
           end
         end
       end
@@ -100,6 +101,7 @@ return function(coordinator)
   coordinator.itsGoTime = function()
       waveNum = (waveNum or -1) + 1
       network.sendAll(network.enum.readyUpState, true, waveNum)
+      coordinator.triggerEarthquake(waveNum)
       --coordinator.readyUpState = false
     end
   
