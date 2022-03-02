@@ -236,15 +236,13 @@ end
 
 coordinator.getMonsterPath = function(from)
     local goal = nests[love.math.random(1,#nests)]
-    
-    local start = {fromI, fromJ}
-    local openset = {[start] = true}
+    local openset = {[from] = true}
     local closeset = {}
     local cameFrom = {}
     local gscore, hscore, fscore = {}, {}, {}
-    gscore[start] = 0
-    hscore[start] = calculateDist(goal, start)
-    fscore[start] = hscore[start]
+    gscore[from] = 0
+    hscore[from] = calculateDist(goal, from)
+    fscore[from] = hscore[from]
     while next(openset) do
       local current = popBestNode(openset, fscore)
       openset[current] = nil
