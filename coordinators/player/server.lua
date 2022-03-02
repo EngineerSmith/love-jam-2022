@@ -31,7 +31,7 @@ return function(coordinator)
     end
   
   network.addHandler(network.enum.confirmConnection, function(client)
-      coordinator.movePlayer(client, 1200, -20)
+      coordinator.movePlayer(client, world.getSpawnPoint())
     end)
   
   coordinator.getCurrency = function(client)

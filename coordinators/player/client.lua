@@ -88,6 +88,11 @@ return function(coordinator)
       lg.pop()
     end
   
+  local camera
+  coordinator.setCamera = function(_camera)
+      camera = _camera
+    end
+  
   local tweenPositionTable, tween = {}, nil
   network.addHandler(network.enum.playerPosition, function(x, y)
       if tween then

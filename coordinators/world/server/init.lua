@@ -42,7 +42,7 @@ return function(coordinator)
             if not earthquake[target.earthquake] then
               earthquake[target.earthquake] = {}
             end
-            insert(earthquake[target.earthquake], target)
+            insert(earthquake[target.earthquake], {target, i, j})
           end
         end
       end
@@ -71,9 +71,16 @@ return function(coordinator)
   coordinator.triggerEarthquake = function(level)
       if earthquake[level] then
         for _, tile in ipairs(earthquake[level]) do
-          if tile.height > -2 then
-            tile.height = -2
-            tile.notWalkable = true
+          for _, client in pairs(network.clients) do
+            if client.position then
+              if tile[1] == coordinator.getTileAtPixels(client.position.x, client.position.y) then
+                require("coordinators.player").movePlayer(client, coordinator.getSpawnPoint())
+              end
+            end
+          end
+          if tile[1].height > -2 then
+            tile[1].height = -2
+            tile[1].notWalkable = true
           end
         end
       end
@@ -104,6 +111,10 @@ return function(coordinator)
         end
       end
       network.sendAll(network.enum.foreignPlayers, players)
+    end
+   
+  coordinator.getSpawnPoint = function()
+      return 1200, -20
     end
   
   coordinator.getTile = function(i, j)

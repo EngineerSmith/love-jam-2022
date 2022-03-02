@@ -47,6 +47,7 @@ scene.resize = function(w, h)
   camera:setFollowLerp(0.2)
   camera:setFollowStyle('TOPDOWN')
   world.setCamera(camera)
+  player.setCamera(camera)
 end
 
 scene.load = function(name, address)
