@@ -64,10 +64,14 @@ return function(coordinator)
   
   local coin = assets["ui.coin"]
   coordinator.drawUI = function(windowScale, subtract)
+      lg.push("all")
       local width, height = coin:getDimensions()
       local coinScale = 1
       local str = formatMoney(coordinator.money)
       local strWidth = lg.getFont():getWidth(str)
+      if subtract then
+        lg.translate(-lg.getWidth()/2+strWidth*windowScale/2+width*windowScale/2, lg.getHeight()/2-height*windowScale)
+      end
       lg.setColor(.9,.9,.9,.6)
       lg.setColor(1,1,1)
       width, height = width*coinScale*windowScale, height*coinScale*windowScale
@@ -81,7 +85,7 @@ return function(coordinator)
         local subStrWidth = lg.getFont():getWidth(subStr)
         lg.print(subStr, lg.getWidth()-width-10-subStrWidth, 10+height/2+lg.getFont():getHeight()/2)
       end
-      lg.setColor(1,1,1)
+      lg.pop()
     end
   
   local tweenPositionTable, tween = {}, nil
