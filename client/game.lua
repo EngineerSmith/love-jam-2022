@@ -183,7 +183,7 @@ scene.draw = function()
   lg.push()
   lg.origin()
   lg.setCanvas(canvas)
-  lg.clear(.1,.1,.1)
+  lg.clear(.08627,.09019,.10196)
   lg.setColor(1,1,1)
   camera:attach()
   if world.depthScale then

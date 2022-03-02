@@ -141,7 +141,7 @@ return function(coordinator)
   coordinator.setWaveNum = function(waveNum)
       if waveNum ~= "nil" then
         coordinator.waveNum = waveNum
-        if earthquake[level] then
+        if earthquake[waveNum] then
           coordinator.boolTriggerEarthquake = true
         end
       end
