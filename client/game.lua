@@ -201,7 +201,7 @@ scene.draw = function()
       local _, pi, pj = world.getTile(player.position.x, player.position.y)
       local a, b = i-pi, j-pj
       local mag = sqrt(a*a+b*b)
-      disabledArrow = mag > 5 or tile.texture == nil or tile.texture == 0 or tile.tower ~= nil
+      disabledArrow = mag > 5 or tile.texture == nil or tile.texture == 0 or tile.tower ~= nil or tile.earthquake ~= nil -- todo check for player
       world.drawArrowAt(tile, i, j, disabledArrow)
     end
     lg.setFont(assets["fonts.futile.18"])

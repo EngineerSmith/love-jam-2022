@@ -57,7 +57,7 @@ return function(coordinator)
         end
       end
     end
-  
+  -- TODO Move players back to spawn if on tiles as a safe escape
   
   network.addHandler(network.enum.confirmConnection, function(client)
       network.send(client, network.enum.worldData, world)
