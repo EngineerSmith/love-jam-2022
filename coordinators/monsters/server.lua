@@ -48,6 +48,8 @@ return function(coordinator)
     end
   
   local addTween -- function defined later
+  local tweensToStop = {}
+  local startMovingAgain = {}
   
   coordinator.prepareSpawnTiles = function()
       for _, spawnTilesLevel in pairs(spawnTiles) do
@@ -64,18 +66,11 @@ return function(coordinator)
       end
       for _, monster in ipairs(monsters) do
         if not monster.dead and monster.path and #monster.path > 0 and monster.tween then
-          local path = world.getMonsterPath(monster.path[1], monster.path.goal)
-          if path then 
-            path.goal = monster.path.goal
-            monster.path = path
-            monster.tween:stop()
-            monster.tween = nil
-            addTween(monster)
-          else
-            monster.path = nil
-            monster.tween:stop()
-            monster.tween = nil
-          end
+          monster.goal = monster.path and monster.path.goal
+          monster.path = nil
+          table.insert(tweensToStop, monster.tween)
+          monster.tween = nil
+          table.insert(startMovingAgain, monster)
         end
       end
     end
@@ -105,21 +100,31 @@ return function(coordinator)
       return monster
     end
   
+  -- should be in world, but /shrug at this point
+  local removeIfNest = function(tile)
+      if tile.nestPos then
+        logger.info("removed nest")
+        for i=tile.nestPos+1, #world.nests do
+          local target = world.nests[i]
+          target.nestPos = target.nestPos - 1
+        end
+        table.remove(world.nests, tile.nestPos)
+        tile.nestPos = nil
+        coordinator.prepareSpawnTiles()
+      end
+    end
   
   local flux = flux.group()
-  local tweensToStop = {}
-  local startMovingAgain = {}
   
   addTween = function(monster)
       if monster.tween then
-        logger.info("HAS TWEEN ALREADY")
+        logger.info("HAS TWEEN ALREADY:", debug.traceback())
         return
       end
-      local target = monster.path[1]
+      local target = monster.path and monster.path[1]
       if target then
     -- attack target
         if target.tower and target.health and target.health > 0 then
-          logger.info("ATTACK!", monster.id)
           monster.tween = flux:to(monster, monster.attackspeed, {}):ease("linear"):onupdate(function()
               if monster.health <= 0 then
                 table.insert(tweensToStop, monster.tween)
@@ -144,6 +149,7 @@ return function(coordinator)
                   if target.health <= 0 then
                     target.tower = nil
                     target.notWalkable = false
+                    removeIfNest(target)
                   end
                   world.notifyTileUpdate(target.i, target.j)
                 end
@@ -172,9 +178,25 @@ return function(coordinator)
             end
           end)
       else
-        table.insert(tweensToStop, monster.tween)
         monster.tween = nil
         monster.path = nil
+        -- find new path
+        local goal = monster.goal
+        if goal and not (goal.tower and goal.health and goal.health > 0) then
+          goal = nil
+        end
+        if not goal then
+          if #world.nests == 0 then
+            return
+          end
+          goal = world.nests[love.math.random(1, #world.nests)]
+        end
+        local path = world.getMonsterPath(world.getTileAtPixels(monster.x, monster.y), goal)
+        if path then
+          path.goal = goal
+          monster.path = path
+          addTween(monster)
+        end
       end
     end
   
@@ -212,6 +234,20 @@ return function(coordinator)
     end
   
   coordinator.update = function(dt)
+      if #tweensToStop > 0 then
+        for _, tween in ipairs(tweensToStop) do
+          tween:stop()
+        end
+        tweensToStop = {}
+      end
+      if #startMovingAgain > 0 then
+        for _, monster in ipairs(startMovingAgain) do
+          if not monster.tween then
+            addTween(monster)
+          end
+        end
+        startMovingAgain = {}
+      end
       flux:update(dt)
       if #tweensToStop > 0 then
         for _, tween in ipairs(tweensToStop) do
@@ -221,7 +257,9 @@ return function(coordinator)
       end
       if #startMovingAgain > 0 then
         for _, monster in ipairs(startMovingAgain) do
-          addTween(monster)
+          if not monster.tween then
+            addTween(monster)
+          end
         end
         startMovingAgain = {}
       end

@@ -42,7 +42,7 @@ return function(coordinator)
     end)
   
   coordinator.update = function(shouldUpdateHeight)
-      --if shouldUpdateHeight then
+      if shouldUpdateHeight then
         for _, monster in ipairs(monsters) do
           local height = world.getHeightAtPoint(monster.x, monster.y)
           if height ~= monster.height then
@@ -52,7 +52,7 @@ return function(coordinator)
             monster.heightTween = flux.to(monster, 1/10, {height=height})
           end
         end
-      --end
+      end
     end
   
   local lg = love.graphics
