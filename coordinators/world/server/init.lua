@@ -99,6 +99,9 @@ return function(coordinator)
       nodes[i] = a
       costs[i] = 1 + extraCost
       i = i +1
+      if extraCost == towerCost then
+        a = nil
+      end 
     end
     ::continuea::
     local b = getNode(node.i+1, node.j)
@@ -114,7 +117,10 @@ return function(coordinator)
       end
       nodes[i] = b
       costs[i] = 1 + extraCost
-      i = i +1
+      i = i + 1
+      if extraCost == towerCost then
+        b = nil
+      end 
     end
     ::continueb::
     local c = getNode(node.i, node.j+1)
@@ -130,7 +136,10 @@ return function(coordinator)
       end
       nodes[i] = c
       costs[i] = 1 + extraCost
-      i = i +1
+      i = i + 1
+      if extraCost == towerCost then
+        c = nil
+      end 
     end
     ::continuec::
     local d = getNode(node.i, node.j-1)
@@ -146,7 +155,10 @@ return function(coordinator)
       end
       nodes[i] = d
       costs[i] = 1 + extraCost
-      i = i +1
+      i = i + 1
+      if extraCost == towerCost then
+        d = nil
+      end 
     end
     ::continued::
     if a and c then

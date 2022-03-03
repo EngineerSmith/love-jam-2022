@@ -29,23 +29,28 @@ return function(coordinator)
           if monstersIdRef[monster.id] then
             table.remove(monsters, monstersIdRef[monster.id])
             monstersIdRef[monster.id] = nil
+            for _, ref in pairs(monstersIdRef) do
+              if ref > monster.id then
+                monstersIdRef[_] = ref - 1
+              end
+            end
           end
         end
       end
     end)
   
   coordinator.update = function(shouldUpdateHeight)
-      if shouldUpdateHeight then
+      --if shouldUpdateHeight then
         for _, monster in ipairs(monsters) do
           local height = world.getHeightAtPoint(monster.x, monster.y)
           if height ~= monster.height then
             if monster.heightTween then
               monster.heightTween:stop()
             end
-            monster.heightTween = flux.to(monster, 0.2, {height=height})
+            monster.heightTween = flux.to(monster, 1/10, {height=height})
           end
         end
-      end
+      --end
     end
   
   local lg = love.graphics
