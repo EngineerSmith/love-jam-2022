@@ -89,6 +89,7 @@ return function(coordinator)
       local type = coordinator.monsterTypes[love.math.random(1,#coordinator.monsterTypes)]
       local monster = { type = type }
       monster.x, monster.y = getXYForTile(tile.i, tile.j)
+      monsterId = monsterId + 1
       monster.id = monsterId
       local monsterType = coordinator.monsters[monster.type]
       monster.health = monsterType.health
@@ -97,12 +98,12 @@ return function(coordinator)
       monster.speedMulMax = monsterType.speedMul
       monster.damage = monsterType.damage
       monster.damagemax = monsterType.damage
-      monsterId = monsterId + 1
       return monster
     end
   
   
   local flux = flux.group()
+  local tweensToStop = {}
   
   addTween = function(monster)
       local target = monster.path[1]
@@ -110,7 +111,8 @@ return function(coordinator)
         local x, y = getXYForTile(target.i, target.j)
         monster.tween = flux:to(monster, .9 * monster.speedMul, {x=x,y=y}):ease("linear"):onupdate(function()
           if monster.health <= 0 then
-            monster.tween:stop()
+            table.insert(tweensToStop, monster.tween)
+            monster.tween = nil
             table.insert(dead, packageMonster(monster))
             monsters[monster.position].dead = true
           end
@@ -124,7 +126,8 @@ return function(coordinator)
           end
         end)
       else
-        monster.tween:stop()
+        table.insert(tweensToStop, monster.tween)
+        monster.tween = nil
         monster.path = nil
         table.insert(dead, packageMonster(monster))
         monsters[monster.position].dead = true
@@ -167,6 +170,12 @@ return function(coordinator)
   
   coordinator.update = function(dt)
       flux:update(dt)
+      if #tweensToStop > 0 then
+        for _, tween in ipairs(tweensToStop) do
+          tween:stop()
+        end
+        tweensToStop = {}
+      end
     end
   
   coordinator.updateNetwork = function()
@@ -178,6 +187,9 @@ return function(coordinator)
         else
           network.sendAll(network.enum.monsters, package)
         end
+      elseif #dead > 0 then
+        network.sendAll(network.enum.monsters, "nil", dead)
+        dead = {}
       end
     end
 end

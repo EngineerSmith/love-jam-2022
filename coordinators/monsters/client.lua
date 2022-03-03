@@ -9,19 +9,21 @@ return function(coordinator)
   local monstersIdRef = {}
   
   network.addHandler(network.enum.monsters, function(_monsters, dead)
-      for _, monster in ipairs(_monsters) do
-        if not monstersIdRef[monster.id] then
-          table.insert(monsters, monster)
-          monstersIdRef[monster.id] = #monsters
-          monster.character = coordinator.monsters[monster.type].character:clone()
-          monster.height = -2
-        else
-          local tbl = monsters[monstersIdRef[monster.id]]
-          tbl.health = monster.health
-          if tbl.tween then
-            tbl.tween:stop()
+      if _monsters ~= "nil" then
+        for _, monster in ipairs(_monsters) do
+          if not monstersIdRef[monster.id] then
+            table.insert(monsters, monster)
+            monstersIdRef[monster.id] = #monsters
+            monster.character = coordinator.monsters[monster.type].character:clone()
+            monster.height = -2
+          else
+            local tbl = monsters[monstersIdRef[monster.id]]
+            tbl.health = monster.health
+            if tbl.tween then
+              tbl.tween:stop()
+            end
+            tbl.tween = flux.to(tbl, 1/10, {x=monster.x, y=monster.y})
           end
-          tbl.tween = flux.to(tbl, 1/10, {x=monster.x, y=monster.y})
         end
       end
       if dead then
