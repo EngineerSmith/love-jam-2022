@@ -221,12 +221,14 @@ return function(coordinator)
   end
 
   local unwindPath
-  unwindPath = function(map, current, flat)
+  unwindPath = function(map, current, flat, i)
     flat = flat or {}
+    i = (i or -1)+1
+    print(i)
     if map[current] then
       local this = map[current]
       table.insert(flat, 1, {this.i, this.j})
-      return unwindPath(flat, map, map[current])
+      return unwindPath(map, this, flat, i)
     else
       return flat
     end

@@ -78,9 +78,10 @@ return function(coordinator)
   
   local addTween
   addTween = function(monster)
-      local target = monster.path[#monster.path]
+      local target = monster.path[1]
       if target then
         local x, y = getXYForTile(target.i, target.j)
+        print("Move to", x, y, "from", monster.x, monster.y, "size", #monster.path)
         monster.tween = flux:to(monster, 10, {x=x,y=y}):onupdate(function()
           if monster.health <= 0 then
             monster.tween:stop()
