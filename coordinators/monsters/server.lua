@@ -40,18 +40,34 @@ return function(coordinator)
       table.insert(spawnTiles[level], {reference=tile})
     end
   
+  local addTween -- function defined later
+  
   coordinator.prepareSpawnTiles = function()
       for _, spawnTilesLevel in pairs(spawnTiles) do
         for _, spawnTile in ipairs(spawnTilesLevel) do
           spawnTile.path = {}
-          for index, goal in ipairs(world.nests) do
-            spawnTile.path[index] = world.getMonsterPath(spawnTile.reference, goal)
+          for _, goal in ipairs(world.nests) do
+            local path = world.getMonsterPath(spawnTile.reference, goal)
+            if path then
+              path.goal = goal
+              table.insert(spawnTile.path, path)
+            end
           end
         end
       end
-      -- TODO repath any current monsters
       for _, monster in ipairs(monsters) do
-        
+        if monster.path and #monster.path > 0 then
+          local path = world.getMonsterPath(monster.path[1], monster.path.goal)
+          if path then 
+            path.goal = monster.path.goal
+            monster.path = path
+            monster.tween:stop()
+            addTween(monster)
+          else
+            monster.path = nil
+            monster.tween:stop()
+          end
+        end
       end
     end
   
@@ -76,12 +92,11 @@ return function(coordinator)
   
   local flux = flux.group()
   
-  local addTween
   addTween = function(monster)
       local target = monster.path[1]
       if target then
         local x, y = getXYForTile(target.i, target.j)
-        monster.tween = flux:to(monster, 1, {x=x,y=y}):ease("linear"):onupdate(function()
+        monster.tween = flux:to(monster, .9, {x=x,y=y}):ease("linear"):onupdate(function()
           if monster.health <= 0 then
             monster.tween:stop()
             table.insert(dead, monster)
@@ -97,6 +112,12 @@ return function(coordinator)
       end
     end
   
+  local addSleepTween = function(monster)
+      flux:to(monster, 2+love.math.random(), {}):oncomplete(function()
+            addTween(monster)
+        end)
+    end
+  
   coordinator.spawnMonsters = function(level, number)
       local spawnTilesLevel = spawnTiles[level]
       if spawnTilesLevel then
@@ -106,6 +127,7 @@ return function(coordinator)
           local monster = newMonster(tile.reference)
           monster.path = tile.path[love.math.random(1,#tile.path)]
           addTween(monster)
+          addSleepTween(monster)
           table.insert(monsters, monster)
           monster.position = #monsters
           table.insert(newMonsters, {

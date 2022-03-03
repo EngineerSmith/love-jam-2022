@@ -14,6 +14,7 @@ return function(coordinator)
           table.insert(monsters, monster)
           monstersIdRef[monster.id] = #monsters
           monster.character = coordinator.monsters[monster.type].character:clone()
+          monster.height = -2
         else
           local tbl = monsters[monstersIdRef[monster.id]]
           tbl.health = monster.health
@@ -33,9 +34,17 @@ return function(coordinator)
       end
     end)
   
-  coordinator.update = function()
-      for _, monster in ipairs(monsters) do
-        monster.height = world.getHeightAtPoint(monster.x, monster.y)
+  coordinator.update = function(shouldUpdateHeight)
+      if shouldUpdateHeight then
+        for _, monster in ipairs(monsters) do
+          local height = world.getHeightAtPoint(monster.x, monster.y)
+          if height ~= monster.height then
+            if monster.heightTween then
+              monster.heightTween:stop()
+            end
+            monster.heightTween = flux.to(monster, 0.2, {height=height})
+          end
+        end
       end
     end
   
@@ -46,11 +55,11 @@ return function(coordinator)
         local w, h = monster.character:getDimensions()
         lg.translate(monster.x-w/2, monster.y-monster.height-h/1.5)
         local z = (monster.y-h/1.5)/world.depthScale
-        --monster.character:draw(z)
-        lg.setColor(1,1,1)
+        monster.character:draw(z)
+        --[[lg.setColor(1,1,1)
         lg.setShader()
         lg.setDepthMode("always", false)
-        lg.rectangle("fill", 0,0,20,20)
+        lg.rectangle("fill", 0,0,20,20)]]
         lg.pop()
       end
     end

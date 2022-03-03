@@ -150,7 +150,7 @@ scene.update = function(dt)
   -- coordinators
   player.update()
   world.update(dt)
-  monsters.update()
+  monsters.update(not world.boolTriggerEarthquake)
   -- camera
   camera:update(dt)
   if not world.boolTriggerEarthquake then
