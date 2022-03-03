@@ -2,6 +2,8 @@ local network = require("network.client")
 
 local flux = require("libs.flux")
 
+local world = require("coordinators.world")
+
 return function(coordinator)
   local monsters = {}
   local monstersIdRef = {}
@@ -31,7 +33,15 @@ return function(coordinator)
       end
     end
   
+  local lg = love.graphics
   coordinator.draw = function()
-      -- draw monsters
+      for _, monster in ipairs(monsters) do
+        lg.push("all")
+        local w, h = monster.character:getDimensions()
+        lg.translate(monster.x-w/2, monster.y-monster.height-h/1.5)
+        local z = (monster.y-h/1.5)/world.depthScale
+        monster.character:draw(z)
+        lg.pop()
+      end
     end
 end

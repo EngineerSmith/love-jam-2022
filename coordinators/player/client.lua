@@ -40,7 +40,7 @@ return function(coordinator)
   coordinator.updateNetwork = function()
       network.send(network.enum.playerPosition, p.x, p.y, coordinator.character.characterState.id)
     end
-    
+  
   coordinator.setCharacter = function(character)
       coordinator.character = character
     end
