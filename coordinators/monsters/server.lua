@@ -2,6 +2,8 @@ local network = require("network.server")
 local logger = require("util.logger")
 local world = require("coordinators.world")
 
+local flux = require("libs.flux")
+
 return function(coordinator)
   
   local spawnTiles = {}
@@ -53,18 +55,46 @@ return function(coordinator)
       end
     end
   
-  local tileH, tileW = 32, 16
+  local tileW, tileH = 32, 16
+  local getXYForTile = function(i, j)
+      local y = i * tileH / 2 - j * tileH / 2
+      local x = j * tileW / 2 + i * tileW / 2
+      return x+tileW/2, y+tileH/2
+    end
+  
   local newMonster = function(tile)
       local type = coordinator.monsterTypes[love.math.random(1,#coordinator.monsterTypes)]
       local monster = { type = type }
-      local y = tile.i * tileH / 2 - tile.j * tileH / 2
-      local x = tile.j * tileW / 2 + tile.i * tileW / 2
-      monster.x, monster.y = x, y
+      monster.x, monster.y = getXYForTile(tile.i, tile.j)
       monster.id = monsterId
       monster.health = coordinator.monsters[monster.type].health
       monster.maxhealth = coordinator.monsters[monster.type].health
       monsterId = monsterId + 1
       return monster
+    end
+  
+  
+  local flux = flux.group()
+  
+  local addTween
+  addTween = function(monster)
+      local target = monster.path[#monster.path]
+      if target then
+        local x, y = getXYForTile(target.i, target.j)
+        monster.tween = flux:to(monster, 10, {x=x,y=y}):onupdate(function()
+          if monster.health <= 0 then
+            monster.tween:stop()
+            table.insert(dead, monster)
+          end
+        end):oncomplete(function()
+          table.remove(monster.path, 1)
+          if monster.health <= 0 then
+            table.insert(dead, monster)
+          else
+            addTween(monster)
+          end
+        end)
+      end
     end
   
   coordinator.spawnMonsters = function(level, number)
@@ -75,6 +105,7 @@ return function(coordinator)
           local tile = spawnTilesLevel[love.math.random(1, #spawnTilesLevel)]
           local monster = newMonster(tile.reference)
           monster.path = tile.path[love.math.random(1,#tile.path)]
+          addTween(monster)
           table.insert(monsters, monster)
           monster.position = #monsters
           table.insert(newMonsters, {
@@ -94,7 +125,7 @@ return function(coordinator)
     end
   
   coordinator.update = function(dt)
-      -- follow monster's path
+      flux:update(dt)
     end
   
   coordinator.updateNetwork = function()
@@ -102,6 +133,7 @@ return function(coordinator)
       if package then
         if #dead > 0 then
           network.sendAll(network.enum.monsters, package, dead)
+          dead = {}
         else
           network.sendAll(network.enum.monsters, package)
         end
