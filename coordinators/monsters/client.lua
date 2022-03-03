@@ -21,7 +21,6 @@ return function(coordinator)
             tbl.tween:stop()
           end
           tbl.tween = flux.to(tbl, 1/10, {x=monster.x, y=monster.y})
-          print(monster.x, monster.y)
         end
       end
       if dead then

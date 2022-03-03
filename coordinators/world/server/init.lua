@@ -221,14 +221,12 @@ return function(coordinator)
   end
 
   local unwindPath
-  unwindPath = function(map, current, flat, i)
+  unwindPath = function(map, current, flat)
     flat = flat or {}
-    i = (i or -1)+1
-    print(i)
     if map[current] then
       local this = map[current]
-      table.insert(flat, 1, {this.i, this.j})
-      return unwindPath(map, this, flat, i)
+      table.insert(flat, 1, this)
+      return unwindPath(map, this, flat)
     else
       return flat
     end
@@ -253,14 +251,16 @@ return function(coordinator)
         closeset[current] = true
         local neighbours, costs = getNeighbours(current)
         for _, neighbour in ipairs(neighbours) do
-          local tentativeGscore = gscore[current] + costs[_]
-          if not openset[neighbour] or tentativeGscore < gscore[neighbour] then
-            cameFrom[neighbour] = current
-            gscore[neighbour] = tentativeGscore
-            hscore[neighbour] = hscore[neighbour] or calculateDist(goal, neighbour)
-            fscore[neighbour] = tentativeGscore + hscore[neighbour]
-            openset[neighbour] = true
-          end
+          if not closeset[neighbour] then
+            local tentativeGscore = gscore[current] + costs[_]
+            if not openset[neighbour] or tentativeGscore < gscore[neighbour] then
+              cameFrom[neighbour] = current
+              gscore[neighbour] = tentativeGscore
+              hscore[neighbour] = hscore[neighbour] or calculateDist(goal, neighbour)
+              fscore[neighbour] = tentativeGscore + hscore[neighbour]
+              openset[neighbour] = true
+            end
+           end
         end
       end
       return nil
