@@ -8,6 +8,7 @@ local chat = require("coordinators.chat")
 local world = require("coordinators.world")
 local player = require("coordinators.player")
 local tower = require("coordinators.towers")
+local monsters = require("coordinators.monsters")
 
 local character = require("client.src.character")
 
@@ -149,6 +150,7 @@ scene.update = function(dt)
   -- coordinators
   player.update()
   world.update(dt)
+  monsters.update()
   -- camera
   camera:update(dt)
   if not world.boolTriggerEarthquake then
@@ -205,6 +207,7 @@ scene.draw = function()
       disabledArrow = mag > 5 or tile.texture == nil or tile.texture == 0 or tile.tower ~= nil or tile.earthquake ~= nil -- todo check for player
       world.drawArrowAt(tile, i, j, disabledArrow)
     end
+    monsters.draw()
     lg.setFont(assets["fonts.futile.18"])
     player.draw()
     lg.pop()

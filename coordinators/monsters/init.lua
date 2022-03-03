@@ -6,7 +6,7 @@ local monstersCoordinator = {}
 local character = require("client.src.character")
 
 monstersCoordinator.monsters = {
-    ["shadow"] = { character.new(require("assets.monsters.shadow")), health = 20 },
+    ["shadow"] = { character=character.new(require("assets.monsters.shadow")), health = 20 },
   }
 
 monstersCoordinator.monsterTypes = {

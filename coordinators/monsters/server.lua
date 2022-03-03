@@ -6,6 +6,7 @@ return function(coordinator)
   
   local spawnTiles = {}
   local monsters = {}
+  local dead = {}
   local monsterId = 0
   
   local packageMonsters = function()
@@ -20,11 +21,14 @@ return function(coordinator)
             maxhealth = monster.maxhealth,
           })
       end
-      return _monsters
+      return #_monsters > 0 and _monsters or nil
     end
   
   network.addHandler(network.enum.confirmConnection, function(client)
-      network.send(client, network.enum.monsters, packageMonsters())
+      local package = packageMonsters()
+      if package then
+        network.send(client, network.enum.monsters, package)
+      end
     end)
   
   coordinator.addSpawnTile = function(level, tile)
@@ -82,7 +86,10 @@ return function(coordinator)
               maxhealth = monster.maxhealth,
             })
         end
-        network.sendAll(network.enum.monsters, newMonsters)
+        if #newMonsters > 0 then
+          logger.info("Spawned", #newMonsters, "new monsters")
+          network.sendAll(network.enum.monsters, newMonsters)
+        end
       end
     end
   
@@ -91,6 +98,13 @@ return function(coordinator)
     end
   
   coordinator.updateNetwork = function()
-      network.sendAll(network.enum.monsters, packageMonsters())
+      local package = packageMonsters()
+      if package then
+        if #dead > 0 then
+          network.sendAll(network.enum.monsters, package, dead)
+        else
+          network.sendAll(network.enum.monsters, package)
+        end
+      end
     end
 end

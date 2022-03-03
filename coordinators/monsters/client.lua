@@ -1,5 +1,5 @@
 local network = require("network.client")
-
+local logger = require("util.logger")
 local flux = require("libs.flux")
 
 local world = require("coordinators.world")
@@ -13,7 +13,7 @@ return function(coordinator)
         if not monstersIdRef[monster.id] then
           table.insert(monsters, monster)
           monstersIdRef[monster.id] = #monsters
-          monster.character = coordinator.monsters[monster.type]:clone()
+          monster.character = coordinator.monsters[monster.type].character:clone()
         else
           local tbl = _monsters[monstersIdRef[monster.id]]
           tbl.health = monster.health
@@ -30,6 +30,12 @@ return function(coordinator)
             monstersIdRef[monster.id] = nil
           end
         end
+      end
+    end)
+  
+  coordinator.update = function()
+      for _, monster in ipairs(monsters) do
+        monster.height = world.getHeightAtPoint(monster.x, monster.y)
       end
     end
   

@@ -65,7 +65,7 @@ return function(coordinator)
   end
 
   local popBestNode = function(set, score)
-    local best, node = 1/0, nil
+    local best, node = math.huge, nil
     for k, v in pairs(set) do
       local s = score[k]
       if s < best then
