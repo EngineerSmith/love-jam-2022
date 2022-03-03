@@ -1,5 +1,5 @@
 local network = require("network.server")
-
+local logger = require("util.logger")
 local world = require("coordinators.world")
 
 return function(coordinator)
@@ -31,13 +31,16 @@ return function(coordinator)
       if not spawnTiles[level] then
         spawnTiles[level] = {}
       end
-      table.insert(spawnTiles, {reference=tile})
+      table.insert(spawnTiles[level], {reference=tile})
     end
   
   coordinator.prepareSpawnTiles = function()
       for _, spawnTilesLevel in pairs(spawnTiles) do
         for _, spawnTile in ipairs(spawnTilesLevel) do
-          spawnTile.path = world.getMonsterPath(spawnTile.reference)
+          spawnTile.path = {}
+          for index, goal in ipairs(world.nests) do
+            spawnTile.path[index] = world.getMonsterPath(spawnTile.reference, goal)
+          end
         end
       end
       -- TODO repath any current monsters
@@ -67,10 +70,10 @@ return function(coordinator)
         for i=1, number do
           local tile = spawnTilesLevel[love.math.random(1, #spawnTilesLevel)]
           local monster = newMonster(tile.reference)
-          monster.path = spawnTilesLevel.path
+          monster.path = tile.path[love.math.random(1,#tile.path)]
           table.insert(monsters, monster)
           monster.position = #monsters
-          table.insert(newMonster, {
+          table.insert(newMonsters, {
               id = monster.id,
               type = monster.type,
               x = monster.x,

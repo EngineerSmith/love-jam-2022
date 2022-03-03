@@ -12,7 +12,7 @@ return function(coordinator)
   local waveNum = nil
   local earthquake = {}
   coordinator.readyUpState = true
-  local nests = {}
+  coordinator.nests = {}
   local targets = {}
   
   coordinator.generateWorld = function()
@@ -34,8 +34,8 @@ return function(coordinator)
               target.maxhealth = t.health
               target.owner = "server"
               target.notWalkable = true
-              table.insert(nests, target)
-              target.nestPos = #nests
+              table.insert(coordinator.nests, target)
+              target.nestPos = #coordinator.nests
             end
           end
           if target.earthquake then
@@ -65,7 +65,7 @@ return function(coordinator)
   end
 
   local popBestNode = function(set, score)
-    local best, node = inf, nil
+    local best, node = 1/0, nil
     for k, v in pairs(set) do
       local s = score[k]
       if s < best then
@@ -232,8 +232,7 @@ return function(coordinator)
     end
   end
 
-  coordinator.getMonsterPath = function(from)
-      local goal = nests[love.math.random(1,#nests)]
+  coordinator.getMonsterPath = function(from, goal)
       local openset = {[from] = true}
       local closeset = {}
       local cameFrom = {}
@@ -268,6 +267,10 @@ return function(coordinator)
   local speed = 10
   coordinator.triggerEarthquake = function(level)
       if earthquake[level] then
+        local MONSTERS = require("coordinators.monsters")
+        for lvl=0, level do
+          MONSTERS.spawnMonsters(lvl, (lvl+1)*5)
+        end
         for _, tile in ipairs(earthquake[level]) do
           for _, client in pairs(network.clients) do
             if client.position then

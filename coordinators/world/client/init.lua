@@ -41,7 +41,7 @@ return function(coordinator)
   local world
   local earthquake
   local sea, seaOffset
-  coordinator.waveNum = 0
+  coordinator.waveNum = -1
   local locationX, locationY = 0,0
   
   network.addHandler(network.enum.worldData, function(worldData)
