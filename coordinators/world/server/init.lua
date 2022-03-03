@@ -283,7 +283,6 @@ return function(coordinator)
         end
       end
     end
-  -- TODO Move players back to spawn if on tiles as a safe escape
   
   network.addHandler(network.enum.confirmConnection, function(client)
       network.send(client, network.enum.worldData, world)
@@ -340,9 +339,14 @@ return function(coordinator)
   
   coordinator.itsGoTime = function()
       waveNum = (waveNum or -1) + 1
-      network.sendAll(network.enum.readyUpState, true, waveNum)
+      network.sendAll(network.enum.readyUpState, false, waveNum)
       coordinator.triggerEarthquake(waveNum)
-      --coordinator.readyUpState = false
+      coordinator.readyUpState = false
+    end
+  
+  coordinator.resetForNextWave = function()
+      coordinator.readyUpState = true
+      network.sendAll(network.enum.readyUpState, true, waveNum)
     end
   
 end

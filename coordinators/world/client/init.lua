@@ -146,12 +146,14 @@ return function(coordinator)
   
   coordinator.setWaveNum = function(waveNum)
       if waveNum ~= "nil" then
-        coordinator.waveNum = waveNum
-        if earthquake[waveNum] then
-          coordinator.boolTriggerEarthquake = true
-          if not settings.client.disableShaking then
-            camera:shake(5, 2, 40)
-            camera.x, camera.y = coordinator.getEarthquakeLocation()
+        if coordinator.waveNum < waveNum then
+          coordinator.waveNum = waveNum
+          if earthquake[waveNum] then
+            coordinator.boolTriggerEarthquake = true
+            if not settings.client.disableShaking then
+              camera:shake(5, 2, 40)
+              camera.x, camera.y = coordinator.getEarthquakeLocation()
+            end
           end
         end
       end
