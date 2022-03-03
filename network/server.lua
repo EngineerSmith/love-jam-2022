@@ -81,6 +81,16 @@ server.handle = function(packetType, ...)
   end
 end
 
+server.getNumberConnected = function()
+  local count = 0
+  for _, client in pairs(server.clients) do
+    if client.hash and client.position then
+      count = count + 1
+    end
+  end
+  return count
+end
+
 server.getClient = function(clientID)
   local client = server.clients[clientID]
   if client then

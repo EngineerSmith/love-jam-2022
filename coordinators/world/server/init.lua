@@ -289,7 +289,7 @@ return function(coordinator)
       if earthquake[level] then
         local MONSTERS = require("coordinators.monsters")
         for lvl=0, level do
-          MONSTERS.spawnMonsters(lvl, ((lvl+1)*5)+math.floor((#network.clients-1)*1.5))
+          MONSTERS.spawnMonsters(lvl, ((lvl+1)*5)+math.floor((network.getNumberConnected()-1)*1.5))
         end
         for _, tile in ipairs(earthquake[level]) do
           for _, client in pairs(network.clients) do
