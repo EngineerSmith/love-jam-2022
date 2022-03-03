@@ -72,7 +72,12 @@ return function(coordinator)
         best, node = s, k
       end
     end
-    if not node then return end
+    if not node then 
+      node = next(set)
+    end
+    if not node then
+      logger.errror("WTF")
+    end
     set[node] = nil
     return node
   end
@@ -82,7 +87,7 @@ return function(coordinator)
   end
 
   local sO = math.sqrt(1)
-  local towerCost = 7
+  local towerCost = 12
   local getNeighbours = function(node)
     local nodes, costs, i = {}, {}, 1
     local a = getNode(node.i-1, node.j)
@@ -246,15 +251,13 @@ return function(coordinator)
 
   coordinator.getMonsterPath = function(from, goal)
       if from == goal then
-        return {goal}
+        return { goal }
       end
-      local openset = {[from] = true}
-      local closeset = {}
-      local cameFrom = {}
-      local gscore, hscore, fscore = {}, {}, {}
-      gscore[from] = 0
-      hscore[from] = calculateDist(goal, from)
-      fscore[from] = hscore[from]
+      local openset = { [from] = true }
+      local closeset, cameFrom = { }, { }
+      local gscore = { [from] = 0 }
+      local hscore = { [from] = calculateDist(goal, from) }
+      local fscore = { [from] = hscore[from] }
       while next(openset) do
         local current = popBestNode(openset, fscore)
         openset[current] = nil
@@ -265,9 +268,9 @@ return function(coordinator)
         end
         closeset[current] = true
         local neighbours, costs = getNeighbours(current)
-        for _, neighbour in ipairs(neighbours) do
+        for index, neighbour in ipairs(neighbours) do
           if not closeset[neighbour] then
-            local tentativeGscore = gscore[current] + costs[_]
+            local tentativeGscore = gscore[current] + costs[index]
             if not openset[neighbour] or tentativeGscore < gscore[neighbour] then
               cameFrom[neighbour] = current
               gscore[neighbour] = tentativeGscore

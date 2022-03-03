@@ -400,13 +400,20 @@ return function(coordinator)
                   lg.draw(image, x, y-height-h+tileH)
                   _h = h
                 end
-                lg.push("all")
-                lg.setShader()
-                lg.setDepthMode("always", false)
-                if state and _h then
-                  lg.print(state, x, y-height-_h+tileH)
+                if target.health < target.maxhealth then
+                  lg.push("all")
+                  lg.setShader()
+                  lg.setDepthMode("always", false)
+                  lg.setColor(.4,.4,.4,.6)
+                  lg.rectangle("fill", x, y-height-_h/2, 10, 2)
+                  lg.setColor(.03,.6,.1)
+                  lg.rectangle("fill", x,y-height-_h/2, 10*(target.health/target.maxhealth), 2)
+                  --[[if state and _h then
+                    lg.setColor(1,1,1)
+                    lg.print(state, x, y-height-_h+tileH)
+                  end]]
+                  lg.pop()
                 end
-                lg.pop()
                 shader:send("scale", tileH*2)
               end
             end

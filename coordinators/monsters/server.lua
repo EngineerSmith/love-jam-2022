@@ -63,16 +63,18 @@ return function(coordinator)
         end
       end
       for _, monster in ipairs(monsters) do
-        if not monster.dead and monster.path and #monster.path > 0 then
+        if not monster.dead and monster.path and #monster.path > 0 and monster.tween then
           local path = world.getMonsterPath(monster.path[1], monster.path.goal)
           if path then 
             path.goal = monster.path.goal
             monster.path = path
             monster.tween:stop()
+            monster.tween = nil
             addTween(monster)
           else
             monster.path = nil
             monster.tween:stop()
+            monster.tween = nil
           end
         end
       end
@@ -98,39 +100,81 @@ return function(coordinator)
       monster.speedMulMax = monsterType.speedMul
       monster.damage = monsterType.damage
       monster.damagemax = monsterType.damage
+      monster.attackspeed = monsterType.attackspeed
+      monster.attackspeedmax = monsterType.attackspeed
       return monster
     end
   
   
   local flux = flux.group()
   local tweensToStop = {}
+  local startMovingAgain = {}
   
   addTween = function(monster)
+      if monster.tween then
+        logger.info("HAS TWEEN ALREADY")
+        return
+      end
       local target = monster.path[1]
       if target then
+    -- attack target
+        if target.tower and target.health and target.health > 0 then
+          logger.info("ATTACK!", monster.id)
+          monster.tween = flux:to(monster, monster.attackspeed, {}):ease("linear"):onupdate(function()
+              if monster.health <= 0 then
+                table.insert(tweensToStop, monster.tween)
+                monster.tween = nil
+                table.insert(dead, packageMonster(monster))
+                monster[monster.position].dead = true
+              else
+                if not target.health or target.health <= 0 then
+                  table.insert(tweensToStop, monster.tween)
+                  monster.tween = nil
+                  table.insert(startMovingAgain, monster)
+                end
+              end
+            end):oncomplete(function()
+              monster.tween = nil
+              if monster.health <= 0 then
+                table.insert(dead, packageMonster(monster))
+                monster[monster.position].dead = true
+              else
+                if target.health and target.health > 0 then
+                  target.health = target.health - monster.damage
+                  if target.health <= 0 then
+                    target.tower = nil
+                    target.notWalkable = false
+                  end
+                  world.notifyTileUpdate(target.i, target.j)
+                end
+                addTween(monster)
+              end
+            end)
+          return
+        end
+    -- move to target
         local x, y = getXYForTile(target.i, target.j)
         monster.tween = flux:to(monster, .9 * monster.speedMul, {x=x,y=y}):ease("linear"):onupdate(function()
-          if monster.health <= 0 then
-            table.insert(tweensToStop, monster.tween)
+            if monster.health <= 0 then
+              table.insert(tweensToStop, monster.tween)
+              monster.tween = nil
+              table.insert(dead, packageMonster(monster))
+              monsters[monster.position].dead = true
+            end
+          end):oncomplete(function()
+            table.remove(monster.path, 1)
             monster.tween = nil
-            table.insert(dead, packageMonster(monster))
-            monsters[monster.position].dead = true
-          end
-        end):oncomplete(function()
-          table.remove(monster.path, 1)
-          if monster.health <= 0 then
-            table.insert(dead, packageMonster(monster))
-            monsters[monster.position].dead = true
-          else
-            addTween(monster)
-          end
-        end)
+            if monster.health <= 0 then
+              table.insert(dead, packageMonster(monster))
+              monsters[monster.position].dead = true
+            else
+              addTween(monster)
+            end
+          end)
       else
         table.insert(tweensToStop, monster.tween)
         monster.tween = nil
         monster.path = nil
-        table.insert(dead, packageMonster(monster))
-        monsters[monster.position].dead = true
       end
     end
   
@@ -148,7 +192,6 @@ return function(coordinator)
           local tile = spawnTilesLevel[love.math.random(1, #spawnTilesLevel)]
           local monster = newMonster(tile.reference)
           monster.path = tile.path[love.math.random(1,#tile.path)]
-          addTween(monster)
           addSleepTween(monster)
           table.insert(monsters, monster)
           monster.position = #monsters
@@ -175,6 +218,12 @@ return function(coordinator)
           tween:stop()
         end
         tweensToStop = {}
+      end
+      if #startMovingAgain > 0 then
+        for _, monster in ipairs(startMovingAgain) do
+          addTween(monster)
+        end
+        startMovingAgain = {}
       end
     end
   
