@@ -9,6 +9,8 @@ local scene = { }
 local disconnect
 local dontConnect = 0
 
+assets["audio.music.1"]:play()
+
 local names = {
   "James",
   "Paul",
@@ -69,6 +71,9 @@ local fullscreen = { text = "Fullscreen", checked = settings.client.windowfullsc
 local disableShaking = { text = "Disable Shaking", checked = settings.client.disableShaking}
 local playerName = { text = names[love.math.random(1,#names)] }
 local serverAddress = { text = "localhost:20202" }
+local audio = { value=50, min=0, max=100, step=1 }
+
+assets["audio.music.1"]:setVolume(audio.value/100)
 
 scene.load = function(disconnectReason)
   disconnect = disconnectReason
@@ -153,6 +158,10 @@ scene.update = function(dt)
       if suit:Checkbox(disableShaking, {align="right"}, suit.layout:up()).hit then
         settings.client.disableShaking = disableShaking.checked
       end
+      if suit:Slider(audio, suit.layout:up()).changed then
+        assets["audio.music.1"]:setVolume(audio.value/100)
+      end
+      suit:Label("Volume", {align="center"}, suit.layout:up())
     end
     suit.layout:reset(30, h-20)
     suit.layout:up(310,185)

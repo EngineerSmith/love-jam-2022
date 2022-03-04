@@ -25,7 +25,8 @@ return function(coordinator)
   
   network.addHandler(network.enum.chatMessage, coordinator.recieveChatMessage)
   
-  network.addHandler(network.enum.confirmConnection, function(client) 
+  network.addHandler(network.enum.confirmConnection, function(client)
+      coordinator.dirty = true
       coordinator.sendChatMessage(client.name.." has joined the game")
     end)
   

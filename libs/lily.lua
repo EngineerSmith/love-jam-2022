@@ -732,6 +732,8 @@ for _, v in pairs(modules) do
 	end
 end
 
+require("love.sound")
+
 -- Handlers
 local lilyProcessor = {}
 local getUpdateMode

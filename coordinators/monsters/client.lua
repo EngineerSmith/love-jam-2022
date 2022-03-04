@@ -21,7 +21,7 @@ return function(coordinator)
           if not monsters[monster.id] then
             monsters[monster.id] = monster
             monster.character = coordinator.monsters[monster.type].character:clone()
-            monster.height = -2
+            monster.height = -32
           else
             local mon = monsters[monster.id]
             if mon then

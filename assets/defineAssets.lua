@@ -12,6 +12,10 @@ local makePixelAnimation = function(image, frameCount, frameWidth, frameHeight, 
   return animation
 end
 
+local loopAudio = function(source)
+  source:setLooping(true)
+end
+
 return { 
     -- UI
     { "UI/logoES.png", "logo.ES", onLoad = pixelArt },
@@ -89,4 +93,7 @@ return {
     { "objects/bullets/green.png", "objects.bullets.green", onLoad = pixelArt },
     { "objects/bullets/red.png", "objects.bullets.red", onLoad = pixelArt },
     { "objects/bullets/purple.png", "objects.bullets.purple", onLoad = pixelArt },
+    
+    -- Audio
+    { "audio/BRPG_Take_Courage_FULL_Loop.wav", "audio.music.1", onLoad = loopAudio },
   }

@@ -35,6 +35,12 @@ scene.updateNetwork = function()
   world.updateNetwork()
   monsters.updateNetwork()
   towers.updateNetwork()
+  if chat.dirty then
+    if network.getNumberConnected() == 0 then
+      logger.info("Empty dirty server, restarting")
+      love.event.quit("restart")
+    end
+  end
 end
 
 scene.threaderror = function(...)

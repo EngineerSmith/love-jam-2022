@@ -25,9 +25,11 @@ return function()
   local lilyTable = { }
   for _, asset in ipairs(assets) do
     local extension = splitFileExtension(asset[1])
+    local fn = extensions[extension and extension:lower() or ""] or error("Couldn't find load function for "..tostring(extension).." extension from file "..tostring(asset[1]))
     insert(lilyTable, {
-        extensions[extension and extension:lower() or ""] or error("Couldn't find load function for "..tostring(extension).." extension from file "..tostring(asset[1])),
+        fn,
         "assets/"..asset[1],
+        (fn == "newSource" and "static" or nil),
       })
   end
   
