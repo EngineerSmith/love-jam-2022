@@ -1,6 +1,7 @@
 local settings = require("util.settings")
 local assets = require("util.assets")
 local suit = require("libs.suit").new()
+local logger = require("util.logger")
 
 local lg = love.graphics
 
@@ -84,6 +85,7 @@ local showGameMenu = false
 
 -- for scene.draw
 local time = 0
+local below60, bonus = false, 0
 scene.update = function(dt)
   time = time + dt
   local w, h = lg.getDimensions()
@@ -149,8 +151,22 @@ scene.update = function(dt)
     local str = " Controls\n  - WASD Movement\n  - Hold Right mouse for build wheel\n  - click to confirm placement\n  - Space bar to ready for wave"
     suit:Label(str, {align="left"}, suit.layout:up())
     local str = " Make sure the program has access through your firewall for multiplayer"
-    suit.layout:reset(w-lg.getFont():getWidth(str)-20, -5)
+    suit.layout:reset(w-lg.getFont():getWidth(str)-15, -5)
     suit:Label(str, {align="left"}, suit.layout:down(lg.getFont():getWidth(str)+10,30))
+    if love.timer.getFPS() < 60 then
+      below60 = true
+      bonus = 0
+    elseif below60 then
+      bonus = bonus + 1
+      if bonus > 10 then
+        below60 = false
+      end
+    end
+    if below60 then
+      local str = " WARNING: Running below 60fps, use low graphics in settings for better performance"
+      suit.layout:reset(w-lg.getFont():getWidth(str)-15, 40)
+      suit:Label(str, {align="left"}, suit.layout:down(lg.getFont():getWidth(str)+10 ,30))
+    end
   end
 end
 
