@@ -31,7 +31,7 @@ return {
     { "UI/wall_wheelGraphic.png", "ui.wheel.wall", onLoad = pixelArt },
     { "UI/cross.png", "ui.cross", onLoad = pixelArt },
     { "UI/tick.png", "ui.tick", onLoad = pixelArt },
-    { "UI/logo.png", "ui.logo", onLoad = makePixelAnimation, 20, 160, 96, 0.1 },
+    { "UI/logo.png", "ui.logo", onLoad = makePixelAnimation, 20, 160 * 2, 96 * 2, 0.1 },
     
     -- Tiles
     { "tiles/test1.png", "tiles.test1", onLoad = pixelArt },
