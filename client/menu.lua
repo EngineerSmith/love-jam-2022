@@ -70,7 +70,7 @@ local lowGraphics = { text = "Low Graphics", checked = settings.client.lowGraphi
 local fullscreen = { text = "Fullscreen", checked = settings.client.windowfullscreen }
 local disableShaking = { text = "Disable Shaking", checked = settings.client.disableShaking}
 local playerName = { text = names[love.math.random(1,#names)] }
-local serverAddress = { text = "localhost:20202" }
+local serverAddress = { text = "18.217.80.152:20202" }
 local audio = { value=settings.client.volume, min=0, max=100, step=1 }
 
 assets["audio.music.1"]:setVolume(audio.value/100)
