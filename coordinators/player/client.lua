@@ -19,7 +19,12 @@ return function(coordinator)
       p.x, p.y = x, y
       p.height = height or p.height
     end
-    
+  
+  coordinator.reset = function()
+      coordinator.money = 0
+      p.x, p.y, p.height = 0,0,0
+    end
+  
   local heightTween
   coordinator.update = function()
       local w = coordinator.character:getDimensions()

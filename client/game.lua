@@ -52,6 +52,12 @@ scene.resize = function(w, h)
 end
 
 scene.load = function(name, address)
+  chat.clear()
+  monsters.reset()
+  player.reset()
+  tower.reset()
+  world.reset()
+  
   scene.resize(lg.getDimensions())
   player.setCharacter(character.new(require("assets.characters.duck1")))
   network.connect(address, { name = name })

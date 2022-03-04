@@ -11,7 +11,13 @@ return function(coordinator)
   
   local towers = coordinator.towers
   
-  local direction = "NE"
+  local direction
+  
+  coordinator.reset = function()
+      coordinator.direction = nil
+      direction = nil
+    end
+  
   coordinator.mousePosition = function(x, y, mag, windowScale)
       love.mouse.setVisible(true)
       direction = ""

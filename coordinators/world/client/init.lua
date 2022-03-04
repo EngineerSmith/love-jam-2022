@@ -44,6 +44,14 @@ return function(coordinator)
   coordinator.waveNum = -1
   local locationX, locationY = 0,0
   
+  coordinator.reset = function()
+      coordinator.waveNum = -1
+      local locationX, locationY = 0,0
+      world = nil
+      earthquake = nil
+      sea = nil
+    end
+  
   network.addHandler(network.enum.worldData, function(worldData)
       -- process world into something that can be used
       earthquake = {}

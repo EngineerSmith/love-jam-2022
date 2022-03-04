@@ -65,6 +65,7 @@ return {
     
     -- Monsters
     { "monsters/shadow_standing.png", "monster.shadow.standing", onLoad = makePixelAnimation, 4, 32, 32, 0.2},
+    { "monsters/GoldenGolem.png", "monster.goldengolem.standing", onLoad = makePixelAnimation, 4, 32, 32, 0.2},
     
     -- Game objects
     { "objects/nest.png", "objects.nest", onLoad = pixelArt },
