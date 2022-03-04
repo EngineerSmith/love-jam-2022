@@ -72,13 +72,13 @@ return function(coordinator)
       for _, spawnTilesLevel in pairs(spawnTiles) do
         for _, spawnTile in ipairs(spawnTilesLevel) do
           spawnTile.path = {}
-          for _, goal in ipairs(world.nests) do
+          --[[for _, goal in ipairs(world.nests) do
             local path = world.getMonsterPath(spawnTile.reference, goal)
             if path then
               path.goal = goal
               table.insert(spawnTile.path, path)
             end
-          end
+          end]]
         end
       end
       for _, monster in ipairs(coordinator.aliveMonsters) do
@@ -235,7 +235,6 @@ return function(coordinator)
         for i=1, number do
           local tile = spawnTilesLevel[love.math.random(1, #spawnTilesLevel)]
           local monster = newMonster(tile.reference)
-          monster.path = tile.path[love.math.random(1,#tile.path)]
           addSleepTween(monster)
           coordinator.aliveMonsters[monster.id] = monster
           table.insert(newMonsters, {

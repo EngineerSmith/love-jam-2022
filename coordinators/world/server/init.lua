@@ -86,7 +86,7 @@ return function(coordinator)
     if a then
       local extraCost = 0
       if a.notWalkable then
-        if a.tower then
+        if a.tower or a.earthquake then
           extraCost = towerCost
         else
           goto continuea
@@ -101,7 +101,7 @@ return function(coordinator)
     if b then
       local extraCost = 0
       if b.notWalkable then
-        if b.tower then
+        if b.tower or b.earthquake then
           extraCost = towerCost
         else
           goto continueb
@@ -116,7 +116,7 @@ return function(coordinator)
     if c then
       local extraCost = 0
       if c.notWalkable then
-        if c.tower then
+        if c.tower or c.earthquake then
           extraCost = towerCost
         else
           goto continuec
@@ -131,7 +131,7 @@ return function(coordinator)
     if d then
       local extraCost = 0
       if d.notWalkable then
-        if d.tower then
+        if d.tower or d.earthquake then
           extraCost = towerCost
         else
           goto continued
@@ -228,7 +228,7 @@ return function(coordinator)
       local players = {}
       for clientID, client in pairs(network.clients) do
         if client.hash and client.position then
-          client.money = (client.money or 400) + 2
+          client.money = (client.money or 300) + 2
           insert(players, {
               clientID  = client.hash,
               name      = client.name,
@@ -302,7 +302,7 @@ return function(coordinator)
       network.sendAll(network.enum.readyUpState, true, waveNum)
       for clientID, client in pairs(network.clients) do
         if client.hash and client.position then
-          client.money = (client.money or 400) + 250 * math.floor((waveNum+1)/2)
+          client.money = (client.money or 300) + 150 * math.floor((waveNum+1)/2)
         end
       end
     end

@@ -50,9 +50,12 @@ local manualGC = function(timeBudget, safetyNetMB)
   end
 end
 
+local cleanUpNetworkFunc
+
 love.run = function()
   if args["-server"] then
     logger.info("Creating server gameloop")
+    cleanUpNetworkFunc = require("network.server").clear
     local port = args["-port"] or settings.server.port or settings._default.server.port
     sceneManager.changeScene("server", port)
     local networkDelt = 0
@@ -74,6 +77,7 @@ love.run = function()
       lt.sleep(1e-3)
     end
   else -- love.run taken from feris 
+    cleanUpNetworkFunc = require("network.client").clear
     logger.info("Creating client gameloop")
     sceneManager.changeScene("client")
     local frameTime, fuzzyTime = 1/60, {1/2,1,2}
@@ -139,6 +143,10 @@ local function error_printer(message, layer)
 end
 
 function love.errorhandler(msg)
+  local success = pcall(cleanUpNetworkFunc)
+  if not success then
+    logger.fatal("Could not clean up network on error")
+  end
 	msg = tostring(msg)
   -- [[ EDIT ]]
   logger.fatal(nil, error_printer(msg, 2))

@@ -294,13 +294,6 @@ local utf8 = require("utf8")
 local switch = false
 scene.textinput = function(t)
   if chatMode then
-    if switch then
-      for _, chatButton in ipairs(settings.client.controls.chat) do
-        if t == chatButton then
-          return
-        end
-      end
-    end
     local len = utf8.len(text..t)
     if len <= 100-8 then
       text = text .. t

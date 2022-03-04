@@ -153,22 +153,26 @@ return function(coordinator)
       end
       
       if not tile.animate then
-        tile.animate = towers[tile.tower].attackAnimation:clone(function()
-            if tile.animate then
-              local y = tile.i * tileH / 2 - tile.j * tileH / 2
-              local x = tile.j * tileW / 2 + tile.i * tileW / 2
-              local target = require("coordinators.monsters").getMonsterByID(tile.target)
-              if target then
-                coordinator.addProjectile(tile.tower, x+16, y-118, target.x, target.y-target.height-16)
-                removeAnimation(tile.animate)
-                tile.animate = nil
+        if towers[tile.tower] and towers[tile.tower].attackAnimation then
+          tile.animate = towers[tile.tower].attackAnimation:clone(function()
+              if tile.animate then
+                local y = tile.i * tileH / 2 - tile.j * tileH / 2
+                local x = tile.j * tileW / 2 + tile.i * tileW / 2
+                local target = require("coordinators.monsters").getMonsterByID(tile.target)
+                if target then
+                  coordinator.addProjectile(tile.tower, x+16, y-118, target.x, target.y-target.height-16)
+                  removeAnimation(tile.animate)
+                  tile.animate = nil
+                end
               end
-            end
-          end)
-        tile.animate.image = towers[tile.tower].attackAnimation.image
-        table.insert(animations, tile.animate)
+            end)
+          tile.animate.image = towers[tile.tower].attackAnimation.image
+          table.insert(animations, tile.animate)
+          tile.animate:gotoFrame(1)
+        end
+      else
+        tile.animate:gotoFrame(1)
       end
-      tile.animate:gotoFrame(1)
     end
   
   coordinator.mousepressed = function(tile, i, j)
