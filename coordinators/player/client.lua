@@ -23,6 +23,7 @@ return function(coordinator)
   coordinator.reset = function()
       coordinator.money = 0
       p.x, p.y, p.height = 0,0,0
+      coordinator.gamelost = false
     end
   
   local heightTween
