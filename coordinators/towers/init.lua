@@ -31,7 +31,6 @@ wall:setStateTexture(tower.states.uprightdown, assets["tiles.walls.uprightleft"]
 wall:setStateTexture(tower.states.updownleft, assets["tiles.walls.leftdownright"])
 wall:setStateTexture(tower.states.rightdownleft, assets["tiles.walls.updownleft"])
 wall:setStateTexture(tower.states.uprightleft, assets["tiles.walls.uprightdown"])
-
 wall:setStateTexture(tower.states.all, assets["tiles.walls.all"])
 
 local nest = tower.new(assets["objects.nest"], -1, 150)
