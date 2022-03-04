@@ -4,6 +4,16 @@ local assets = require("util.assets")
 
 local tower = require("coordinators.towers.tower")
 
+                                  -- wheel image, price, health, canAttack, attackspeed, damage, range
+local green = tower.new(assets["objects.towers.green"] , 100, 25, true, 1.04, 5*1.04, 125)
+green:setAttackAnimation(assets["objects.towers.greencharging"])
+
+local purple = tower.new(assets["objects.towers.purple"], 100, 25, true, 0.8, 5*0.8, 125)
+purple:setAttackAnimation(assets["objects.towers.purplecharging"])
+
+local red = tower.new(assets["objects.towers.red"]   , 100, 25, true, 1.48, 5*1.48, 125)
+red:setAttackAnimation(assets["objects.towers.redcharging"])
+
 local wall = tower.new(assets["ui.wheel.wall"],  50, 60)
 wall:setStateTexture(tower.states.updown, assets["tiles.walls.vertical"])
 wall:setStateTexture(tower.states.rightleft, assets["tiles.walls.horizontal"])
@@ -16,10 +26,10 @@ local nest = tower.new(assets["objects.nest"], -1, 150)
 nest:setDamageStateTexture(.5, assets["objects.nest"])
 
 local towerCoordinator = {
-    towers = {                               -- price, health, canAttack, attackspeed, damage, range
-      ["NE"] = tower.new(assets["objects.towers.green"] , 100, 25, true, .9, 5, 110),
-      ["NW"] = tower.new(assets["objects.towers.purple"], 100, 25, true, .9, 5, 110),
-      ["SE"] = tower.new(assets["objects.towers.red"]   , 100, 25, true, .9, 5, 110),
+    towers = {
+      ["NE"] = green,
+      ["NW"] = purple,
+      ["SE"] = red,
       ["SW"] = wall,
       ["NEST"] = nest
     }

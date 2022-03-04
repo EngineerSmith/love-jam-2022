@@ -51,6 +51,10 @@ tower.setDamageStateTexture = function(self, state, texture)
   table.sort(self.damageStates, sortDamage)
 end
 
+tower.setAttackAnimation = function(self, attackingAnimation)
+  self.attackAnimation = attackingAnimation
+end
+
 tower.hasState = function(self)
   return self.textures ~= nil
 end

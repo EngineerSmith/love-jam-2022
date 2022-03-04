@@ -172,7 +172,11 @@ return function(coordinator)
         if not world[i] then
           world[i] = {}
         end
+        local hadTargetBefore = world[i] and world[i][j] and world[i][j].target
         world[i][j] = tile
+        if hadTargetBefore or tile.target then
+          require("coordinators.towers").towerHasTarget(tile)
+        end
       end
     end)
   
@@ -384,6 +388,9 @@ return function(coordinator)
                   end
                 end
                 local image = tower:getTexture(state, target.health/target.maxhealth)
+                if target.animate then
+                  image = target.animate
+                end
                 if type(image) == "table" then
                   local w, h = image:getDimensions()
                   shader:send("scale", h*.5)

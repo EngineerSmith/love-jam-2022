@@ -94,38 +94,41 @@ return function(coordinator)
         end
         if not tower.tween then
           local target = tower.target and monsters.getMonsterByID(tower.target)
+          if target then
+            local x = tower.x - target.x
+            local y = tower.y*1.5 - target.y*1.5
+            if target.health <= 0 or x*x+y*y >= tower.range*tower.range then
+              target = nil
+            end
+          end
           if not target then
+            local dist = math.huge
             for _, monster in ipairs(monsters.aliveMonsters) do
               local x = tower.x - monster.x
-              local y = tower.y*2 - monster.y*2
-              if x*x+y*y < tower.range*tower.range then
+              local y = tower.y*1.5 - monster.y*1.5
+              if monster.health > 0 and x*x+y*y < tower.range*tower.range and x*x+y*y < dist then
                 target = monster
-                break
+                dist = x*x+y*y
               end
             end
           end
           if target then
-            logger.info("Found target", target.id)
             tower.target = target.id
             tower.reference.target = target.id
             world.notifyTileUpdate(tower.reference.i, tower.reference.j)
             tower.tween = flux:to(tower, tower.reference.attackSpeed, {}):ease("linear"):onupdate(function()
                 local x = tower.x - target.x
-                local y = tower.y*2 - target.y*2
-                if x*x+y*y >= tower.range*tower.range then
+                local y = tower.y*1.5 - target.y*1.5
+                if target.health <= 0 or x*x+y*y >= tower.range*tower.range then
                   tower.target = nil
                   tower.reference.target = nil
                   world.notifyTileUpdate(tower.reference.i, tower.reference.j)
                   return
                 end
-                if target.health <= 0 then
-                  tower.target = nil
-                  tower.reference.target = nil
-                end
               end):oncomplete(function()
                 if target.health > 0 then
                   local x = tower.x - target.x
-                  local y = tower.y*2 - target.y*2
+                  local y = tower.y*1.5 - target.y*1.5
                   if x*x+y*y >= tower.range*tower.range then
                     tower.target = nil
                     tower.reference.target = nil
@@ -143,6 +146,7 @@ return function(coordinator)
                   tower.reference.target = nil
                   world.notifyTileUpdate(tower.reference.i, tower.reference.j)
                 end
+                tower.tween = nil
               end)
           end
         end

@@ -8,6 +8,13 @@ return function(coordinator)
   local monsters = {}
   local monstersIdRef = {}
   
+  coordinator.getMonsterByID = function(id)
+    local pos = monstersIdRef[id]
+    if pos then
+      return monsters[pos]
+    end
+  end
+  
   network.addHandler(network.enum.monsters, function(_monsters, dead)
       if _monsters ~= "nil" then
         for _, monster in ipairs(_monsters) do

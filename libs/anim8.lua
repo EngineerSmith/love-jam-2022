@@ -192,8 +192,8 @@ local function newAnimation(frames, durations, onLoop)
   )
 end
 
-function Animation:clone()
-  local newAnim = newAnimation(self.frames, self.durations, self.onLoop)
+function Animation:clone(func)
+  local newAnim = newAnimation(self.frames, self.durations, func)
   newAnim.flippedH, newAnim.flippedV = self.flippedH, self.flippedV
   return newAnim
 end

@@ -1,7 +1,11 @@
 local network = require("network.client")
 local assets = require("util.assets")
 
+local logger = require("util.logger")
+
 local world = require("coordinators.world")
+
+local flux = require("libs.flux")
 
 return function(coordinator)
   
@@ -37,7 +41,8 @@ return function(coordinator)
       ["SE"] = assets["ui.wheel.se"],
       ["SW"] = assets["ui.wheel.sw"],
     }
-  coordinator.draw = function(showWheel, windowScale)
+  
+  coordinator.drawUI = function(showWheel, windowScale)
       if showWheel then
         local time = love.timer.getTime() - showWheel
         local scale = math.min(time/.5, 1)
@@ -76,6 +81,91 @@ return function(coordinator)
         coordinator.direction = direction
         coordinator.cost = nil
       end
+    end
+  
+  local animations = {}
+  
+  local removeAnimation = function(animation)
+      for index, anim in ipairs(animations) do
+        if anim == animation then
+          table.remove(animations, index)
+          return
+        end
+      end
+    end
+  
+  coordinator.update = function(dt)
+      for _, animations in ipairs(animations) do
+        animations:update(dt)
+      end
+    end
+  
+  local projectiles = {}
+  
+  coordinator.addProjectile = function(pType, startX, startY, targetX, targetY)
+      local pro = {x=startX, y=startY, pType=pType}
+      pro.tween = flux.to(pro, .5, {x=targetX, y=targetY}):ease("linear"):oncomplete(function()
+          for index, p in ipairs(projectiles) do
+            if p == pro then
+              table.remove(projectiles, index)
+              return
+            end
+          end
+        end)
+      table.insert(projectiles, pro)
+    end
+  
+  local projectileImages = {
+      ["NE"] = assets["objects.bullets.green"],
+      ["NW"] = assets["objects.bullets.purple"],
+      ["SE"] = assets["objects.bullets.red"],
+    }
+  
+  coordinator.draw = function()
+      for _, pro in ipairs(projectiles) do
+        local image = projectileImages[pro.pType] -- centre pro when drawn
+        lg.push()
+        local w, h = image:getDimensions()
+        lg.translate(pro.x-w/2, pro.y-h/2)
+        if type(image) == "table" then
+          image:draw(image.image)
+        else
+          lg.draw(image)
+        end
+        lg.pop()
+      end
+    end
+  
+  local tileW, tileH = 32, 16 -- how many times have I rewrote this
+  coordinator.towerHasTarget = function(tile)
+      if not tile.target or not tile.tower then
+        if tile.animate then
+          removeAnimation(tile.animate)
+          tile.animate = nil
+        end
+        return
+      end
+      
+      if not tile.animate then
+        tile.animate = towers[tile.tower].attackAnimation:clone(function()
+            logger.info("hit", 1)
+            if tile.animate then
+              logger.info("hit", 2)
+              local y = tile.i * tileH / 2 - tile.j * tileH / 2
+              local x = tile.j * tileW / 2 + tile.i * tileW / 2
+              local target = require("coordinators.monsters").getMonsterByID(tile.target)
+              if target then
+                logger.info("hit", 3)
+                coordinator.addProjectile(tile.tower, x+32, y-118, target.x+16, target.y+target.height-16)
+                removeAnimation(tile.animate)
+                tile.animate = nil
+              end
+            end
+          end)
+        tile.animate.image = towers[tile.tower].attackAnimation.image
+        table.insert(animations, tile.animate)
+      end
+      tile.animate:gotoFrame(1)
     end
   
   coordinator.mousepressed = function(tile, i, j)
