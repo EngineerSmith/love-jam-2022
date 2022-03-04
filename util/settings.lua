@@ -21,6 +21,7 @@ local defaultSettings = {
         },
         lowGraphics = false,
         disableShaking = false,
+        volume = 30,
       },
     server = {
         port = 20202,

@@ -71,6 +71,10 @@ scene.unload = function()
   network.clean()
 end
 
+scene.quit = function()
+  network.clean()
+end
+
 local chatMode = false
 local time = 0
 scene.update = function(dt)
@@ -248,9 +252,9 @@ scene.draw = function()
   player.drawUI(scale, tower.cost)
   if showReadyUp then
     lg.push("all")
-    lg.setColor(.7,.7,.7,.3)
+    lg.setColor(1,1,1,.3)
     lg.rectangle("fill",0,0,lg.getDimensions())
-    lg.setColor(1,1,1,1)
+    lg.setColor(.5,.5,.5)
     lg.setFont(assets["fonts.futile.28"])
     local readyStr = "Ready up?"
     lg.print(readyStr, math.floor(lg.getWidth()/2-lg.getFont():getWidth(readyStr)/2), math.floor(lg.getHeight()/2)-lg.getFont():getHeight()-assets["ui.tick"]:getHeight()/2*1.1)
@@ -259,11 +263,22 @@ scene.draw = function()
     lg.push("all")
     lg.setFont(assets["fonts.futile.28"])
     local str = "Press 'spacebar' and click the tick to ready up"
-    lg.setColor(.8,.8,.8)
+    lg.setColor(.7,.7,.7)
     lg.print(str, lg.getWidth()/2-lg.getFont():getWidth(str)/2, 5)
     lg.pop()
   end
   suit:draw()
+  if player.gamelost then
+    lg.setColor(.7,.7,.7)
+    lg.setFont(assets["fonts.futile.28"])
+    local str = "You lose!"
+    lg.print(str, lg.getWidth()/2-lg.getFont():getWidth(str)/2, lg.getHeight()/2-lg.getFont():getHeight())
+    local str = "Reconnect to play again!"
+    lg.print(str, lg.getWidth()/2-lg.getFont():getWidth(str)/2, lg.getHeight()/2+lg.getFont():getHeight()*0.5)
+    lg.setFont(assets["fonts.futile.21"])
+    local str = "Type 'disconnect' to leave back to the main menu"
+    lg.print(str, lg.getWidth()/2-lg.getFont():getWidth(str)/2, lg.getHeight()/2+lg.getFont():getHeight()*2)
+  end
   lg.pop()
 end
 

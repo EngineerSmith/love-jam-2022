@@ -71,7 +71,7 @@ local fullscreen = { text = "Fullscreen", checked = settings.client.windowfullsc
 local disableShaking = { text = "Disable Shaking", checked = settings.client.disableShaking}
 local playerName = { text = names[love.math.random(1,#names)] }
 local serverAddress = { text = "localhost:20202" }
-local audio = { value=50, min=0, max=100, step=1 }
+local audio = { value=settings.client.volume, min=0, max=100, step=1 }
 
 assets["audio.music.1"]:setVolume(audio.value/100)
 
@@ -160,6 +160,7 @@ scene.update = function(dt)
       end
       if suit:Slider(audio, suit.layout:up()).changed then
         assets["audio.music.1"]:setVolume(audio.value/100)
+        settings.client.volume = audio.value
       end
       suit:Label("Volume", {align="center"}, suit.layout:up())
     end
@@ -175,7 +176,7 @@ scene.update = function(dt)
       bonus = 0
     elseif below60 then
       bonus = bonus + 1
-      below60 = not bonus > 15
+      below60 = not (bonus > 15)
     end
     if below60 then
       local str = " WARNING: Running below 60fps, use low graphics in settings for better performance"
