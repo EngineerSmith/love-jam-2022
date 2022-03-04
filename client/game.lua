@@ -245,6 +245,13 @@ scene.draw = function()
     local readyStr = "Ready up?"
     lg.print(readyStr, math.floor(lg.getWidth()/2-lg.getFont():getWidth(readyStr)/2), math.floor(lg.getHeight()/2)-lg.getFont():getHeight()-assets["ui.tick"]:getHeight()/2*1.1)
     lg.pop()
+  elseif world.readyUpState then
+    lg.push("all")
+    lg.setFont(assets["fonts.futile.28"])
+    local str = "Press 'spacebar' and click the tick to ready up"
+    lg.setColor(.8,.8,.8)
+    lg.print(str, lg.getWidth()/2-lg.getFont():getWidth(str)/2, 5)
+    lg.pop()
   end
   suit:draw()
   lg.pop()
