@@ -59,7 +59,10 @@ love.run = function()
     lt.step()
     return function()
       local quit = processEvents()
-      if quit then return quit end
+      if quit then 
+        logger.info("QUITING WITH", quit)
+        return quit
+      end
       local dt = lt.step()
       love.update(dt) -- to do fixed time step for server
       networkDelt = networkDelt + dt

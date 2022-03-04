@@ -21,6 +21,7 @@ local enum = {
         tileUpdate        = 'u',
         readyUpState      = 'e',
         monsters          = 'o',
+        gamelost          = 'L',
       },
   }
   

@@ -22,6 +22,10 @@ return function(coordinator)
       coordinator.chat.clear()
     end
   
+  network.addHandler(network.enum.gamelost, function()
+      coordinator.addChatMessage("Game has been lost! Type 'disconnect' in chat to leave. Server will auto restart.")
+    end)
+  
   network.addHandler(network.enum.chatMessage, coordinator.addChatMessage)
   
   network.addHandler(network.enum.disconnect, function(reason, code)

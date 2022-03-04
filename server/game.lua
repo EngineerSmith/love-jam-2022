@@ -19,6 +19,12 @@ end
 scene.update = function(dt)
   monsters.update(dt)
   towers.update(dt)
+  if world.gameLost then
+    if network.getNumberConnected() == 0 then
+      logger.info("Restarting server")
+      love.event.quit("restart")
+    end
+  end
 end
 
 scene.updateNetwork = function()

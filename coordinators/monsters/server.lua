@@ -187,9 +187,11 @@ return function(coordinator)
               coordinator.aliveMonsters[monster.position].dead = true
             end
           end):oncomplete(function()
-            table.remove(monster.path, 1)
+            if monster.path then
+              table.remove(monster.path, 1)
+            end
             monster.tween = nil
-            if monster.health <= 0 then
+            if monster.health <= 0 or not monster.path then
               table.insert(dead, packageMonster(monster))
               coordinator.aliveMonsters[monster.position].dead = true
             else

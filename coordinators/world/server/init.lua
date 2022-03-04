@@ -228,7 +228,7 @@ return function(coordinator)
       local players = {}
       for clientID, client in pairs(network.clients) do
         if client.hash and client.position then
-          client.money = (client.money or 0) + 10
+          client.money = (client.money or 500) + 2
           insert(players, {
               clientID  = client.hash,
               name      = client.name,
@@ -241,6 +241,12 @@ return function(coordinator)
       network.sendAll(network.enum.foreignPlayers, players)
       if not coordinator.readyUpState and require("coordinators.monsters").isAllMonstersDead() then
         coordinator.resetForNextWave()
+      end
+      if not coordinator.gameLost and #coordinator.nests == 0 then
+        logger.info("GAME LOST")
+        coordinator.gameLost = true
+        network.sendAll(network.enum.gamelost, true)
+        coordinator.resetForNextWave(true)
       end
     end
    
@@ -278,10 +284,26 @@ return function(coordinator)
       coordinator.readyUpState = false
     end
   
-  coordinator.resetForNextWave = function()
+  coordinator.resetForNextWave = function(hasLost)
+      hasLost = hasLost or false
+      if hasLost then
+        require("coordinators.monsters").reset()
+        for clientID, client in pairs(network.clients) do
+          if client.hash and client.position then
+            client.money = 0
+          end
+        end
+        coordinator.readyUpState = true
+        return
+      end
       coordinator.readyUpState = true
       require("coordinators.monsters").reset()
       network.sendAll(network.enum.readyUpState, true, waveNum)
+      for clientID, client in pairs(network.clients) do
+        if client.hash and client.position then
+          client.money = (client.money or 500) + 250 * (waveNum+1)
+        end
+      end
     end
   
 end

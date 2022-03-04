@@ -56,6 +56,10 @@ return function(coordinator)
       end
     end
   
+  network.addHandler(network.enum.gamelost, function()
+      coordinator.gamelost = true
+    end)
+  
   local formatMoney = function(num)
     local i, j, minus, int, fraction = tostring(num):find('([-]?)(%d+)([.]?%d*)')
     int = int:reverse():gsub("(%d%d%d)", "%1,")
