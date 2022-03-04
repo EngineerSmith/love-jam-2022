@@ -131,6 +131,14 @@ scene.update = function(dt)
       lg.setFont(assets["fonts.futile.18"])
       suit:Input(serverAddress, suit.layout:up())
       lg.setFont(assets["fonts.futile.24"])
+      if suit:Button(#serverAddress.text == 0 and "Paste" or "Clear", suit.layout:left(125,30)).hit then
+        if #serverAddress.text == 0 then
+          serverAddress.text = love.system.getClipboardText()
+        else
+          serverAddress.text = ""
+        end
+      end
+      suit.layout:right(175,30)
       suit:Label("Server IP", {align = "center"}, suit.layout:up())
       lg.setFont(assets["fonts.futile.18"])
     end
