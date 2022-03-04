@@ -68,7 +68,7 @@ love.run = function()
         networkDelt = 0
       end
       manualGC(1e-3, 128)
-      lt.sleep(1e-5)
+      lt.sleep(1e-4)
     end
   else -- love.run taken from feris 
     logger.info("Creating client gameloop")
