@@ -1,13 +1,15 @@
 local network = require("network.server")
 local logger = require("util.logger")
-local world = require("coordinators.world")
 
-local flux = require("libs.flux")
+local world = require("coordinators.world")
+local towers = require("coordinators.towers")
+
+local flux = require("libs.flux").group()
 
 return function(coordinator)
   
   local spawnTiles = {}
-  local monsters = {}
+  coordinator.aliveMonsters = {}
   local dead = {}
   local monsterId = 0
   
@@ -24,7 +26,7 @@ return function(coordinator)
   
   local packageMonsters = function()
       local _monsters = {}
-      for _, monster in ipairs(monsters) do
+      for _, monster in ipairs(coordinator.aliveMonsters) do
         if not monster.dead then
           table.insert(_monsters, packageMonster(monster))
         end
@@ -64,7 +66,7 @@ return function(coordinator)
           end
         end
       end
-      for _, monster in ipairs(monsters) do
+      for _, monster in ipairs(coordinator.aliveMonsters) do
         if not monster.dead and monster.path and #monster.path > 0 and monster.tween then
           monster.goal = monster.path and monster.path.goal
           monster.path = nil
@@ -110,11 +112,13 @@ return function(coordinator)
         end
         table.remove(world.nests, tile.nestPos)
         tile.nestPos = nil
-        coordinator.prepareSpawnTiles()
+        tile.tower = nil
+        tile.notWalkable = false
+        tile.health = nil
+        tile.owner = nil
+        tile.maxhealth = nil
       end
     end
-  
-  local flux = flux.group()
   
   addTween = function(monster)
       if monster.tween then
@@ -147,9 +151,9 @@ return function(coordinator)
                 if target.health and target.health > 0 then
                   target.health = target.health - monster.damage
                   if target.health <= 0 then
-                    target.tower = nil
-                    target.notWalkable = false
+                    towers.removeTower(target)
                     removeIfNest(target)
+                    coordinator.prepareSpawnTiles()
                   end
                   world.notifyTileUpdate(target.i, target.j)
                 end
@@ -165,18 +169,19 @@ return function(coordinator)
               table.insert(tweensToStop, monster.tween)
               monster.tween = nil
               table.insert(dead, packageMonster(monster))
-              monsters[monster.position].dead = true
+              coordinator.aliveMonsters[monster.position].dead = true
             end
           end):oncomplete(function()
             table.remove(monster.path, 1)
             monster.tween = nil
             if monster.health <= 0 then
               table.insert(dead, packageMonster(monster))
-              monsters[monster.position].dead = true
+              coordinator.aliveMonsters[monster.position].dead = true
             else
               addTween(monster)
             end
           end)
+        return
       else
         monster.tween = nil
         monster.path = nil
@@ -201,7 +206,7 @@ return function(coordinator)
     end
   
   local addSleepTween = function(monster)
-      flux:to(monster, 4+love.math.random()*2.5, {}):oncomplete(function()
+      flux:to(monster, 2.5+love.math.random()*2.5, {}):oncomplete(function()
             addTween(monster)
         end)
     end
@@ -215,8 +220,8 @@ return function(coordinator)
           local monster = newMonster(tile.reference)
           monster.path = tile.path[love.math.random(1,#tile.path)]
           addSleepTween(monster)
-          table.insert(monsters, monster)
-          monster.position = #monsters
+          table.insert(coordinator.aliveMonsters, monster)
+          monster.position = #coordinator.aliveMonsters
           table.insert(newMonsters, {
               id = monster.id,
               type = monster.type,

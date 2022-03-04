@@ -13,7 +13,6 @@ return function(coordinator)
   local earthquake = {}
   coordinator.readyUpState = true
   coordinator.nests = {}
-  local targets = {}
   
   coordinator.generateWorld = function()
       world = worldGen()
@@ -50,12 +49,6 @@ return function(coordinator)
       end
       end
       MONSTERS.prepareSpawnTiles()
-    end
-  
-  coordinator.addTarget = function(tile)
-      table.insert(targets, tile)
-      require("coordinators.monsters").prepareSpawnTiles()
-      return #targets
     end
   
   local calculateDist = function(a, b)

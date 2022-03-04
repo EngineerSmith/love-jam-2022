@@ -61,14 +61,14 @@ love.run = function()
       local quit = processEvents()
       if quit then return quit end
       local dt = lt.step()
-      love.update(dt)
+      love.update(dt) -- to do fixed time step for server
       networkDelt = networkDelt + dt
       if networkDelt > 1/10 then
         love.updateNetwork()
         networkDelt = 0
       end
       manualGC(1e-3, 128)
-      lt.sleep(1e-4)
+      lt.sleep(1e-3)
     end
   else -- love.run taken from feris 
     logger.info("Creating client gameloop")

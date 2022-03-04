@@ -4,8 +4,10 @@ local network = require("network.server")
 local chat = require("coordinators.chat")
 local world = require("coordinators.world")
 local player = require("coordinators.player")
-local tower = require("coordinators.towers")
+local towers = require("coordinators.towers")
 local monsters = require("coordinators.monsters")
+
+-- server is mostly reactive than active; hence the barebones
 
 local scene = { }
 
@@ -16,11 +18,13 @@ end
 
 scene.update = function(dt)
   monsters.update(dt)
+  towers.update(dt)
 end
 
 scene.updateNetwork = function()
   world.updateNetwork()
   monsters.updateNetwork()
+  towers.updateNetwork()
 end
 
 scene.threaderror = function(...)

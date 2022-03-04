@@ -1,11 +1,14 @@
 local tower = {}
 tower.__index = tower
 
-tower.new = function(wheelGraphic, price, health)
+tower.new = function(wheelGraphic, price, health, canAttack, attackSpeed, damage)
   return setmetatable({
       wheel = wheelGraphic,
       price = price,
       health = health,
+      canAttack = canAttack or false,
+      attackSpeed = attackSpeed,
+      damage = damage,
     }, tower)
 end
 
