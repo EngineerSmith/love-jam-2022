@@ -17,12 +17,17 @@ return function(coordinator)
             monster.character = coordinator.monsters[monster.type].character:clone()
             monster.height = -2
           else
-            local tbl = monsters[monstersIdRef[monster.id]]
-            tbl.health = monster.health
-            if tbl.tween then
-              tbl.tween:stop()
+            local pos = monstersIdRef[monster.id]
+            if pos then
+              local tbl = monsters[pos]
+              if tbl then
+                tbl.health = monster.health
+                if tbl.tween then
+                  tbl.tween:stop()
+                end
+                tbl.tween = flux.to(tbl, 1/10, {x=monster.x, y=monster.y})
+              end
             end
-            tbl.tween = flux.to(tbl, 1/10, {x=monster.x, y=monster.y})
           end
         end
       end
@@ -63,10 +68,14 @@ return function(coordinator)
         lg.translate(monster.x-w/2, monster.y-monster.height-h/1.5)
         local z = (monster.y-h/1.5)/world.depthScale
         monster.character:draw(z)
-        --[[lg.setColor(1,1,1)
+        lg.push("all")
         lg.setShader()
         lg.setDepthMode("always", false)
-        lg.rectangle("fill", 0,0,20,20)]]
+        lg.setColor(.6,.1,.1,1)
+        lg.rectangle("fill", 10, 0, 10, 2)
+        lg.setColor(.03,.7,.1,1)
+        lg.rectangle("fill", 10,0, 10*(monster.health/monster.maxhealth), 2)
+        lg.pop()
         lg.pop()
       end
     end

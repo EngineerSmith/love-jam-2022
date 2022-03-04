@@ -13,6 +13,15 @@ return function(coordinator)
   local dead = {}
   local monsterId = 0
   
+  coordinator.getMonsterByID = function(id)
+    for _, mon in ipairs(coordinator.aliveMonsters) do
+      if not mon.dead and mon.health > 0 and mon.id == id then
+        return mon
+      end
+    end
+    return nil
+  end
+  
   local packageMonster = function(monster)
       return {
           id = monster.id,

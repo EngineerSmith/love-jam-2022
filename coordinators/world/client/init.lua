@@ -363,7 +363,7 @@ return function(coordinator)
               local tower = towers[target.tower]
               if tower then
                 local state = nil
-                local _h
+                local _w, _h
                 if tower:hasState() then
                   state = 0
                   local up = world[i] and world[i+1][j]
@@ -388,7 +388,7 @@ return function(coordinator)
                   local w, h = image:getDimensions()
                   shader:send("scale", h*.5)
                   image:draw(image.image, x-tileW/2, y-height-h+tileH)
-                  _h = h
+                  _w, _h = w, h
                 else
                   local w, h = image:getDimensions()
                   if w > tileW then
@@ -398,16 +398,16 @@ return function(coordinator)
                     shader:send("scale", tileH*2)
                   end
                   lg.draw(image, x, y-height-h+tileH)
-                  _h = h
+                  _w, _h = w, h
                 end
                 if target.health < target.maxhealth then
                   lg.push("all")
                   lg.setShader()
                   lg.setDepthMode("always", false)
                   lg.setColor(.6,.1,.1,1)
-                  lg.rectangle("fill", x+10, y-height-_h+tileH, 10, 2)
+                  lg.rectangle("fill", x+_w/2-5, y-height-_h+tileH, 10, 2)
                   lg.setColor(.03,.7,.1,1)
-                  lg.rectangle("fill", x+10,y-height-_h+tileH, 10*(target.health/target.maxhealth), 2)
+                  lg.rectangle("fill", x+_w/2-5,y-height-_h+tileH, 10*(target.health/target.maxhealth), 2)
                   --[[if state and _h then
                     lg.setColor(1,1,1)
                     lg.print(state, x, y-height-_h+tileH)

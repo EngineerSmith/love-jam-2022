@@ -16,10 +16,10 @@ local nest = tower.new(assets["objects.nest"], -1, 150)
 nest:setDamageStateTexture(.5, assets["objects.nest"])
 
 local towerCoordinator = {
-    towers = {                                        -- price, health
-      ["NE"] = tower.new(assets["objects.towers.green"] , 100, 25, true, 1, 10),
-      ["NW"] = tower.new(assets["objects.towers.purple"], 100, 25, true, 1, 10),
-      ["SE"] = tower.new(assets["objects.towers.red"]   , 100, 25, true, 1, 10),
+    towers = {                               -- price, health, canAttack, attackspeed, damage, range
+      ["NE"] = tower.new(assets["objects.towers.green"] , 100, 25, true, .9, 7, 110),
+      ["NW"] = tower.new(assets["objects.towers.purple"], 100, 25, true, .9, 7, 110),
+      ["SE"] = tower.new(assets["objects.towers.red"]   , 100, 25, true, .9, 7, 110),
       ["SW"] = wall,
       ["NEST"] = nest
     }
