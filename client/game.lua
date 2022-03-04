@@ -249,7 +249,7 @@ scene.draw = function()
     local readyStr = "Ready up?"
     lg.print(readyStr, math.floor(lg.getWidth()/2-lg.getFont():getWidth(readyStr)/2), math.floor(lg.getHeight()/2)-lg.getFont():getHeight()-assets["ui.tick"]:getHeight()/2*1.1)
     lg.pop()
-  elseif world.readyUpState then
+  elseif world.readyUpState and not tower.direction then
     lg.push("all")
     lg.setFont(assets["fonts.futile.28"])
     local str = "Press 'spacebar' and click the tick to ready up"
@@ -325,7 +325,7 @@ scene.keypressed = function(key, scancode)
       end
     end
   end
-  if not world.boolTriggerEarthquake and not showTowerWheel and world.readyUpState and scancode == "space" then
+  if not world.boolTriggerEarthquake and not showTowerWheel and not tower.direction and world.readyUpState and scancode == "space" then
     showReadyUp = not showReadyUp
   end
 end

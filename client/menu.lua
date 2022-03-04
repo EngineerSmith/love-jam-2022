@@ -120,6 +120,10 @@ scene.update = function(dt)
       else
         suit:Input(playerName, suit.layout:up())
       end
+      if suit:Button("Regen name", suit.layout:left(125,30)).hit then
+        playerName.text = names[love.math.random(1,#names)]
+      end
+      suit.layout:right(175,30)
       lg.setFont(assets["fonts.futile.24"])
       suit:Label("Player name", {align = "center"}, suit.layout:up())
       lg.setFont(assets["fonts.futile.18"])
@@ -140,6 +144,13 @@ scene.update = function(dt)
         settings.client.disableShaking = disableShaking.checked
       end
     end
+    suit.layout:reset(30, h-20)
+    suit.layout:up(310,125)
+    local str = " Controls\n  - WASD Movement\n  - Hold Right mouse for build wheel\n  - click to confirm placement\n  - Space bar to ready for wave"
+    suit:Label(str, {align="left"}, suit.layout:up())
+    local str = " Make sure the program has access through your firewall for multiplayer"
+    suit.layout:reset(w-lg.getFont():getWidth(str)-20, -5)
+    suit:Label(str, {align="left"}, suit.layout:down(lg.getFont():getWidth(str)+10,30))
   end
 end
 
