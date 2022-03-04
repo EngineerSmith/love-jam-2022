@@ -54,6 +54,11 @@ return {
     { "tiles/walls/ld.png", "tiles.walls.ld", onLoad = pixelArt },
     { "tiles/walls/lu.png", "tiles.walls.lu", onLoad = pixelArt },
     { "tiles/walls/ru.png", "tiles.walls.ru", onLoad = pixelArt },
+    { "tiles/walls/pole.png", "tiles.walls.pole", onLoad = pixelArt },
+    { "tiles/walls/up.png", "tiles.walls.up", onLoad = pixelArt },
+    { "tiles/walls/down.png", "tiles.walls.down", onLoad = pixelArt },
+    { "tiles/walls/left.png", "tiles.walls.left", onLoad = pixelArt },
+    { "tiles/walls/right.png", "tiles.walls.right", onLoad = pixelArt },
     
     -- Characters
     { "characters/duck1.png", "characters.duck1", onLoad = pixelArt },
