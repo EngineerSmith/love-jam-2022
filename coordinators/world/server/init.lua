@@ -78,8 +78,7 @@ return function(coordinator)
   local getNode = function(i, j)
     return world[i] and world[i][j]
   end
-
-  local sO = math.sqrt(1)
+  
   local towerCost = 12
   local getNeighbours = function(node)
     local nodes, costs, i = {}, {}, 1
@@ -90,16 +89,12 @@ return function(coordinator)
         if a.tower then
           extraCost = towerCost
         else
-          a = nil
           goto continuea
         end
       end
       nodes[i] = a
       costs[i] = 1 + extraCost
       i = i +1
-      if extraCost == towerCost then
-        a = nil
-      end 
     end
     ::continuea::
     local b = getNode(node.i+1, node.j)
@@ -109,16 +104,12 @@ return function(coordinator)
         if b.tower then
           extraCost = towerCost
         else
-          b = nil
           goto continueb
         end
       end
       nodes[i] = b
       costs[i] = 1 + extraCost
       i = i + 1
-      if extraCost == towerCost then
-        b = nil
-      end 
     end
     ::continueb::
     local c = getNode(node.i, node.j+1)
@@ -128,16 +119,12 @@ return function(coordinator)
         if c.tower then
           extraCost = towerCost
         else
-          c = nil
           goto continuec
         end
       end
       nodes[i] = c
       costs[i] = 1 + extraCost
       i = i + 1
-      if extraCost == towerCost then
-        c = nil
-      end 
     end
     ::continuec::
     local d = getNode(node.i, node.j-1)
@@ -147,86 +134,14 @@ return function(coordinator)
         if d.tower then
           extraCost = towerCost
         else
-          d = nil
           goto continued
         end
       end
       nodes[i] = d
       costs[i] = 1 + extraCost
       i = i + 1
-      if extraCost == towerCost then
-        d = nil
-      end 
     end
     ::continued::
-    if a and c then
-      local z = getNode(node.i-1,node.j+1)
-      if z then
-        local extraCost = 0
-        if z.notWalkable then
-          if z.tower then
-            extraCost = towerCost
-          else
-            goto continuee
-          end
-        end
-        nodes[i] = z
-        costs[i] = sO + extraCost
-        i = i + 1
-      end
-    end
-    ::continuee::
-    if a and d then
-      local z = getNode(node.i-1,node.j-1)
-      if z then
-        local extraCost = 0
-        if z.notWalkable then
-          if z.tower then
-            extraCost = towerCost
-          else
-            goto continuef
-          end
-        end
-        nodes[i] = z
-        costs[i] = sO + extraCost
-        i = i + 1
-      end
-    end
-    ::continuef::
-    if b and c then
-      local z = getNode(node.i+1,node.j+1)
-      if z then
-        local extraCost = 0
-        if z.notWalkable then
-          if z.tower then
-            extraCost = towerCost
-          else
-            goto continueg
-          end
-        end
-        nodes[i] = z
-        costs[i] = sO + extraCost
-        i = i + 1
-      end
-    end
-    ::continueg::
-    if b and d then
-      local z = getNode(node.i+1,node.j-1)
-      if z then
-        local extraCost = 0
-        if z.notWalkable then
-          if z.tower then
-            extraCost = towerCost
-          else
-            goto continueh
-          end
-        end
-        nodes[i] = z
-        costs[i] = sO + extraCost
-        i = i + 1
-      end
-    end
-    ::continueh::
     return nodes, costs
   end
 

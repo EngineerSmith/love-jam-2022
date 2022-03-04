@@ -143,7 +143,7 @@ return function(coordinator)
                 table.insert(tweensToStop, monster.tween)
                 monster.tween = nil
                 table.insert(dead, packageMonster(monster))
-                monster[monster.position].dead = true
+                coordinator.aliveMonsters[monster.position].dead = true
               else
                 if not target.health or target.health <= 0 then
                   table.insert(tweensToStop, monster.tween)

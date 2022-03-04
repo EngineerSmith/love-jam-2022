@@ -86,6 +86,12 @@ return function(coordinator)
     local monsters = require("coordinators.monsters")
     for _, tower in ipairs(allTowers) do
       if tower.canAttack then
+        if tower.tween then
+          if not tower.target then
+            tower.tween:stop()
+            tower.tween = nil
+          end
+        end
         if not tower.tween then
           local target = tower.target and monsters.getMonsterByID(tower.target)
           if not target then
@@ -95,28 +101,48 @@ return function(coordinator)
               if x*x+y*y < tower.range*tower.range then
                 target = monster
                 break
-              else
-                logger.info("Dist", x*x+y*y, "Goal", tower.range*tower.range)
               end
             end
           end
           if target then
             logger.info("Found target", target.id)
             tower.target = target.id
+            tower.reference.target = target.id
+            world.notifyTileUpdate(tower.reference.i, tower.reference.j)
             tower.tween = flux:to(tower, tower.reference.attackSpeed, {}):ease("linear"):onupdate(function()
+                local x = tower.x - target.x
+                local y = tower.y*2 - target.y*2
+                if x*x+y*y >= tower.range*tower.range then
+                  tower.target = nil
+                  tower.reference.target = nil
+                  world.notifyTileUpdate(tower.reference.i, tower.reference.j)
+                  return
+                end
                 if target.health <= 0 then
                   tower.target = nil
+                  tower.reference.target = nil
                 end
               end):oncomplete(function()
                 if target.health > 0 then
+                  local x = tower.x - target.x
+                  local y = tower.y*2 - target.y*2
+                  if x*x+y*y >= tower.range*tower.range then
+                    tower.target = nil
+                    tower.reference.target = nil
+                    world.notifyTileUpdate(tower.reference.i, tower.reference.j)
+                    return
+                  end
                   target.health = target.health - tower.reference.damage
                   if target.health <= 0 then
                     tower.target = nil
+                    tower.reference.target = nil
+                    world.notifyTileUpdate(tower.reference.i, tower.reference.j)
                   end
                 else
                   tower.target = nil
+                  tower.reference.target = nil
+                  world.notifyTileUpdate(tower.reference.i, tower.reference.j)
                 end
-                tower.tween = nil
               end)
           end
         end
