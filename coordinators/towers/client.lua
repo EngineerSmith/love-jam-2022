@@ -159,7 +159,7 @@ return function(coordinator)
               local x = tile.j * tileW / 2 + tile.i * tileW / 2
               local target = require("coordinators.monsters").getMonsterByID(tile.target)
               if target then
-                coordinator.addProjectile(tile.tower, x+32, y-118, target.x, target.y-target.height-16)
+                coordinator.addProjectile(tile.tower, x+16, y-118, target.x, target.y-target.height-16)
                 removeAnimation(tile.animate)
                 tile.animate = nil
               end

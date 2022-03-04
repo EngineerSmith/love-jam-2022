@@ -319,7 +319,8 @@ scene.keypressed = function(key, scancode)
         text = text:sub(1, byteoffset-1)
       end
     elseif key == "return" then
-      if text == "disconnect" then
+      if text:lower() == "disconnect" then
+        chatMode = false
         text = ""
         network.disconnect()
         chat.clear()
