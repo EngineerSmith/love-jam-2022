@@ -239,6 +239,9 @@ return function(coordinator)
         end
       end
       network.sendAll(network.enum.foreignPlayers, players)
+      if not coordinator.readyUpState and require("coordinators.monsters").isAllMonstersDead() then
+        coordinator.resetForNextWave()
+      end
     end
    
   coordinator.getSpawnPoint = function()
@@ -277,6 +280,7 @@ return function(coordinator)
   
   coordinator.resetForNextWave = function()
       coordinator.readyUpState = true
+      require("coordinators.monsters").reset()
       network.sendAll(network.enum.readyUpState, true, waveNum)
     end
   

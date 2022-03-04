@@ -112,6 +112,7 @@ return function(coordinator)
       world.readyUpState = readyUpState
       world.setWaveNum(waveNum)
       coordinator.ready = false
+      require("coordinators.monsters").reset()
     end)
   
   coordinator.setReadyState = function(ready)

@@ -7,8 +7,12 @@ local world = require("coordinators.world")
 return function(coordinator)
   local monsters = {}
   
+  coordinator.reset = function()
+      monsters = {}
+    end
+  
   coordinator.getMonsterByID = function(id)
-    return not monsters[id].dead and monsters[id]
+    return  monsters[id] and not monsters[id].dead and monsters[id]
   end
   
   network.addHandler(network.enum.monsters, function(_monsters, dead)

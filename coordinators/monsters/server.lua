@@ -13,6 +13,12 @@ return function(coordinator)
   local dead = {}
   local monsterId = 0
   
+  coordinator.reset = function()
+      coordinator.aliveMonsters = {}
+      dead = {}
+      monsterId = 0
+    end
+  
   coordinator.getMonsterByID = function(id)
     for _, mon in ipairs(coordinator.aliveMonsters) do
       if not mon.dead and mon.health > 0 and mon.id == id then
@@ -277,6 +283,17 @@ return function(coordinator)
         end
         startMovingAgain = {}
       end
+    end
+  
+  coordinator.isAllMonstersDead = function()
+      local monsters = coordinator.aliveMonsters
+      local count = #monsters
+      for _, m in ipairs(monsters) do
+        if m.dead or m.health <= 0 then
+          count = count - 1
+        end
+      end
+      return count == 0
     end
   
   coordinator.updateNetwork = function()
