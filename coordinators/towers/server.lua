@@ -19,10 +19,10 @@ return function(coordinator)
   
   coordinator.damageAll = function(damage)
       for _, tower in ipairs(allTowers) do
-        if tower.health and tower.health > 0 and tower.tower ~= "NEST" then
-          tower.health = tower.health - damage
+        if tower.reference.health and tower.reference.health > 0 and tower.reference.tower ~= "NEST" then
+          tower.reference.health = tower.reference.health - damage
           local i, j = tower.reference.i, tower.reference.j
-          if tower.health <= 0 then
+          if tower.reference.health <= 0 then
             coordinator.removeTower(tower.reference)
           end
           world.notifyTileUpdate(i, j)

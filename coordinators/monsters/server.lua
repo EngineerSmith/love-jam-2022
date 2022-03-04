@@ -149,7 +149,7 @@ return function(coordinator)
                 table.insert(tweensToStop, monster.tween)
                 monster.tween = nil
                 table.insert(dead, packageMonster(monster))
-                coordinator.aliveMonsters[monster.position].dead = true
+                monster.dead = true
               else
                 if not target.health or target.health <= 0 then
                   table.insert(tweensToStop, monster.tween)
@@ -161,7 +161,7 @@ return function(coordinator)
               monster.tween = nil
               if monster.health <= 0 then
                 table.insert(dead, packageMonster(monster))
-                monster[monster.position].dead = true
+                monster.dead = true
               else
                 if target.health and target.health > 0 then
                   target.health = target.health - monster.damage
@@ -184,7 +184,7 @@ return function(coordinator)
               table.insert(tweensToStop, monster.tween)
               monster.tween = nil
               table.insert(dead, packageMonster(monster))
-              coordinator.aliveMonsters[monster.position].dead = true
+              monster.dead = true
             end
           end):oncomplete(function()
             if monster.path then
@@ -193,7 +193,7 @@ return function(coordinator)
             monster.tween = nil
             if monster.health <= 0 or not monster.path then
               table.insert(dead, packageMonster(monster))
-              coordinator.aliveMonsters[monster.position].dead = true
+              monster.dead = true
             else
               addTween(monster)
             end
@@ -237,8 +237,7 @@ return function(coordinator)
           local monster = newMonster(tile.reference)
           monster.path = tile.path[love.math.random(1,#tile.path)]
           addSleepTween(monster)
-          table.insert(coordinator.aliveMonsters, monster)
-          monster.position = #coordinator.aliveMonsters
+          coordinator.aliveMonsters[monster.id] = monster
           table.insert(newMonsters, {
               id = monster.id,
               type = monster.type,
