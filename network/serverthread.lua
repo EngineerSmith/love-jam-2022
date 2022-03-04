@@ -92,6 +92,9 @@ while true do
   end
   local cmd, limit = cmdIn:pop(), 0
   while cmd and limit < 20 do
+    if cmd == "quit" then
+      return
+    end
     local target = cmd[1]
     if target == "all" then
       local success, data = pcall(ld.compress, "string", "lz4", cmd[2])

@@ -55,6 +55,10 @@ client.quit = function()
   client.isConnected = false
 end
 
+client.clean = function()
+  client.quit()
+end
+
 client.handle = function(packetType, encoded)
   if packetType == "warn" then
     logger.warn(encoded)

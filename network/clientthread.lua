@@ -48,6 +48,8 @@ while true do
   local cmd, limit = cmdIn:pop(), 0
   while cmd and limit < 20 do
     if cmd == "quit" then
+      server:disconnect_now(0)
+      server:flush()
       return
     elseif cmd[1] == enumPT.disconnect then
       local reason = tonumber(cmd[3]) or enum.disconnect.normal

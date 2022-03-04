@@ -2,7 +2,7 @@ local logger = require("util.logger")
 
 local scene = { }
 
-local loader = require("util.serverLoader")
+local loader = require("util.serverloader")
 
 scene.load = function(port)
   logger.info("Server loading assets")

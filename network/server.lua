@@ -37,6 +37,20 @@ server.threaderror = function(thread, errorMessage)
   return false
 end
 
+server.quit = function()
+  if server.thread and server.thread:isRunning() then
+    cmdIn:performAtomic(function()
+        cmdIn:clear()
+        cmdIn:push("quit")
+      end)
+    server.thread:wait()
+  end
+end
+
+server.clean = function()
+  server.quit()
+end
+
 local EncodeID = function(id)
   --return love.data.encode("string", "base64", id)
   return id

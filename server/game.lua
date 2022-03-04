@@ -16,6 +16,10 @@ scene.load = function(port)
   network.start(port)
 end
 
+scene.quit = function()
+  network.clean()
+end
+
 scene.update = function(dt)
   monsters.update(dt)
   towers.update(dt)

@@ -61,6 +61,10 @@ scene.load = function(name, address)
   end
 end
 
+scene.unload = function()
+  network.clean()
+end
+
 local chatMode = false
 local time = 0
 scene.update = function(dt)
