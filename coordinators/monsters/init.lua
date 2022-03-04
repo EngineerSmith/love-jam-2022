@@ -11,6 +11,7 @@ monstersCoordinator.monsters = {
     ["necromancer"] = { character=character.new(require("assets.monsters.necromancer")), health = 20, speedMul = .6, damage = 15, attackspeed = .8 },
     ["redman"] = { character=character.new(require("assets.monsters.redman")), health = 20, speedMul = .9, damage = 10, attackspeed = .9 },
     ["greenman"] = { character=character.new(require("assets.monsters.greenman")), health = 20, speedMul = .9, damage = 10, attackspeed = .9 },
+    ["skeleton"] = { character=character.new(require("assets.monsters.greenman")), health = 40, speedMul = 1.2, damage = 20, attackspeed = 1.5 },
   }
 
 monstersCoordinator.monsterTypes = {
@@ -19,6 +20,7 @@ monstersCoordinator.monsterTypes = {
   "necromancer",
   "redman",
   "greenman",
+  "skeleton",
 }
 
 if args["-server"] then
