@@ -216,9 +216,14 @@ scene.draw = function()
   lg.draw(assets["ui.main.duck"], 0, 0, r, 1,1, w/2, h)
   lg.pop()
   lg.push()
-  local w, h = assets["ui.logo"]:getDimensions()
+  local logo = assets["ui.logo"]
+  local w, h = logo:getDimensions()
   lg.translate(lg.getWidth()/2-w/2, lg.getHeight()/2-h*0.9)
-  lg.draw(assets["ui.logo"])
+  if type(logo) == "table" then
+    logo:draw(logo.image)
+  else
+    lg.draw(logo)
+  end
   lg.pop()
   suit:draw()
 end
