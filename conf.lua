@@ -20,7 +20,7 @@ end
 if args["-server"] then
   love.conf = function(t)
     baseConf(t)
-    t.window.title = "Sever"
+    t.window.title = "Server"
     
     t.modules.data = true
     t.modules.event = true
@@ -43,7 +43,7 @@ else
     baseConf(t)
     t.gammacorrect = true
     
-    t.window.title = "Client"
+    t.window.title = "Battle for Egg Island"
     t.window.icon = nil
     t.window.resizable = true
     t.window.display = 1

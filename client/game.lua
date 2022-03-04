@@ -325,7 +325,7 @@ scene.keypressed = function(key, scancode)
       end
     end
   end
-  if not world.boolTriggerEarthquake and not showTowerWheel and not tower.direction and world.readyUpState and scancode == "space" then
+  if not chatMode and not world.boolTriggerEarthquake and not showTowerWheel and not tower.direction and world.readyUpState and scancode == "space" then
     showReadyUp = not showReadyUp
   end
 end

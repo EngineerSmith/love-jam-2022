@@ -158,7 +158,7 @@ scene.update = function(dt)
       bonus = 0
     elseif below60 then
       bonus = bonus + 1
-      if bonus > 10 then
+      if bonus > 15 then
         below60 = false
       end
     end
