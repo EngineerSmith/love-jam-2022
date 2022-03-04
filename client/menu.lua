@@ -155,8 +155,8 @@ scene.update = function(dt)
       end
     end
     suit.layout:reset(30, h-20)
-    suit.layout:up(310,125)
-    local str = " Controls\n  - WASD Movement\n  - Hold Right mouse for build wheel\n  - click to confirm placement\n  - Space bar to ready for wave"
+    suit.layout:up(310,185)
+    local str = " Controls\n  - WASD Movement\n  - Hold Right mouse for build wheel\n  - click to confirm placement\n  - Space bar to ready for wave\n  - Type \"disconnect\" to disconnect \tfrom server"
     suit:Label(str, {align="left"}, suit.layout:up())
     local str = " Make sure the program has access through your firewall for multiplayer"
     suit.layout:reset(w-lg.getFont():getWidth(str)-15, -5)
