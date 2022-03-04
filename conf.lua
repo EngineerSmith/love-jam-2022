@@ -44,7 +44,7 @@ else
     t.gammacorrect = true
     
     t.window.title = "Battle for Egg Island"
-    t.window.icon = nil
+    t.window.icon = "assets/UI/egg.png"
     t.window.resizable = true
     t.window.display = 1
     t.window.highdpi = true

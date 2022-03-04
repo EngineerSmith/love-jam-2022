@@ -175,9 +175,7 @@ scene.update = function(dt)
       bonus = 0
     elseif below60 then
       bonus = bonus + 1
-      if bonus > 15 then
-        below60 = false
-      end
+      below60 = not bonus > 15
     end
     if below60 then
       local str = " WARNING: Running below 60fps, use low graphics in settings for better performance"
@@ -215,6 +213,11 @@ scene.draw = function()
   local r = math.cos(x+y+time)*0.2
   lg.translate(x, y + height)
   lg.draw(assets["ui.main.duck"], 0, 0, r, 1,1, w/2, h)
+  lg.pop()
+  lg.push()
+  local w, h = assets["ui.logo"]:getDimensions()
+  lg.translate(lg.getWidth()/2-w/2, lg.getHeight()/2-h*0.9)
+  lg.draw(assets["ui.logo"])
   lg.pop()
   suit:draw()
 end

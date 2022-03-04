@@ -31,6 +31,7 @@ return {
     { "UI/wall_wheelGraphic.png", "ui.wheel.wall", onLoad = pixelArt },
     { "UI/cross.png", "ui.cross", onLoad = pixelArt },
     { "UI/tick.png", "ui.tick", onLoad = pixelArt },
+    { "UI/gameLogo.png", "ui.logo", onLoad = pixelArt },
     
     -- Tiles
     { "tiles/test1.png", "tiles.test1", onLoad = pixelArt },

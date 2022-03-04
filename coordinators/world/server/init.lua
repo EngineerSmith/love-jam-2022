@@ -228,7 +228,7 @@ return function(coordinator)
       local players = {}
       for clientID, client in pairs(network.clients) do
         if client.hash and client.position then
-          client.money = (client.money or 500) + 2
+          client.money = (client.money or 400) + 2
           insert(players, {
               clientID  = client.hash,
               name      = client.name,
@@ -302,7 +302,7 @@ return function(coordinator)
       network.sendAll(network.enum.readyUpState, true, waveNum)
       for clientID, client in pairs(network.clients) do
         if client.hash and client.position then
-          client.money = (client.money or 500) + 250 * (waveNum+1)
+          client.money = (client.money or 400) + 250 * math.floor((waveNum+1)/2)
         end
       end
     end
