@@ -148,15 +148,12 @@ return function(coordinator)
       
       if not tile.animate then
         tile.animate = towers[tile.tower].attackAnimation:clone(function()
-            logger.info("hit", 1)
             if tile.animate then
-              logger.info("hit", 2)
               local y = tile.i * tileH / 2 - tile.j * tileH / 2
               local x = tile.j * tileW / 2 + tile.i * tileW / 2
               local target = require("coordinators.monsters").getMonsterByID(tile.target)
               if target then
-                logger.info("hit", 3)
-                coordinator.addProjectile(tile.tower, x+32, y-118, target.x+16, target.y+target.height-16)
+                coordinator.addProjectile(tile.tower, x+32, y-118, target.x, target.y-target.height-16)
                 removeAnimation(tile.animate)
                 tile.animate = nil
               end
