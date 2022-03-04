@@ -17,6 +17,19 @@ return function(coordinator)
       return x, y
     end
   
+  coordinator.damageAll = function(damage)
+      for _, tower in ipairs(allTowers) do
+        if tower.health and tower.health > 0 and tower.tower ~= "NEST" then
+          tower.health = tower.health - damage
+          local i, j = tower.reference.i, tower.reference.j
+          if tower.health <= 0 then
+            coordinator.removeTower(tower.reference)
+          end
+          world.notifyTileUpdate(i, j)
+        end
+      end
+    end
+  
   network.addHandler(network.enum.placeTower, function(client, i, j, towerID)
       local tile = world.getTile(i, j)
       if tile and tile.tower == nil and tile.earthquake == nil then

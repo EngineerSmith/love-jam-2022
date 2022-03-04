@@ -281,6 +281,7 @@ return function(coordinator)
       waveNum = (waveNum or -1) + 1
       network.sendAll(network.enum.readyUpState, false, waveNum)
       coordinator.triggerEarthquake(waveNum)
+      require("coordinators.towers").damageAll(10)
       coordinator.readyUpState = false
     end
   
