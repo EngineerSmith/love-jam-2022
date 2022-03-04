@@ -31,7 +31,6 @@ return function(coordinator)
         end
       end
       if dead then
-        logger.info(#dead, "monsters have died")
         for _, monster in ipairs(dead) do
           if monsters[monster.id] then
             monsters[monster.id].dead = true
